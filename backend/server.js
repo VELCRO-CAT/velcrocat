@@ -44,8 +44,7 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`🚀 서버 실행: http://localhost:${PORT}`);
       console.log(`📦 DB: ${process.env.DATABASE_URL ? 'PostgreSQL (Render)' : 'JSON 파일 (dev-db.json)'}`);
-      console.log(`👤 관리자: admin@osakamarket.kr / admin123`);
-      console.log(`👤 일반:   user@osakamarket.kr / user123`);
+      console.log(`👤 관리자: osakamarket0316 / osakamarket0316`);
     });
   } catch (err) {
     console.error('❌ 서버 시작 오류:', err);
