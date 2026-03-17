@@ -1,12 +1,12 @@
 <template>
   <v-container class="py-16 d-flex justify-center">
-    <v-card width="440" variant="outlined" class="pa-8">
-      <div class="text-center mb-8">
+    <v-card width="440" variant="outlined" class="pa-8 login-card">
+      <div class="text-center mb-8 reveal reveal-1">
         <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">로그인</h1>
         <p class="text-caption text-grey mt-1" style="letter-spacing:4px">LOGIN</p>
       </div>
 
-      <v-form @submit.prevent="handleLogin">
+      <v-form @submit.prevent="handleLogin" class="reveal reveal-2">
         <v-text-field
           v-model="email"
           label="이메일"
@@ -33,7 +33,7 @@
         <v-btn type="submit" color="#111" block size="large" :loading="loading">로그인</v-btn>
       </v-form>
 
-      <p class="text-center text-body-2 mt-4">
+      <p class="text-center text-body-2 mt-4 reveal reveal-3">
         계정이 없으신가요?
         <router-link to="/register" style="color:#111;font-weight:600">회원가입</router-link>
       </p>
@@ -42,9 +42,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+
+onMounted(() => {
+  document.querySelectorAll('.login-card .reveal').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), 150 * (i + 1));
+  });
+});
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -68,3 +74,15 @@ async function handleLogin() {
   }
 }
 </script>
+
+<style scoped>
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>

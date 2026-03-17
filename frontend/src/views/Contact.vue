@@ -1,7 +1,7 @@
 <template>
   <div class="contact-page">
     <!-- 페이지 헤더 -->
-    <div class="page-header">
+    <div class="page-header reveal">
       <span class="page-label">CONTACT</span>
       <h1 class="page-title">문의하기</h1>
       <p class="page-desc">궁금한 점이 있으시면 아래 양식으로 문의해 주세요.<br>빠른 시일 내에 답변 드리겠습니다.</p>
@@ -19,7 +19,7 @@
       <form v-else @submit.prevent="submit" class="contact-form">
 
         <!-- 문의 유형 -->
-        <div class="field">
+        <div class="field reveal">
           <label>문의 유형 <span class="required">*</span></label>
           <div class="type-grid">
             <button
@@ -34,7 +34,7 @@
         </div>
 
         <!-- 이름 / 전화번호 -->
-        <div class="field-group">
+        <div class="field-group reveal">
           <div class="field">
             <label>이름 <span class="required">*</span></label>
             <input v-model="form.name" type="text" placeholder="이름을 입력해주세요" required />
@@ -52,7 +52,7 @@
         </div>
 
         <!-- 이메일 / 주문번호 -->
-        <div class="field-group">
+        <div class="field-group reveal">
           <div class="field">
             <label>이메일 <span class="required">*</span></label>
             <input v-model="form.email" type="email" placeholder="이메일을 입력해주세요" required />
@@ -64,13 +64,13 @@
         </div>
 
         <!-- 문의 내용 -->
-        <div class="field">
+        <div class="field reveal">
           <label>문의 내용 <span class="required">*</span></label>
           <textarea v-model="form.message" placeholder="문의 내용을 자세히 입력해주세요" rows="7" required></textarea>
         </div>
 
         <p v-if="error" class="error-msg">{{ error }}</p>
-        <button type="submit" class="submit-btn hvr-sweep-to-right" :disabled="loading">
+        <button type="submit" class="submit-btn hvr-sweep-to-right reveal" :disabled="loading">
           {{ loading ? 'SENDING...' : 'SEND MESSAGE' }}
         </button>
       </form>
@@ -79,8 +79,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
+
+onMounted(() => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.contact-page .reveal').forEach(el => observer.observe(el));
+});
 
 const inquiryTypes = ['상품 문의', '배송 문의', '교환/반품', '결제 문의', '기타'];
 
@@ -254,4 +266,15 @@ async function submit() {
 }
 .submit-btn:hover:not(:disabled) { background: #333; }
 .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+/* 스크롤 등장 애니메이션 */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
