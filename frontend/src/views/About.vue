@@ -32,16 +32,16 @@
         <div class="hero-video-overlay"></div>
       </div>
       <div class="hero-content">
-        <span class="hero-label">Brand Concept</span>
-        <h1 class="hero-title">
+        <span class="hero-label hero-reveal">Brand Concept</span>
+        <h1 class="hero-title hero-reveal hero-reveal-2">
           VELCRO<br>
           <span class="accent">CAT</span>
         </h1>
-        <p class="hero-desc">
+        <p class="hero-desc hero-reveal hero-reveal-3">
           일상과 스타일의 경계를 허무는 브랜드.<br>
           편안함 속에서 나만의 감각을 찾다.
         </p>
-        <div class="hero-scroll">
+        <div class="hero-scroll hero-reveal hero-reveal-4">
           <span>Scroll</span>
           <div class="hero-scroll-line"></div>
         </div>
@@ -225,6 +225,12 @@ function handleScroll() {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
+  // 히어로 텍스트 순차 등장
+  setTimeout(() => {
+    document.querySelectorAll('.hero-reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('show'), 300 * (i + 1));
+    });
+  }, 200);
   // 첫 영상 자동재생
   setTimeout(startFirstVideo, 300);
 
@@ -354,8 +360,18 @@ onUnmounted(() => {
 }
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   padding: 0 24px;
+}
+/* 히어로 텍스트 순차 등장 */
+.hero-reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.hero-reveal.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 .hero-label {
   display: inline-block;
