@@ -52,10 +52,11 @@
     <div v-else-if="products.length" class="product-grid-wrap">
       <div class="product-grid">
         <router-link
-          v-for="product in products"
+          v-for="(product, idx) in products"
           :key="product.id"
           :to="`/products/${product.id}`"
-          class="product-item"
+          class="product-item reveal"
+          :style="{ transitionDelay: (idx % 6) * 0.08 + 's' }"
         >
           <div class="product-img-wrap">
             <img :src="product.image" :alt="product.name" class="product-img" />
@@ -95,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
@@ -139,6 +140,22 @@ async function fetchProducts() {
   products.value = res.data.products;
   total.value = res.data.total;
   loading.value = false;
+  nextTick(() => initReveal());
+}
+
+function initReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.products-page .reveal').forEach(el => {
+    el.classList.remove('visible');
+    observer.observe(el);
+  });
 }
 
 // URL 쿼리 파라미터 변경 시 자동 반영
@@ -252,6 +269,17 @@ function addToCart(product) {
 }
 @media (max-width: 599px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
 
+/* 스크롤 등장 애니메이션 */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.25s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .product-item {
   text-decoration: none;
   color: #111;
@@ -260,7 +288,6 @@ function addToCart(product) {
   border-bottom: 1px solid #e0e0e0;
   position: relative;
   z-index: 0;
-  transition: box-shadow 0.25s ease;
 }
 .product-item:hover {
   box-shadow: 0 8px 32px rgba(0,0,0,0.13);
