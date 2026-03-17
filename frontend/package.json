@@ -1,0 +1,24 @@
+{
+  "name": "osakamarket-frontend",
+  "version": "2.0.0",
+  "description": "Osaka Market Frontend",
+  "scripts": {
+    "dev": "vite --port 8080",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mdi/font": "7.3.67",
+    "axios": "^1.6.2",
+    "hover.css": "^2.3.2",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5",
+    "vuetify": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.0",
+    "vite": "^5.0.6",
+    "vite-plugin-vuetify": "^2.0.1"
+  }
+}

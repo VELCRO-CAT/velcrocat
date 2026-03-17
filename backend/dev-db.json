@@ -1,0 +1,399 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "wlwl",
+      "email": "wlwl9183@naver.com",
+      "password": "$2a$10$.SwQDLyAxpvV72xgwujOqugq3kT/h6j2EVhOesnfjBxIe.OziaEBa",
+      "role": "user",
+      "created_at": "2026-03-16T07:39:03.789Z",
+      "updated_at": "2026-03-16T07:39:03.789Z"
+    },
+    {
+      "id": 2,
+      "name": "관리자",
+      "email": "osakamarket0316@osakamarket.kr",
+      "password": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
+      "role": "admin",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "slug": "outer",
+      "name": "아우터",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "slug": "tops",
+      "name": "탑스",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "slug": "bottoms",
+      "name": "바텀스",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "slug": "roomwear",
+      "name": "룸웨어",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "slug": "bags",
+      "name": "가방",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 6,
+      "slug": "shoes",
+      "name": "슈즈",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 7,
+      "slug": "hats",
+      "name": "모자",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 8,
+      "slug": "belts",
+      "name": "벨트",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 9,
+      "slug": "scarves",
+      "name": "머플러·글러브",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 10,
+      "slug": "innerwear",
+      "name": "이너웨어",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 11,
+      "slug": "suits",
+      "name": "수트·셋업",
+      "gender": "men",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 12,
+      "slug": "w-outer",
+      "name": "아우터",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 13,
+      "slug": "w-tops",
+      "name": "탑스",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 14,
+      "slug": "w-bottoms",
+      "name": "바텀스",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 15,
+      "slug": "w-dresses",
+      "name": "원피스",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 16,
+      "slug": "w-skirts",
+      "name": "스커트",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 17,
+      "slug": "w-roomwear",
+      "name": "룸웨어",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 18,
+      "slug": "w-bags",
+      "name": "가방",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 19,
+      "slug": "w-shoes",
+      "name": "슈즈",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 20,
+      "slug": "w-accessories",
+      "name": "액세서리",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 21,
+      "slug": "w-hats",
+      "name": "모자",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 22,
+      "slug": "w-innerwear",
+      "name": "이너웨어",
+      "gender": "women",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    }
+  ],
+  "products": [
+    {
+      "id": 16,
+      "name": "치노 팬츠 베이지",
+      "price": 36000,
+      "category": "bottoms",
+      "image": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=600&fit=crop",
+      "description": "깔끔한 베이지 치노 팬츠. 캐주얼부터 스마트 캐주얼까지 활용.",
+      "rating": 4.4,
+      "stock": 55,
+      "seller": "오사카마켓",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 17,
+      "name": "하프 팬츠 네이비",
+      "price": 23000,
+      "category": "bottoms",
+      "image": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&h=600&fit=crop",
+      "description": "여름 필수 하프 팬츠. 시원하고 활동적인 반바지.",
+      "rating": 4.3,
+      "stock": 70,
+      "seller": "오사카마켓",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 18,
+      "name": "저지 팬츠 차콜",
+      "price": 25000,
+      "category": "bottoms",
+      "image": "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=600&h=600&fit=crop",
+      "description": "부드러운 저지 소재 팬츠. 착용감이 가벼운 이지 팬츠.",
+      "rating": 4.6,
+      "stock": 80,
+      "seller": "오사카마켓",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 19,
+      "name": "저지 상하 세트 그레이",
+      "price": 52000,
+      "category": "roomwear",
+      "image": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=600&fit=crop",
+      "description": "부드러운 저지 소재의 상하 세트. 홈웨어부터 가벼운 외출까지.",
+      "rating": 4.7,
+      "stock": 35,
+      "seller": "오사카마켓",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 20,
+      "name": "룸웨어 세트 블랙",
+      "price": 48000,
+      "category": "roomwear",
+      "image": "https://images.unsplash.com/photo-1434389677669-e08b4cda3a27?w=600&h=600&fit=crop",
+      "description": "심플하고 모던한 블랙 룸웨어 세트. 편안하고 세련된 홈웨어.",
+      "rating": 4.5,
+      "stock": 30,
+      "seller": "오사카마켓",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 21,
+      "name": "스웨트 상하 세트 네이비",
+      "price": 58000,
+      "category": "roomwear",
+      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop",
+      "description": "기모 안감의 따뜻한 스웨트 세트업. 가을·겨울 룸웨어의 정석.",
+      "rating": 4.6,
+      "stock": 25,
+      "seller": "오사카마켓",
+      "created_at": "2026-03-16T07:00:00.000Z",
+      "updated_at": "2026-03-16T07:00:00.000Z"
+    },
+    {
+      "id": 22,
+      "name": "블랙 울 코트",
+      "price": 139000,
+      "stock": 40,
+      "category": "outer",
+      "description": "멋드러지는 블랙 색상의 코트가 잘 정리와 진열이 되어있으며 상품은 40개 있음",
+      "image": "/uploads/1773647359142.png",
+      "seller": "오사카마켓",
+      "created_at": "2026-03-16T07:50:09.494Z",
+      "updated_at": "2026-03-16T07:50:09.494Z"
+    },
+    {
+      "id": 23,
+      "name": "아기고양이 네코 ",
+      "price": 100000,
+      "stock": 2,
+      "category": "outer",
+      "description": "고양이가 귀엽습니다 .",
+      "image": "/uploads/1773649843599.png",
+      "seller": "오사카마켓",
+      "created_at": "2026-03-16T08:31:02.564Z",
+      "updated_at": "2026-03-16T08:31:02.564Z"
+    },
+    {
+      "id": 24,
+      "name": "고냥이",
+      "price": 20000,
+      "stock": 0,
+      "category": "w-bags",
+      "description": "귀여운 카펫 시트",
+      "image": "/uploads/1773725141759.png",
+      "seller": "오사카마켓",
+      "created_at": "2026-03-17T05:26:12.387Z",
+      "updated_at": "2026-03-17T05:26:12.387Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "order_no": "ORD-1773726947996",
+      "user_id": 2,
+      "user_name": "관리자",
+      "user_email": "osakamarket0316@osakamarket.kr",
+      "items_json": "[{\"id\":23,\"name\":\"아기고양이 네코 \",\"price\":100000,\"stock\":2,\"category\":\"outer\",\"description\":\"고양이가 귀엽습니다 .\",\"image\":\"/uploads/1773649843599.png\",\"seller\":\"오사카마켓\",\"created_at\":\"2026-03-16T08:31:02.564Z\",\"updated_at\":\"2026-03-16T08:31:02.564Z\",\"qty\":1}]",
+      "total": 100000,
+      "payment_method": "card",
+      "shipping_address_json": "{\"name\":\"관리자\",\"phone\":\"01088888888\",\"zip\":\"13903\",\"address\":\"경기 안양시 만안구 연현로 29\",\"addressDetail\":\"안양역\"}",
+      "status": "paid",
+      "created_at": "2026-03-17T05:55:47.996Z",
+      "updated_at": "2026-03-17T07:13:58.729Z"
+    },
+    {
+      "id": 2,
+      "order_no": "ORD-1773726949802",
+      "user_id": 2,
+      "user_name": "관리자",
+      "user_email": "osakamarket0316@osakamarket.kr",
+      "items_json": "[{\"id\":23,\"name\":\"아기고양이 네코 \",\"price\":100000,\"stock\":2,\"category\":\"outer\",\"description\":\"고양이가 귀엽습니다 .\",\"image\":\"/uploads/1773649843599.png\",\"seller\":\"오사카마켓\",\"created_at\":\"2026-03-16T08:31:02.564Z\",\"updated_at\":\"2026-03-16T08:31:02.564Z\",\"qty\":1}]",
+      "total": 100000,
+      "payment_method": "tosspay",
+      "shipping_address_json": "{\"name\":\"관리자\",\"phone\":\"01088888888\",\"zip\":\"13903\",\"address\":\"경기 안양시 만안구 연현로 29\",\"addressDetail\":\"안양역\"}",
+      "status": "confirmed",
+      "created_at": "2026-03-17T05:55:49.802Z",
+      "updated_at": "2026-03-17T05:55:49.802Z"
+    },
+    {
+      "id": 3,
+      "order_no": "ORD-1773726967058",
+      "user_id": 2,
+      "user_name": "관리자",
+      "user_email": "osakamarket0316@osakamarket.kr",
+      "items_json": "[{\"id\":23,\"name\":\"아기고양이 네코 \",\"price\":100000,\"stock\":2,\"category\":\"outer\",\"description\":\"고양이가 귀엽습니다 .\",\"image\":\"/uploads/1773649843599.png\",\"seller\":\"오사카마켓\",\"created_at\":\"2026-03-16T08:31:02.564Z\",\"updated_at\":\"2026-03-16T08:31:02.564Z\",\"qty\":1}]",
+      "total": 100000,
+      "payment_method": "card",
+      "shipping_address_json": "{\"name\":\"관리자\",\"phone\":\"01088888888\",\"zip\":\"13903\",\"address\":\"경기 안양시 만안구 연현로 29\",\"addressDetail\":\"안양역\"}",
+      "status": "confirmed",
+      "created_at": "2026-03-17T05:56:07.058Z",
+      "updated_at": "2026-03-17T05:56:07.058Z"
+    },
+    {
+      "id": 4,
+      "order_no": "ORD-1773726968019",
+      "user_id": 2,
+      "user_name": "관리자",
+      "user_email": "osakamarket0316@osakamarket.kr",
+      "items_json": "[{\"id\":23,\"name\":\"아기고양이 네코 \",\"price\":100000,\"stock\":2,\"category\":\"outer\",\"description\":\"고양이가 귀엽습니다 .\",\"image\":\"/uploads/1773649843599.png\",\"seller\":\"오사카마켓\",\"created_at\":\"2026-03-16T08:31:02.564Z\",\"updated_at\":\"2026-03-16T08:31:02.564Z\",\"qty\":1}]",
+      "total": 100000,
+      "payment_method": "card",
+      "shipping_address_json": "{\"name\":\"관리자\",\"phone\":\"01088888888\",\"zip\":\"13903\",\"address\":\"경기 안양시 만안구 연현로 29\",\"addressDetail\":\"안양역\"}",
+      "status": "confirmed",
+      "created_at": "2026-03-17T05:56:08.019Z",
+      "updated_at": "2026-03-17T05:56:08.019Z"
+    },
+    {
+      "id": 5,
+      "order_no": "ORD-1773726969673",
+      "user_id": 2,
+      "user_name": "관리자",
+      "user_email": "osakamarket0316@osakamarket.kr",
+      "items_json": "[{\"id\":23,\"name\":\"아기고양이 네코 \",\"price\":100000,\"stock\":2,\"category\":\"outer\",\"description\":\"고양이가 귀엽습니다 .\",\"image\":\"/uploads/1773649843599.png\",\"seller\":\"오사카마켓\",\"created_at\":\"2026-03-16T08:31:02.564Z\",\"updated_at\":\"2026-03-16T08:31:02.564Z\",\"qty\":1}]",
+      "total": 100000,
+      "payment_method": "tosspay",
+      "shipping_address_json": "{\"name\":\"관리자\",\"phone\":\"01088888888\",\"zip\":\"13903\",\"address\":\"경기 안양시 만안구 연현로 29\",\"addressDetail\":\"안양역\"}",
+      "status": "confirmed",
+      "created_at": "2026-03-17T05:56:09.673Z",
+      "updated_at": "2026-03-17T05:56:09.673Z"
+    }
+  ],
+  "inquiries": [
+    {
+      "id": 1,
+      "name": "주지호",
+      "email": "wlwl@naver.com",
+      "message": "지금 배송을 받고싶었습니다.",
+      "status": "read",
+      "created_at": "2026-03-16T08:14:01.268Z",
+      "updated_at": "2026-03-16T08:15:28.492Z"
+    }
+  ]
+}

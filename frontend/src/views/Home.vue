@@ -1,0 +1,175 @@
+<template>
+  <div class="home">
+    <!-- 상품 그리드 (MRU 스타일 — PC 3열, 모바일 2열) -->
+    <div v-if="loading" class="loading-wrap">
+      <v-progress-circular indeterminate color="#111" size="36" />
+    </div>
+
+    <div v-else class="product-grid-wrap"><div class="product-grid">
+      <router-link
+        v-for="product in products"
+        :key="product.id"
+        :to="`/products/${product.id}`"
+        class="product-item"
+      >
+        <div class="product-img-wrap">
+          <img :src="product.image" :alt="product.name" class="product-img" />
+          <span v-if="product.stock === 0" class="sold-out-badge">SOLD OUT</span>
+          <button v-else class="product-cart-btn hvr-grow" @click.prevent="addToCart(product)" aria-label="장바구니 담기">
+            <v-icon size="18">mdi-cart-plus</v-icon>
+          </button>
+        </div>
+        <div class="product-info">
+          <p class="product-name">{{ product.name }}</p>
+          <p class="product-price">₩{{ Number(product.price).toLocaleString() }}</p>
+        </div>
+      </router-link>
+    </div></div>
+
+    <v-snackbar v-model="snackbar" color="#222" timeout="2000" location="bottom right">
+      <v-icon start color="white">mdi-check-circle</v-icon>
+      <span style="color:#fff">장바구니에 담았습니다</span>
+    </v-snackbar>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useCartStore } from '../stores/cart';
+
+const cartStore = useCartStore();
+const products = ref([]);
+const loading = ref(true);
+const snackbar = ref(false);
+
+onMounted(async () => {
+  try {
+    const res = await axios.get('/api/products');
+    products.value = res.data.products;
+  } finally {
+    loading.value = false;
+  }
+});
+
+function addToCart(product) {
+  cartStore.addItem(product);
+  snackbar.value = true;
+}
+</script>
+
+<style scoped>
+.home { background: #fff; }
+
+.loading-wrap {
+  text-align: center;
+  padding: 80px 24px;
+}
+
+/* MRU 스타일 상품 그리드 */
+.product-grid-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid #e8e8e8;
+  border-left: 1px solid #e8e8e8;
+}
+
+/* 모바일: 2열 */
+@media (max-width: 599px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.product-item {
+  text-decoration: none;
+  color: #111;
+  display: block;
+  border-right: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  position: relative;
+  transition: box-shadow 0.25s ease, z-index 0s;
+  z-index: 0;
+}
+.product-item:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  z-index: 2;
+}
+
+.product-img-wrap {
+  position: relative;
+  overflow: hidden;
+  background: #f5f5f5;
+  aspect-ratio: 1 / 1;
+}
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+.product-item:hover .product-img {
+  transform: scale(1.05);
+}
+
+.product-cart-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s;
+  color: #111;
+}
+.product-item:hover .product-cart-btn {
+  opacity: 1;
+}
+.sold-out-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #fff;
+}
+
+.product-info {
+  padding: 12px 14px 16px;
+}
+.product-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 6px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.5;
+  min-height: 36px;
+}
+.product-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+}
+</style>

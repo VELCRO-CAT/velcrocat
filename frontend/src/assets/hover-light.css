@@ -1,0 +1,135 @@
+/* hover-light.css — hover.css에서 사용 중인 6개 애니메이션만 추출 (성능 최적화) */
+
+/* === hvr-underline-from-center === */
+.hvr-underline-from-center {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  overflow: hidden;
+}
+.hvr-underline-from-center::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 51%;
+  right: 51%;
+  bottom: 0;
+  background: #111;
+  height: 2px;
+  transition: left 0.25s ease-out, right 0.25s ease-out;
+}
+.hvr-underline-from-center:hover::before,
+.hvr-underline-from-center:focus::before,
+.hvr-underline-from-center:active::before {
+  left: 0;
+  right: 0;
+}
+
+/* === hvr-grow === */
+.hvr-grow {
+  display: inline-block;
+  transition: transform 0.2s ease-out;
+}
+.hvr-grow:hover,
+.hvr-grow:focus,
+.hvr-grow:active {
+  transform: scale(1.1);
+}
+
+/* === hvr-bob === */
+@keyframes hvr-bob-float {
+  100% { transform: translateY(-6px); }
+}
+@keyframes hvr-bob {
+  0% { transform: translateY(-6px); }
+  50% { transform: translateY(-3px); }
+  100% { transform: translateY(-6px); }
+}
+.hvr-bob {
+  display: inline-block;
+  transition: transform 0.3s;
+}
+.hvr-bob:hover {
+  animation: hvr-bob-float 0.3s ease-out forwards,
+             hvr-bob 1.5s ease-in-out 0.3s infinite alternate;
+}
+
+/* === hvr-buzz-out === */
+@keyframes hvr-buzz-out {
+  10%  { transform: translateX(3px) rotate(2deg); }
+  20%  { transform: translateX(-3px) rotate(-2deg); }
+  30%  { transform: translateX(3px) rotate(2deg); }
+  40%  { transform: translateX(-3px) rotate(-2deg); }
+  50%  { transform: translateX(2px) rotate(1deg); }
+  60%  { transform: translateX(-2px) rotate(-1deg); }
+  70%  { transform: translateX(2px) rotate(1deg); }
+  80%  { transform: translateX(-2px) rotate(-1deg); }
+  90%  { transform: translateX(1px) rotate(0); }
+  100% { transform: translateX(-1px) rotate(0); }
+}
+.hvr-buzz-out {
+  display: inline-block;
+}
+.hvr-buzz-out:hover,
+.hvr-buzz-out:focus,
+.hvr-buzz-out:active {
+  animation: hvr-buzz-out 0.75s linear 1;
+}
+
+/* === hvr-sweep-to-right === */
+.hvr-sweep-to-right {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s;
+}
+.hvr-sweep-to-right::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #111;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.3s ease-out;
+}
+.hvr-sweep-to-right:hover::before,
+.hvr-sweep-to-right:focus::before,
+.hvr-sweep-to-right:active::before {
+  transform: scaleX(1);
+}
+.hvr-sweep-to-right:hover {
+  color: #fff;
+}
+
+/* === hvr-bounce-to-top === */
+.hvr-bounce-to-top {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s;
+}
+.hvr-bounce-to-top::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #111;
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform 0.3s ease-out;
+}
+.hvr-bounce-to-top:hover::before,
+.hvr-bounce-to-top:focus::before,
+.hvr-bounce-to-top:active::before {
+  transform: scaleY(1);
+}
+.hvr-bounce-to-top:hover {
+  color: #fff;
+}
