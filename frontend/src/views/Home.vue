@@ -7,10 +7,11 @@
 
     <div v-else class="product-grid-wrap"><div class="product-grid">
       <router-link
-        v-for="product in products"
+        v-for="(product, idx) in products"
         :key="product.id"
         :to="`/products/${product.id}`"
-        class="product-item"
+        class="product-item reveal"
+        :style="{ transitionDelay: (idx % 6) * 0.08 + 's' }"
       >
         <div class="product-img-wrap">
           <img :src="product.image" :alt="product.name" class="product-img" />
@@ -34,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
 
@@ -43,12 +44,26 @@ const products = ref([]);
 const loading = ref(true);
 const snackbar = ref(false);
 
+function initReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.home .reveal').forEach(el => observer.observe(el));
+}
+
 onMounted(async () => {
   try {
     const res = await axios.get('/api/products');
     products.value = res.data.products;
   } finally {
     loading.value = false;
+    nextTick(() => initReveal());
   }
 });
 
@@ -85,6 +100,17 @@ function addToCart(product) {
   }
 }
 
+/* 스크롤 등장 애니메이션 */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.25s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .product-item {
   text-decoration: none;
   color: #111;
@@ -92,7 +118,6 @@ function addToCart(product) {
   border-right: 1px solid #e8e8e8;
   border-bottom: 1px solid #e8e8e8;
   position: relative;
-  transition: box-shadow 0.25s ease, z-index 0s;
   z-index: 0;
 }
 .product-item:hover {
