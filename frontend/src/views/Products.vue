@@ -59,12 +59,14 @@
           :style="{ transitionDelay: (idx % 6) * 0.08 + 's' }"
         >
           <div class="product-img-wrap" @mouseenter="startSlide(product)" @mouseleave="stopSlide(product)">
-            <img :src="getDisplayImage(product)" :alt="product.name" class="product-img" />
-            <template v-if="getImages(product).length > 1">
-              <div class="slide-dots">
-                <span v-for="(_, si) in getImages(product)" :key="si" class="slide-dot" :class="{ active: (slideIndex[product.id] || 0) === si }"></span>
-              </div>
-            </template>
+            <img
+              v-for="(img, si) in getImages(product)"
+              :key="si"
+              :src="img"
+              :alt="product.name"
+              class="product-img"
+              :class="{ active: (slideIndex[product.id] || 0) === si }"
+            />
             <span v-if="product.stock === 0" class="sold-out-badge">SOLD OUT</span>
             <button v-else class="product-cart-btn hvr-grow" @click.prevent="addToCart(product)">
               <v-icon size="18">mdi-cart-plus</v-icon>
@@ -123,12 +125,6 @@ function getImages(product) {
     } catch { /* ignore */ }
   }
   return product.image ? [product.image] : [];
-}
-
-function getDisplayImage(product) {
-  const imgs = getImages(product);
-  const idx = slideIndex[product.id] || 0;
-  return imgs[idx] || imgs[0] || '';
 }
 
 function startSlide(product) {
@@ -382,25 +378,20 @@ function addToCart(product) {
   z-index: 3;
   pointer-events: none;
 }
-/* 이미지 슬라이드 */
-.product-img { transition: opacity 0.4s ease, transform 0.4s; }
-.slide-dots {
+/* 이미지 슬라이드 (페이드 전환) */
+.product-img {
   position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 5px;
-  z-index: 3;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
-.slide-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.5);
-  transition: background 0.3s;
+.product-img.active {
+  opacity: 1;
 }
-.slide-dot.active { background: #fff; }
+.product-img:first-child {
+  position: relative;
+}
 
 .product-info { padding: 14px 14px 16px; }
 .product-seller { font-size: 10px; color: #999; margin-bottom: 4px; letter-spacing: 0.5px; }
