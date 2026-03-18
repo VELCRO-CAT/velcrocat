@@ -53,35 +53,33 @@
       <v-card-text class="pa-5">
         <v-form @submit.prevent="saveProduct" ref="formRef">
 
-          <!-- 이미지 섹션 -->
-          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">상품 이미지</p>
-          <div class="image-section mb-4">
-            <div class="image-preview">
-              <img v-if="imagePreview" :src="imagePreview" class="preview-img" />
-              <div v-else class="preview-placeholder">
-                <v-icon size="40" color="grey-lighten-1">mdi-image-outline</v-icon>
-                <span class="text-caption text-grey mt-1">이미지 없음</span>
-              </div>
+          <!-- 이미지 섹션 (최대 10장) -->
+          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">상품 이미지 (최대 10장)</p>
+          <div class="images-grid mb-3">
+            <div v-for="(img, i) in imageList" :key="i" class="img-thumb">
+              <img :src="img" class="img-thumb-pic" />
+              <button class="img-thumb-remove" @click.prevent="removeImage(i)">&times;</button>
+              <span v-if="i === 0" class="img-thumb-main">대표</span>
             </div>
-            <div class="image-inputs">
-              <!-- 파일 업로드 -->
-              <label class="upload-btn">
-                <v-icon size="16" class="mr-1">mdi-upload</v-icon> 파일 업로드
-                <input type="file" accept="image/*" style="display:none" @change="handleFileUpload" />
-              </label>
-              <p class="text-caption text-grey my-2" style="text-align:center">또는</p>
-              <!-- URL 직접 입력 -->
-              <v-text-field
-                v-model="form.image"
-                label="이미지 URL 입력"
-                variant="outlined"
-                density="compact"
-                hide-details
-                placeholder="https://..."
-                @update:modelValue="imagePreview = form.image"
-              />
-              <p class="text-caption text-grey mt-1">JPG, PNG (최대 5MB)</p>
-            </div>
+            <label v-if="imageList.length < 10" class="img-thumb img-thumb-add">
+              <v-icon size="28" color="grey-lighten-1">mdi-plus</v-icon>
+              <span class="text-caption text-grey">추가</span>
+              <input type="file" accept="image/*" multiple style="display:none" @change="handleMultiUpload" />
+            </label>
+          </div>
+          <div class="mb-4">
+            <v-text-field
+              v-model="urlInput"
+              label="이미지 URL 직접 입력"
+              variant="outlined"
+              density="compact"
+              hide-details
+              placeholder="https://..."
+              append-inner-icon="mdi-plus-circle"
+              @click:append-inner="addUrlImage"
+              @keyup.enter="addUrlImage"
+            />
+            <p class="text-caption text-grey mt-1">JPG, PNG (최대 5MB / 장), 파일 업로드 또는 URL 입력</p>
           </div>
 
           <v-divider class="mb-4" />
@@ -164,8 +162,8 @@ const showDialog = ref(false);
 const editingProduct = ref(null);
 const saving = ref(false);
 const formError = ref('');
-const imagePreview = ref('');
-const uploadingImage = ref(false);
+const imageList = ref([]);
+const urlInput = ref('');
 
 const categoryItems = ref([]);
 
@@ -198,10 +196,18 @@ onMounted(() => {
   fetchProducts();
 });
 
+function parseImages(p) {
+  if (p.images) {
+    try { return JSON.parse(p.images); } catch { /* ignore */ }
+  }
+  return p.image ? [p.image] : [];
+}
+
 function openAdd() {
   editingProduct.value = null;
   form.value = defaultForm();
-  imagePreview.value = '';
+  imageList.value = [];
+  urlInput.value = '';
   formError.value = '';
   showDialog.value = true;
 }
@@ -209,48 +215,56 @@ function openAdd() {
 function openEdit(p) {
   editingProduct.value = p;
   form.value = { ...p };
-  imagePreview.value = p.image || '';
+  imageList.value = [...parseImages(p)];
+  urlInput.value = '';
   formError.value = '';
   showDialog.value = true;
 }
 
 function closeDialog() {
   showDialog.value = false;
-  imagePreview.value = '';
+  imageList.value = [];
 }
 
-async function handleFileUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+function removeImage(i) {
+  imageList.value.splice(i, 1);
+}
 
-  // 미리보기
-  const reader = new FileReader();
-  reader.onload = e => { imagePreview.value = e.target.result; };
-  reader.readAsDataURL(file);
+function addUrlImage() {
+  const url = urlInput.value.trim();
+  if (!url) return;
+  if (imageList.value.length >= 10) return;
+  imageList.value.push(url);
+  urlInput.value = '';
+}
 
-  // 서버에 업로드
-  uploadingImage.value = true;
-  try {
-    const fd = new FormData();
-    fd.append('image', file);
-    const res = await axios.post('/api/upload', fd);
-    form.value.image = res.data.url;
-  } catch {
-    // 업로드 실패 시 base64 미리보기 유지 (URL은 비워둠)
-    form.value.image = imagePreview.value;
-  } finally {
-    uploadingImage.value = false;
+async function handleMultiUpload(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  const remaining = 10 - imageList.value.length;
+  const toUpload = files.slice(0, remaining);
+  for (const file of toUpload) {
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await axios.post('/api/upload', fd);
+      imageList.value.push(res.data.url);
+    } catch { /* skip failed */ }
   }
+  event.target.value = '';
 }
 
 async function saveProduct() {
   saving.value = true;
   formError.value = '';
   try {
+    const data = { ...form.value };
+    data.image = imageList.value[0] || '';
+    data.images = JSON.stringify(imageList.value);
     if (editingProduct.value) {
-      await axios.put(`/api/admin/products/${editingProduct.value.id}`, form.value);
+      await axios.put(`/api/admin/products/${editingProduct.value.id}`, data);
     } else {
-      await axios.post('/api/admin/products', form.value);
+      await axios.post('/api/admin/products', data);
     }
     await fetchProducts();
     showDialog.value = false;
@@ -340,6 +354,63 @@ async function confirmDelete(p) {
   width: 100%;
 }
 .upload-btn:hover { background: #f5f5f5; }
+
+/* 다중 이미지 그리드 */
+.images-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.img-thumb {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  border: 1px solid #e0e0e0;
+  background: #f9f9f9;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.img-thumb-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.img-thumb-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.img-thumb-main {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 9px;
+  text-align: center;
+  padding: 1px 0;
+  letter-spacing: 1px;
+}
+.img-thumb-add {
+  cursor: pointer;
+  border: 1px dashed #ccc;
+  background: #fafafa;
+}
+.img-thumb-add:hover { background: #f0f0f0; }
 
 /* 공통 관리자 모바일 */
 .page-header {

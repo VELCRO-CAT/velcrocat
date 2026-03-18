@@ -58,8 +58,13 @@
           class="product-item reveal"
           :style="{ transitionDelay: (idx % 6) * 0.08 + 's' }"
         >
-          <div class="product-img-wrap">
-            <img :src="product.image" :alt="product.name" class="product-img" />
+          <div class="product-img-wrap" @mouseenter="startSlide(product)" @mouseleave="stopSlide(product)">
+            <img :src="getDisplayImage(product)" :alt="product.name" class="product-img" />
+            <template v-if="getImages(product).length > 1">
+              <div class="slide-dots">
+                <span v-for="(_, si) in getImages(product)" :key="si" class="slide-dot" :class="{ active: (slideIndex[product.id] || 0) === si }"></span>
+              </div>
+            </template>
             <span v-if="product.stock === 0" class="sold-out-badge">SOLD OUT</span>
             <button v-else class="product-cart-btn hvr-grow" @click.prevent="addToCart(product)">
               <v-icon size="18">mdi-cart-plus</v-icon>
@@ -96,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
@@ -107,6 +112,45 @@ const products = ref([]);
 const total = ref(0);
 const loading = ref(true);
 const snackbar = ref(false);
+const slideIndex = reactive({});
+const slideTimers = {};
+
+function getImages(product) {
+  if (product.images) {
+    try {
+      const arr = JSON.parse(product.images);
+      if (arr.length) return arr;
+    } catch { /* ignore */ }
+  }
+  return product.image ? [product.image] : [];
+}
+
+function getDisplayImage(product) {
+  const imgs = getImages(product);
+  const idx = slideIndex[product.id] || 0;
+  return imgs[idx] || imgs[0] || '';
+}
+
+function startSlide(product) {
+  const imgs = getImages(product);
+  if (imgs.length < 2) return;
+  slideTimers[product.id] = setInterval(() => {
+    const current = slideIndex[product.id] || 0;
+    slideIndex[product.id] = (current + 1) % imgs.length;
+  }, 1200);
+}
+
+function stopSlide(product) {
+  if (slideTimers[product.id]) {
+    clearInterval(slideTimers[product.id]);
+    delete slideTimers[product.id];
+  }
+  slideIndex[product.id] = 0;
+}
+
+onUnmounted(() => {
+  Object.values(slideTimers).forEach(t => clearInterval(t));
+});
 const selectedCategory = ref(route.query.category || null);
 const selectedGender = ref(route.query.gender || null);
 const sortBy = ref(null);
@@ -335,6 +379,26 @@ function addToCart(product) {
   letter-spacing: 3px;
   color: #fff;
 }
+/* 이미지 슬라이드 */
+.product-img { transition: opacity 0.4s ease, transform 0.4s; }
+.slide-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 3;
+}
+.slide-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  transition: background 0.3s;
+}
+.slide-dot.active { background: #fff; }
+
 .product-info { padding: 14px 14px 16px; }
 .product-seller { font-size: 10px; color: #999; margin-bottom: 4px; letter-spacing: 0.5px; }
 .product-name {

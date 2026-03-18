@@ -17,4 +17,11 @@ router.post('/', upload.single('image'), (req, res) => {
   res.json({ url: `/uploads/${req.file.filename}` });
 });
 
+// 다중 이미지 업로드 (최대 10장)
+router.post('/multiple', upload.array('images', 10), (req, res) => {
+  if (!req.files || req.files.length === 0) return res.status(400).json({ error: '파일이 없습니다' });
+  const urls = req.files.map(f => `/uploads/${f.filename}`);
+  res.json({ urls });
+});
+
 module.exports = router;
