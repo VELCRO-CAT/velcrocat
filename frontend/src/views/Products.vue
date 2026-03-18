@@ -369,15 +369,20 @@ function addToCart(product) {
 .product-item:hover .product-cart-btn { opacity: 1; }
 .sold-out-badge {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 3px;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  transform: translate(-50%, -50%) rotate(-35deg);
+  background: #c62828;
   color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-align: center;
+  padding: 6px 0;
+  z-index: 3;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 /* 이미지 슬라이드 */
 .product-img { transition: opacity 0.4s ease, transform 0.4s; }
