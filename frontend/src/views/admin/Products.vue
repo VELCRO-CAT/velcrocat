@@ -284,8 +284,10 @@ async function confirmDelete(p) {
 </script>
 
 <style scoped>
-.product-card { overflow: hidden; transition: box-shadow 0.2s; }
+.product-card { overflow: hidden; transition: box-shadow 0.2s; height: 100%; display: flex; flex-direction: column; }
 .product-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important; }
+.product-card .v-card-text { flex: 1; display: flex; flex-direction: column; }
+.product-card .v-card-text .d-flex { margin-top: auto; }
 .product-img-area {
   position: relative;
   aspect-ratio: 1/1;
