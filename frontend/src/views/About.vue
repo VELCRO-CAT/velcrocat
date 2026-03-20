@@ -79,8 +79,8 @@
     <section id="concept" class="section story" ref="storyRef">
       <div class="story-layout">
         <div class="story-visual">
-          <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" class="story-logo" />
-          <div class="visual-label">EST. 2026 OSAKA</div>
+          <img src="../image/video.gif" alt="Velcro Cat Lookbook" class="story-gif" />
+          <div class="visual-label">EST. 2026 — SEOUL</div>
         </div>
         <div class="story-text">
           <p class="section-label">Our Story</p>
@@ -132,7 +132,7 @@
     <section class="section features">
       <div class="features-layout">
         <div class="features-visual">
-          <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" class="features-logo" />
+          <img src="../image/video2.gif" alt="Velcro Cat Collection" class="features-gif" />
           <div class="visual-label-dark">Velcro Cat Collection</div>
         </div>
         <div class="features-list">
@@ -624,26 +624,32 @@ onUnmounted(() => {
 }
 .story-visual {
   flex-shrink: 0;
-  width: 360px;
-  height: 360px;
-  background: #f8f8f8;
-  border: 1px solid #eee;
+  width: 420px;
+  height: 480px;
+  background: #0a0a0a;
+  overflow: hidden;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  justify-content: flex-end;
 }
-.story-logo {
-  height: 200px;
-  width: auto;
-  object-fit: contain;
+.story-gif {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .visual-label {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  text-align: center;
   font-size: 10px;
   letter-spacing: 3px;
-  color: #bbb;
+  color: rgba(255,255,255,0.7);
   font-weight: 600;
+  z-index: 1;
 }
 .story-text { flex: 1; }
 .story-desc {
@@ -708,28 +714,33 @@ onUnmounted(() => {
 }
 .features-visual {
   flex-shrink: 0;
-  width: 320px;
-  height: 400px;
-  background: #fff;
-  border: 1px solid #eee;
+  width: 360px;
+  height: 460px;
+  background: #0a0a0a;
+  overflow: hidden;
+  position: sticky;
+  top: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  position: sticky;
-  top: 80px;
+  justify-content: flex-end;
 }
-.features-logo {
-  height: 180px;
-  width: auto;
-  object-fit: contain;
+.features-gif {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .visual-label-dark {
+  position: relative;
+  z-index: 1;
   font-size: 10px;
   letter-spacing: 3px;
-  color: #999;
+  color: rgba(255,255,255,0.7);
   font-weight: 600;
+  padding: 16px 0;
 }
 .features-list { flex: 1; }
 .feature-item {
