@@ -624,8 +624,8 @@ onUnmounted(() => {
 }
 .story-visual {
   flex-shrink: 0;
-  width: 420px;
-  height: 480px;
+  width: 460px;
+  height: 560px;
   background: #0a0a0a;
   overflow: hidden;
   position: relative;
@@ -637,7 +637,7 @@ onUnmounted(() => {
 .story-gif {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .visual-label {
   position: absolute;
@@ -714,8 +714,8 @@ onUnmounted(() => {
 }
 .features-visual {
   flex-shrink: 0;
-  width: 360px;
-  height: 460px;
+  width: 420px;
+  height: 540px;
   background: #0a0a0a;
   overflow: hidden;
   position: sticky;
@@ -728,7 +728,7 @@ onUnmounted(() => {
 .features-gif {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   position: absolute;
   top: 0;
   left: 0;
