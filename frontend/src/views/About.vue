@@ -83,9 +83,7 @@
       </div>
       <!-- 스크롤 콘텐츠 -->
       <div class="parallax-content">
-        <!-- 첫 화면: 로고만 크게 보임 (빈 공간) -->
-        <div class="parallax-spacer"></div>
-        <!-- 설명 블록들 -->
+        <!-- 설명 블록들이 먼저 보임 -->
         <div class="parallax-card">
           <p class="parallax-label">ABOUT US</p>
           <h2 class="parallax-title">일상에 스며드는<br>감각적인 스타일</h2>
@@ -101,6 +99,8 @@
           <h2 class="parallax-title">서울에서<br>세계로</h2>
           <p class="parallax-desc">서울의 감성과 일본의 장인 정신을 담아<br>누구나 공감할 수 있는 스타일을 만들어갑니다.</p>
         </div>
+        <!-- 마지막에 로고가 드러나는 빈 공간 -->
+        <div class="parallax-spacer"></div>
       </div>
     </div>
 
@@ -679,9 +679,8 @@ onUnmounted(() => {
   margin: 0 auto;
   padding: 80px 32px;
   text-align: center;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(4px);
-  border-top: 1px solid #eee;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(6px);
 }
 .parallax-label {
   font-size: 13px;
