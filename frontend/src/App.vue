@@ -229,7 +229,7 @@ function logout() {
   color: #111;
 }
 .logo-cat {
-  height: 160px;
+  height: 120px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -238,20 +238,20 @@ function logout() {
   text-align: center;
   font-family: 'Georgia', 'Times New Roman', serif;
   font-weight: 900;
-  letter-spacing: 8px;
+  letter-spacing: 10px;
   line-height: 1;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 .logo-v {
-  font-size: 64px;
+  font-size: 86px;
 }
 .logo-rest {
-  font-size: 52px;
+  font-size: 70px;
 }
 .logo-cat-text {
-  font-size: 44px;
-  letter-spacing: 14px;
-  margin-top: -4px;
+  font-size: 58px;
+  letter-spacing: 18px;
+  margin-top: -2px;
 }
 
 /* 고정 네비게이션 바 */
