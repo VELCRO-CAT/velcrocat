@@ -3,7 +3,9 @@
     <!-- 로고 영역 (Brand 페이지에서는 숨김) -->
     <div v-if="!isAboutPage" class="logo-section">
       <router-link to="/" class="logo-link hvr-bob">
-        <img src="./image/osakamarketLOGO5.png" alt="Velcro Cat" class="logo-img" />
+        <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="logo-cat" />
+        <div class="logo-text">VELCROCAT</div>
+        <div class="logo-sub">SEOUL</div>
       </router-link>
     </div>
 
@@ -233,16 +235,35 @@ function logout() {
   border-bottom: 1px solid #e0e0e0;
 }
 .logo-link {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-decoration: none;
-  text-align: center;
+  color: #111;
 }
-.logo-img {
-  height: 300px;
+.logo-cat {
+  height: 120px;
   width: auto;
   object-fit: contain;
   display: block;
-  margin: 0 auto;
+}
+.logo-text {
+  font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+  font-size: 96px;
+  font-weight: 900;
+  letter-spacing: 12px;
+  line-height: 1;
+  color: #111;
+  margin-top: 4px;
+}
+.logo-sub {
+  font-family: 'Arial', 'Helvetica Neue', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 20px;
+  color: #111;
+  margin-top: 2px;
+  padding-left: 20px;
 }
 
 /* 고정 네비게이션 바 */
@@ -534,8 +555,17 @@ function logout() {
   .logo-section {
     padding-top: 64px;
   }
-  .logo-img {
-    height: 160px;
+  .logo-cat {
+    height: 80px;
+  }
+  .logo-text {
+    font-size: 42px;
+    letter-spacing: 6px;
+  }
+  .logo-sub {
+    font-size: 14px;
+    letter-spacing: 12px;
+    padding-left: 12px;
   }
 
   /* 네비바 최상단 고정 */
