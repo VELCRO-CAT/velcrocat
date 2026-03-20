@@ -158,8 +158,18 @@ function saveRecent(p) {
   recentProducts.value = list;
 }
 
-function loadRecent() {
-  try { recentProducts.value = JSON.parse(localStorage.getItem('osaka_recent') || '[]'); } catch {}
+async function loadRecent() {
+  try {
+    const list = JSON.parse(localStorage.getItem('osaka_recent') || '[]');
+    // 서버에 존재하는 상품만 필터링
+    const res = await axios.get('/api/products?limit=100');
+    const serverIds = (res.data.products || res.data).map(p => p.id);
+    const filtered = list.filter(item => serverIds.includes(item.id));
+    if (filtered.length !== list.length) {
+      localStorage.setItem('osaka_recent', JSON.stringify(filtered));
+    }
+    recentProducts.value = filtered;
+  } catch {}
 }
 
 async function loadProduct(id) {
