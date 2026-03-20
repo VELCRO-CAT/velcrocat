@@ -2,8 +2,12 @@
   <v-app style="background:#fff" :class="{ 'about-active': isAboutPage }">
     <!-- 로고 영역 (Brand 페이지에서는 숨김) -->
     <div v-if="!isAboutPage" class="logo-section">
-      <router-link to="/" class="hvr-bob">
-        <img src="./image/osakamarketLOGO3.png" alt="오사카마켓" class="logo-img" />
+      <router-link to="/" class="logo-link hvr-bob">
+        <img src="./image/osakamarketLOGO2.png" alt="오사카마켓" class="logo-cat" />
+        <div class="logo-text">
+          <span class="logo-v">V</span><span class="logo-rest">ELCRO</span>
+          <div class="logo-cat-text">CAT</div>
+        </div>
       </router-link>
     </div>
 
@@ -217,15 +221,37 @@ function logout() {
   padding: 20px 0 16px;
   border-bottom: 1px solid #e0e0e0;
 }
-.logo-section a {
-  display: block;
+.logo-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-decoration: none;
+  color: #111;
 }
-.logo-img {
-  height: 360px;
+.logo-cat {
+  height: 160px;
   width: auto;
   object-fit: contain;
   display: block;
+}
+.logo-text {
+  text-align: center;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-weight: 900;
+  letter-spacing: 8px;
+  line-height: 1;
+  margin-top: 4px;
+}
+.logo-v {
+  font-size: 64px;
+}
+.logo-rest {
+  font-size: 52px;
+}
+.logo-cat-text {
+  font-size: 44px;
+  letter-spacing: 14px;
+  margin-top: -4px;
 }
 
 /* 고정 네비게이션 바 */
@@ -517,8 +543,18 @@ function logout() {
   .logo-section {
     padding-top: 64px;
   }
-  .logo-img {
-    height: 160px;
+  .logo-cat {
+    height: 100px;
+  }
+  .logo-v {
+    font-size: 36px;
+  }
+  .logo-rest {
+    font-size: 28px;
+  }
+  .logo-cat-text {
+    font-size: 24px;
+    letter-spacing: 10px;
   }
 
   /* 네비바 최상단 고정 */
