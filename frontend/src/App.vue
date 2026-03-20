@@ -3,11 +3,7 @@
     <!-- 로고 영역 (Brand 페이지에서는 숨김) -->
     <div v-if="!isAboutPage" class="logo-section">
       <router-link to="/" class="logo-link hvr-bob">
-        <img src="./image/osakamarketLOGO2.png" alt="오사카마켓" class="logo-cat" />
-        <div class="logo-text">
-          <span class="logo-v">V</span><span class="logo-rest">ELCRO</span>
-          <div class="logo-cat-text">CAT</div>
-        </div>
+        <img src="./image/osakamarketLOGO5.png" alt="Velcro Cat" class="logo-img" />
       </router-link>
     </div>
 
@@ -98,7 +94,7 @@
     <transition name="slide">
       <div v-if="menuOpen" class="drawer">
         <div class="drawer-header">
-          <img src="./image/osakamarketLOGO3.png" alt="오사카마켓" class="drawer-logo" />
+          <img src="./image/osakamarketLOGO5.png" alt="오사카마켓" class="drawer-logo" />
           <button class="drawer-close" @click="menuOpen = false">✕</button>
         </div>
         <nav class="drawer-nav">
@@ -155,7 +151,7 @@
     <footer v-if="!isAboutPage" class="site-footer">
       <div class="footer-inner">
         <div class="footer-brand">
-          <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="footer-logo" />
+          <img src="./image/osakamarketLOGO5.png" alt="Velcro Cat" class="footer-logo" />
           <span class="footer-brand-name">VELCRO CAT</span>
         </div>
         <div class="footer-nav">
@@ -237,36 +233,16 @@ function logout() {
   border-bottom: 1px solid #e0e0e0;
 }
 .logo-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: block;
   text-decoration: none;
-  color: #111;
+  text-align: center;
 }
-.logo-cat {
-  height: 120px;
+.logo-img {
+  height: 300px;
   width: auto;
   object-fit: contain;
   display: block;
-}
-.logo-text {
-  text-align: center;
-  font-family: 'Georgia', 'Times New Roman', serif;
-  font-weight: 900;
-  letter-spacing: 16px;
-  line-height: 1;
-  margin-top: 8px;
-}
-.logo-v {
-  font-size: 110px;
-}
-.logo-rest {
-  font-size: 90px;
-}
-.logo-cat-text {
-  font-size: 74px;
-  letter-spacing: 24px;
-  margin-top: -2px;
+  margin: 0 auto;
 }
 
 /* 고정 네비게이션 바 */
@@ -558,18 +534,8 @@ function logout() {
   .logo-section {
     padding-top: 64px;
   }
-  .logo-cat {
-    height: 100px;
-  }
-  .logo-v {
-    font-size: 36px;
-  }
-  .logo-rest {
-    font-size: 28px;
-  }
-  .logo-cat-text {
-    font-size: 24px;
-    letter-spacing: 10px;
+  .logo-img {
+    height: 160px;
   }
 
   /* 네비바 최상단 고정 */

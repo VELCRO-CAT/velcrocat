@@ -4,7 +4,7 @@
     <!-- MRU식 네비게이션 -->
     <nav class="brand-nav">
       <router-link to="/" class="brand-nav-logo">
-        <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
+        <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" />
         <span class="brand-nav-name">VELCRO CAT</span>
       </router-link>
       <div class="brand-nav-main">
@@ -79,7 +79,7 @@
     <section id="concept" class="section story" ref="storyRef">
       <div class="story-layout">
         <div class="story-visual">
-          <img src="../image/osakamarketLOGO3.png" alt="Velcro Cat" class="story-logo" />
+          <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" class="story-logo" />
           <div class="visual-label">EST. 2026 OSAKA</div>
         </div>
         <div class="story-text">
@@ -132,7 +132,7 @@
     <section class="section features">
       <div class="features-layout">
         <div class="features-visual">
-          <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" class="features-logo" />
+          <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" class="features-logo" />
           <div class="visual-label-dark">Velcro Cat Collection</div>
         </div>
         <div class="features-list">
@@ -202,7 +202,7 @@
     <footer class="brand-footer">
       <div class="footer-inner">
         <div class="footer-logo">
-          <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
+          <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" />
           <span>VELCRO CAT</span>
         </div>
         <div class="footer-nav">
