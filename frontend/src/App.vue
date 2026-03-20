@@ -238,19 +238,19 @@ function logout() {
   text-align: center;
   font-family: 'Georgia', 'Times New Roman', serif;
   font-weight: 900;
-  letter-spacing: 10px;
+  letter-spacing: 16px;
   line-height: 1;
   margin-top: 8px;
 }
 .logo-v {
-  font-size: 86px;
+  font-size: 110px;
 }
 .logo-rest {
-  font-size: 70px;
+  font-size: 90px;
 }
 .logo-cat-text {
-  font-size: 58px;
-  letter-spacing: 18px;
+  font-size: 74px;
+  letter-spacing: 24px;
   margin-top: -2px;
 }
 
