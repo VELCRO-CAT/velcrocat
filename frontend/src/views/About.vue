@@ -568,30 +568,32 @@ onUnmounted(() => {
 
 /* 마키 텍스트 */
 .marquee-section {
-  background: #111;
-  padding: 18px 0;
+  background: #fff;
+  padding: 28px 0;
   overflow: hidden;
   white-space: nowrap;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 .marquee-track {
   display: inline-flex;
   animation: marquee 25s linear infinite;
 }
 .marquee-item {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  color: #555;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #111;
   padding: 0 12px;
 }
 .dot {
   display: inline-block;
-  width: 4px;
-  height: 4px;
-  background: #444;
+  width: 5px;
+  height: 5px;
+  background: #ccc;
   border-radius: 50%;
   vertical-align: middle;
-  margin: 0 16px;
+  margin: 0 20px;
 }
 @keyframes marquee {
   0% { transform: translateX(0); }
