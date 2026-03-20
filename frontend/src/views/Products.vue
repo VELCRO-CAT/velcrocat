@@ -336,13 +336,13 @@ function addToCart(product) {
 .product-img-wrap {
   position: relative;
   overflow: hidden;
-  background: #f5f5f5;
-  aspect-ratio: 1/1;
+  background: #fff;
+  aspect-ratio: 3/4;
 }
 .product-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.4s;
 }
 .product-item:hover .product-img { transform: scale(1.04); }
