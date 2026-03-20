@@ -152,15 +152,30 @@
     </v-main>
 
     <!-- 푸터 -->
-    <footer class="site-footer">
+    <footer v-if="!isAboutPage" class="site-footer">
       <div class="footer-inner">
-        <img src="./image/osakamarketLOGO.png" alt="오사카마켓" class="footer-logo" />
-        <div class="footer-links">
-          <a href="#">개인정보처리방침</a>
-          <a href="#">이용약관</a>
-          <router-link to="/contact" style="color:#888;text-decoration:none">고객센터</router-link>
+        <div class="footer-brand">
+          <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="footer-logo" />
+          <span class="footer-brand-name">VELCRO CAT</span>
         </div>
-        <p class="footer-copy">© 2026 오사카마켓 All rights reserved.</p>
+        <div class="footer-nav">
+          <router-link to="/">HOME</router-link>
+          <router-link to="/products">SHOP</router-link>
+          <router-link to="/contact">CONTACT</router-link>
+          <router-link to="/about">BRAND</router-link>
+        </div>
+        <div class="footer-sub">
+          <a href="#">회사 소개</a>
+          <span class="footer-divider">|</span>
+          <a href="#">개인정보처리방침</a>
+          <span class="footer-divider">|</span>
+          <a href="#">이용약관</a>
+          <span class="footer-divider">|</span>
+          <router-link to="/contact">고객센터</router-link>
+          <span class="footer-divider">|</span>
+          <a href="https://www.instagram.com/" target="_blank">Instagram</a>
+        </div>
+        <p class="footer-copy">© 2026 Velcro Cat / 오사카마켓. All rights reserved.</p>
       </div>
     </footer>
   </v-app>
@@ -598,7 +613,8 @@ function logout() {
 /* 푸터 */
 .site-footer {
   background: #111;
-  padding: 48px 24px;
+  padding: 48px 24px 32px;
+  border-top: 1px solid #222;
 }
 .footer-inner {
   max-width: 1200px;
@@ -606,32 +622,58 @@ function logout() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 .footer-logo {
-  height: 52px;
+  height: 28px;
   width: auto;
   object-fit: contain;
-  background: white;
-  border-radius: 8px;
-  padding: 4px 10px;
 }
-.footer-links {
+.footer-brand-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 3px;
+}
+.footer-nav {
   display: flex;
   gap: 24px;
-  flex-wrap: wrap;
   justify-content: center;
 }
-.footer-links a {
-  color: #888;
-  font-size: 12px;
+.footer-nav a {
+  font-size: 11px;
+  color: #666;
   text-decoration: none;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   transition: color 0.2s;
 }
-.footer-links a:hover { color: white; }
-.footer-copy {
+.footer-nav a:hover { color: #fff; }
+.footer-sub {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.footer-sub a {
+  font-size: 10px;
   color: #555;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-sub a:hover { color: #fff; }
+.footer-divider {
+  color: #333;
+  font-size: 10px;
+}
+.footer-copy {
+  color: #444;
   font-size: 11px;
   margin: 0;
   letter-spacing: 0.5px;
