@@ -84,17 +84,17 @@
       <!-- 스크롤 콘텐츠 -->
       <div class="parallax-content">
         <!-- 설명 블록들이 먼저 보임 -->
-        <div class="parallax-card">
+        <div class="parallax-card parallax-card-1">
           <p class="parallax-label">ABOUT US</p>
           <h2 class="parallax-title">일상에 스며드는<br>감각적인 스타일</h2>
           <p class="parallax-desc">Velcro Cat은 편안함과 스타일의 균형을 추구합니다.<br>매일 입고 싶은 옷, 오래 곁에 두고 싶은 브랜드.</p>
         </div>
-        <div class="parallax-card">
+        <div class="parallax-card parallax-card-2">
           <p class="parallax-label">PHILOSOPHY</p>
           <h2 class="parallax-title">과하지 않은<br>심플함의 가치</h2>
           <p class="parallax-desc">불필요한 것을 덜어내고 본질에 집중합니다.<br>자연스러운 실루엣, 시간이 지나도 변하지 않는 품질.</p>
         </div>
-        <div class="parallax-card">
+        <div class="parallax-card parallax-card-3">
           <p class="parallax-label">ORIGIN</p>
           <h2 class="parallax-title">서울에서<br>세계로</h2>
           <p class="parallax-desc">서울의 감성과 일본의 장인 정신을 담아<br>누구나 공감할 수 있는 스타일을 만들어갑니다.</p>
@@ -675,12 +675,22 @@ onUnmounted(() => {
   height: 100vh;
 }
 .parallax-card {
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   padding: 80px 32px;
   text-align: center;
-  background: rgba(255,255,255,0.75);
-  backdrop-filter: blur(6px);
+  background: rgba(255,255,255,0.95);
+}
+.parallax-card-1 {
+  background: rgba(255,255,255,0.97);
+}
+.parallax-card-2 {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(2px);
+}
+.parallax-card-3 {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(2px);
 }
 .parallax-label {
   font-size: 13px;
