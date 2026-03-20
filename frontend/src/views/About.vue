@@ -54,17 +54,10 @@
           일상과 스타일의 경계를 허무는 브랜드.<br>
           편안함 속에서 나만의 감각을 찾다.
         </p>
-        <!-- 회전 스크롤 인디케이터 (우측 하단) -->
-        <div class="scroll-circle hero-reveal hero-reveal-4">
-          <svg class="scroll-circle-svg" viewBox="0 0 120 120">
-            <defs>
-              <path id="circlePath" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
-            </defs>
-            <text class="scroll-circle-text">
-              <textPath href="#circlePath">Scroll down · Scroll down · Scroll down ·&nbsp;</textPath>
-            </text>
-          </svg>
-          <div class="scroll-circle-arrow">↓</div>
+        <!-- 스크롤 인디케이터 (우측 하단) -->
+        <div class="scroll-indicator hero-reveal hero-reveal-4">
+          <span class="scroll-text">Scroll</span>
+          <div class="scroll-line"></div>
         </div>
       </div>
     </section>
@@ -547,43 +540,45 @@ onUnmounted(() => {
   max-width: 480px;
   margin: 0 auto;
 }
-/* 회전 스크롤 인디케이터 */
-.scroll-circle {
+/* 스크롤 인디케이터 (우측 하단) */
+.scroll-indicator {
   position: absolute;
-  bottom: 36px;
-  right: 40px;
-  width: 100px;
-  height: 100px;
-  cursor: pointer;
+  bottom: 40px;
+  right: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 3;
 }
-.scroll-circle-svg {
-  width: 100%;
-  height: 100%;
-  animation: spinText 12s linear infinite;
-}
-.scroll-circle-text {
-  font-size: 11px;
+.scroll-text {
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 3px;
-  fill: rgba(255,255,255,0.65);
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.5);
   text-transform: uppercase;
+  writing-mode: vertical-rl;
 }
-.scroll-circle-arrow {
+.scroll-line {
+  width: 1px;
+  height: 56px;
+  background: rgba(255,255,255,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-line::after {
+  content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 18px;
-  color: rgba(255,255,255,0.8);
-  animation: arrowBounce 1.5s ease-in-out infinite;
+  top: -100%;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: #fff;
+  animation: scrollDown 1.8s ease-in-out infinite;
 }
-@keyframes spinText {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-@keyframes arrowBounce {
-  0%, 100% { transform: translate(-50%, -50%); }
-  50% { transform: translate(-50%, -40%); }
+@keyframes scrollDown {
+  0% { top: -100%; }
+  100% { top: 100%; }
 }
 
 /* 마키 텍스트 */
