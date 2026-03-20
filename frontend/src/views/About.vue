@@ -355,7 +355,7 @@ onUnmounted(() => {
   object-fit: contain;
 }
 .brand-nav-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: 3px;
   color: #fff;
@@ -366,7 +366,7 @@ onUnmounted(() => {
   margin-left: auto;
 }
 .brand-nav-main a {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
   color: rgba(255,255,255,0.65);
@@ -385,7 +385,7 @@ onUnmounted(() => {
   padding-left: 16px;
 }
 .sub-link {
-  font-size: 10px;
+  font-size: 12px;
   color: rgba(255,255,255,0.4);
   text-decoration: none;
   transition: color 0.2s;
@@ -404,8 +404,8 @@ onUnmounted(() => {
 }
 .nav-btn {
   display: inline-block;
-  padding: 8px 20px;
-  font-size: 10px;
+  padding: 10px 24px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
   text-decoration: none;
@@ -442,20 +442,20 @@ onUnmounted(() => {
   transform: translateY(0);
 }
 .section-label {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 4px;
   text-transform: uppercase;
   color: #999;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .section-title {
-  font-size: 32px;
+  font-size: 38px;
   font-weight: 800;
   line-height: 1.3;
   letter-spacing: -0.5px;
   color: #111;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 /* 히어로 */
@@ -509,7 +509,7 @@ onUnmounted(() => {
 }
 .hero-label {
   display: inline-block;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 5px;
   text-transform: uppercase;
@@ -533,7 +533,7 @@ onUnmounted(() => {
   background-clip: text;
 }
 .hero-desc {
-  font-size: 15px;
+  font-size: 17px;
   color: #999;
   line-height: 1.8;
   letter-spacing: 0.5px;
@@ -645,7 +645,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: 3px;
   color: rgba(255,255,255,0.7);
   font-weight: 600;
@@ -653,7 +653,7 @@ onUnmounted(() => {
 }
 .story-text { flex: 1; }
 .story-desc {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 2;
   color: #555;
   margin-bottom: 16px;
@@ -695,13 +695,13 @@ onUnmounted(() => {
   letter-spacing: 2px;
 }
 .value-card h3 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   margin-bottom: 12px;
   letter-spacing: 1px;
 }
 .value-card p {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.8;
   color: #777;
 }
@@ -736,7 +736,7 @@ onUnmounted(() => {
 .visual-label-dark {
   position: relative;
   z-index: 1;
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: 3px;
   color: rgba(255,255,255,0.7);
   font-weight: 600;
@@ -755,13 +755,13 @@ onUnmounted(() => {
   transform: translateX(0);
 }
 .feature-item h3 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   margin-bottom: 10px;
   letter-spacing: 1px;
 }
 .feature-item p {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.9;
   color: #777;
 }
@@ -777,7 +777,7 @@ onUnmounted(() => {
 .cta .section-label { color: #666; }
 .cta .section-title { color: #fff; }
 .cta-desc {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.9;
   color: #888;
   margin-bottom: 36px;
