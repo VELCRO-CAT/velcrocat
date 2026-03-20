@@ -54,9 +54,17 @@
           일상과 스타일의 경계를 허무는 브랜드.<br>
           편안함 속에서 나만의 감각을 찾다.
         </p>
-        <div class="hero-scroll hero-reveal hero-reveal-4">
-          <span>Scroll</span>
-          <div class="hero-scroll-line"></div>
+        <!-- 회전 스크롤 인디케이터 (우측 하단) -->
+        <div class="scroll-circle hero-reveal hero-reveal-4">
+          <svg class="scroll-circle-svg" viewBox="0 0 120 120">
+            <defs>
+              <path id="circlePath" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
+            </defs>
+            <text class="scroll-circle-text">
+              <textPath href="#circlePath">Scroll down · Scroll down · Scroll down ·&nbsp;</textPath>
+            </text>
+          </svg>
+          <div class="scroll-circle-arrow">↓</div>
         </div>
       </div>
     </section>
@@ -539,31 +547,43 @@ onUnmounted(() => {
   max-width: 480px;
   margin: 0 auto;
 }
-.hero-scroll {
+/* 회전 스크롤 인디케이터 */
+.scroll-circle {
   position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  bottom: 36px;
+  right: 40px;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
 }
-.hero-scroll span {
-  font-size: 10px;
+.scroll-circle-svg {
+  width: 100%;
+  height: 100%;
+  animation: spinText 12s linear infinite;
+}
+.scroll-circle-text {
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 3px;
-  color: #666;
+  fill: rgba(255,255,255,0.65);
   text-transform: uppercase;
 }
-.hero-scroll-line {
-  width: 1px;
-  height: 48px;
-  background: linear-gradient(to bottom, #666, transparent);
-  animation: scrollPulse 2s ease-in-out infinite;
+.scroll-circle-arrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: rgba(255,255,255,0.8);
+  animation: arrowBounce 1.5s ease-in-out infinite;
 }
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+@keyframes spinText {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes arrowBounce {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(-50%, -40%); }
 }
 
 /* 마키 텍스트 */
