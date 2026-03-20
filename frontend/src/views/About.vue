@@ -75,6 +75,30 @@
       </div>
     </div>
 
+    <!-- 패럴랙스 로고 섹션 -->
+    <div class="parallax-wrap">
+      <div class="parallax-bg">
+        <img src="../image/osakamarketLOGO.png" alt="Velcro Cat" class="parallax-logo" />
+      </div>
+      <div class="parallax-overlay">
+        <div class="parallax-text-block">
+          <p class="parallax-label">ABOUT US</p>
+          <h2 class="parallax-title">일상에 스며드는<br>감각적인 스타일</h2>
+          <p class="parallax-desc">Velcro Cat은 편안함과 스타일의 균형을 추구합니다.<br>매일 입고 싶은 옷, 오래 곁에 두고 싶은 브랜드.</p>
+        </div>
+        <div class="parallax-text-block">
+          <p class="parallax-label">PHILOSOPHY</p>
+          <h2 class="parallax-title">과하지 않은<br>심플함의 가치</h2>
+          <p class="parallax-desc">불필요한 것을 덜어내고 본질에 집중합니다.<br>자연스러운 실루엣, 시간이 지나도 변하지 않는 품질.</p>
+        </div>
+        <div class="parallax-text-block">
+          <p class="parallax-label">ORIGIN</p>
+          <h2 class="parallax-title">서울에서<br>세계로</h2>
+          <p class="parallax-desc">서울의 감성과 일본의 장인 정신을 담아<br>누구나 공감할 수 있는 스타일을 만들어갑니다.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- 브랜드 스토리 (CONCEPT) -->
     <section id="concept" class="section story" ref="storyRef">
       <div class="story-layout">
@@ -616,6 +640,65 @@ onUnmounted(() => {
   100% { transform: translateX(-50%); }
 }
 
+/* 패럴랙스 로고 섹션 */
+.parallax-wrap {
+  position: relative;
+}
+.parallax-bg {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  z-index: 0;
+}
+.parallax-logo {
+  height: 340px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.12;
+  user-select: none;
+  pointer-events: none;
+}
+.parallax-overlay {
+  position: relative;
+  z-index: 1;
+}
+.parallax-text-block {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(2px);
+}
+.parallax-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: #999;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.parallax-title {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #111;
+  margin-bottom: 24px;
+}
+.parallax-desc {
+  font-size: 16px;
+  line-height: 2;
+  color: #666;
+  max-width: 500px;
+}
+
 /* 브랜드 스토리 */
 .story-layout {
   display: flex;
@@ -944,6 +1027,10 @@ onUnmounted(() => {
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
+  .parallax-logo { height: 200px; }
+  .parallax-title { font-size: 28px; }
+  .parallax-desc { font-size: 14px; }
+  .parallax-text-block { min-height: 80vh; padding: 40px 20px; }
   .brand-nav {
     padding: 12px 16px;
     flex-wrap: wrap;
