@@ -369,8 +369,8 @@ onUnmounted(() => {
   align-items: center;
   padding: 12px 32px;
   gap: 20px;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(8px);
+  background: transparent;
+  backdrop-filter: none;
   transition: background 0.3s;
   white-space: nowrap;
   min-height: 52px;
