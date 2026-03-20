@@ -364,11 +364,13 @@ onUnmounted(() => {
 .brand-nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 100;
+  z-index: 200;
   display: flex;
   align-items: center;
   padding: 16px 32px;
   gap: 24px;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
   transition: background 0.3s, padding 0.3s;
 }
 .brand-nav-logo {
