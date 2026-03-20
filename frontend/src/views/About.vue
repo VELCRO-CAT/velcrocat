@@ -367,11 +367,15 @@ onUnmounted(() => {
   z-index: 200;
   display: flex;
   align-items: center;
-  padding: 16px 32px;
-  gap: 24px;
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(12px);
-  transition: background 0.3s, padding 0.3s;
+  padding: 12px 32px;
+  gap: 20px;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(8px);
+  transition: background 0.3s;
+  white-space: nowrap;
+  min-height: 52px;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 .brand-nav-logo {
   display: flex;
@@ -393,8 +397,9 @@ onUnmounted(() => {
 }
 .brand-nav-main {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 .brand-nav-main a {
   font-size: 13px;
