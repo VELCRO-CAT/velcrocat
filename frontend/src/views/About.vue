@@ -544,7 +544,7 @@ onUnmounted(() => {
 .scroll-indicator {
   position: absolute;
   bottom: 40px;
-  right: 48px;
+  right: 56px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -555,9 +555,10 @@ onUnmounted(() => {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 4px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.55);
   text-transform: uppercase;
   writing-mode: vertical-rl;
+  padding-right: 2px;
 }
 .scroll-line {
   width: 1px;
