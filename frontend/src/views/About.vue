@@ -54,11 +54,11 @@
           일상과 스타일의 경계를 허무는 브랜드.<br>
           편안함 속에서 나만의 감각을 찾다.
         </p>
-        <!-- 스크롤 인디케이터 (우측 하단) -->
-        <div class="scroll-indicator hero-reveal hero-reveal-4">
-          <span class="scroll-text">Scroll</span>
-          <div class="scroll-line"></div>
-        </div>
+      </div>
+      <!-- 스크롤 인디케이터 (우측 하단, hero-content 밖) -->
+      <div class="scroll-indicator">
+        <span class="scroll-text">Scroll</span>
+        <div class="scroll-line"></div>
       </div>
     </section>
 
@@ -543,8 +543,8 @@ onUnmounted(() => {
 /* 스크롤 인디케이터 (우측 하단) */
 .scroll-indicator {
   position: absolute;
-  bottom: 40px;
-  right: 56px;
+  bottom: 32px;
+  right: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
