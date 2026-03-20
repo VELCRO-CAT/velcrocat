@@ -81,7 +81,7 @@
         <!-- 카트 (항상 표시) -->
         <router-link to="/cart" class="nav-cart hvr-buzz-out">
           <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
-            <v-icon size="20" color="#111">mdi-cart-outline</v-icon>
+            <v-icon size="20" color="#fff">mdi-cart-outline</v-icon>
           </v-badge>
         </router-link>
       </div>
@@ -231,8 +231,7 @@ function logout() {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px 0 16px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 32px 0 20px;
 }
 .logo-link {
   display: flex;
@@ -271,8 +270,8 @@ function logout() {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  background: #111;
+  transition: all 0.3s;
 }
 .nav-inner {
   max-width: 1200px;
@@ -289,17 +288,18 @@ function logout() {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: #111;
+  color: #fff;
   text-decoration: none;
   transition: opacity 0.2s;
 }
-.nav-link:hover { opacity: 0.45; }
+.nav-link:hover { opacity: 0.6; }
 .nav-link.router-link-active {
   text-decoration: underline;
   text-underline-offset: 4px;
+  text-decoration-color: #fff;
 }
 .nav-link.hvr-underline-from-center::before {
-  background: #111 !important;
+  background: #fff !important;
 }
 /* PC 네비 */
 .nav-desktop {
@@ -312,7 +312,7 @@ function logout() {
   right: 16px;
   display: flex;
   align-items: center;
-  color: #111;
+  color: #fff;
   text-decoration: none;
   padding: 9px 0;
 }
@@ -330,8 +330,8 @@ function logout() {
   left: 0;
   display: flex;
   flex-direction: row;
-  background: #fff;
-  border: 1px solid #e0e0e0;
+  background: #111;
+  border: 1px solid #222;
   box-shadow: 0 8px 32px rgba(0,0,0,0.1);
   z-index: 150;
 }
@@ -339,7 +339,7 @@ function logout() {
 .cat-gender-list {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #eee;
+  border-right: 1px solid #222;
   width: 130px;
   flex-shrink: 0;
 }
@@ -353,18 +353,18 @@ function logout() {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: #555;
+  color: #fff;
   transition: background 0.15s, color 0.15s;
 }
 .cat-gender:hover,
 .cat-gender.active {
-  background: #111;
+  background: #222;
   color: #fff;
 }
 .cat-gender-arrow {
   font-size: 10px;
   margin-left: 10px;
-  opacity: 0.5;
+  color: rgba(255,255,255,0.4);
 }
 .cat-gender:hover .cat-gender-arrow,
 .cat-gender.active .cat-gender-arrow {
@@ -384,23 +384,23 @@ function logout() {
   display: block;
   padding: 10px 24px;
   font-size: 12px;
-  color: #444;
+  color: rgba(255,255,255,0.7);
   text-decoration: none;
   white-space: nowrap;
   transition: background 0.12s, color 0.12s, padding-left 0.15s;
   letter-spacing: 0.5px;
 }
 .cat-sub-link:hover {
-  background: #f5f5f5;
-  color: #111;
+  background: #1a1a1a;
+  color: #fff;
   padding-left: 30px;
 }
 .cat-sub-all {
   font-weight: 700;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #222;
   margin-top: 4px;
   padding-top: 12px;
-  color: #111;
+  color: #fff;
 }
 /* 서브카테고리 슬라이드 트랜지션 */
 .cat-slide-enter-active { transition: opacity 0.2s, transform 0.2s; }
@@ -425,7 +425,7 @@ function logout() {
   display: block;
   width: 22px;
   height: 2px;
-  background: #111;
+  background: #fff;
 }
 
 /* 드로어 오버레이 */
@@ -609,7 +609,7 @@ function logout() {
 /* 푸터 */
 .site-footer {
   background: #111;
-  padding: 48px 24px 32px;
+  padding: 56px 24px 36px;
   border-top: 1px solid #222;
 }
 .footer-inner {
@@ -678,7 +678,7 @@ function logout() {
 
 <style>
 .nav-link.hvr-underline-from-center::before {
-  background: #111 !important;
+  background: #fff !important;
 }
 /* Brand 페이지: 외부 스크롤 숨김 (이중 스크롤 방지) */
 .about-active .v-application__wrap {
