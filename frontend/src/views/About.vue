@@ -626,7 +626,7 @@ onUnmounted(() => {
   flex-shrink: 0;
   width: 460px;
   height: 560px;
-  background: #0a0a0a;
+  background: #fff;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -647,7 +647,7 @@ onUnmounted(() => {
   text-align: center;
   font-size: 13px;
   letter-spacing: 3px;
-  color: rgba(255,255,255,0.7);
+  color: #999;
   font-weight: 600;
   z-index: 1;
 }
@@ -716,7 +716,7 @@ onUnmounted(() => {
   flex-shrink: 0;
   width: 420px;
   height: 540px;
-  background: #0a0a0a;
+  background: #fff;
   overflow: hidden;
   position: sticky;
   top: 80px;
@@ -738,7 +738,7 @@ onUnmounted(() => {
   z-index: 1;
   font-size: 13px;
   letter-spacing: 3px;
-  color: rgba(255,255,255,0.7);
+  color: #999;
   font-weight: 600;
   padding: 16px 0;
 }
