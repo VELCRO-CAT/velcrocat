@@ -1,15 +1,28 @@
 <template>
   <div class="about-page">
 
-    <!-- 미니 네비게이션 (브랜드 페이지 전용) -->
+    <!-- MRU식 네비게이션 -->
     <nav class="brand-nav">
       <router-link to="/" class="brand-nav-logo">
         <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
+        <span class="brand-nav-name">VELCRO CAT</span>
       </router-link>
-      <div class="brand-nav-links">
+      <div class="brand-nav-main">
         <router-link to="/">HOME</router-link>
+        <a href="#concept" @click.prevent="scrollTo('concept')">CONCEPT</a>
+        <a href="#pickup" @click.prevent="scrollTo('pickup')">PICK UP</a>
         <router-link to="/products">SHOP</router-link>
         <router-link to="/contact">CONTACT</router-link>
+      </div>
+      <div class="brand-nav-sub">
+        <a href="#" class="sub-link">회사 소개</a>
+        <a href="#" class="sub-link">개인정보처리방침</a>
+        <a href="https://www.instagram.com/" target="_blank" class="sub-social">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+      </div>
+      <div class="brand-nav-btns">
+        <router-link to="/products" class="nav-btn nav-btn-gray">ONLINE SHOP</router-link>
       </div>
     </nav>
 
@@ -61,8 +74,8 @@
       </div>
     </div>
 
-    <!-- 브랜드 스토리 -->
-    <section class="section story" ref="storyRef">
+    <!-- 브랜드 스토리 (CONCEPT) -->
+    <section id="concept" class="section story" ref="storyRef">
       <div class="story-layout">
         <div class="story-visual">
           <img src="../image/osakamarketLOGO3.png" alt="Velcro Cat" class="story-logo" />
@@ -142,6 +155,32 @@
       </div>
     </section>
 
+    <!-- PICK UP 섹션 -->
+    <section id="pickup" class="section pickup">
+      <div class="pickup-header">
+        <p class="section-label">Pick Up</p>
+        <h2 class="section-title">추천 아이템</h2>
+        <p class="pickup-sub">Velcro Cat이 제안하는 이번 시즌 스타일</p>
+      </div>
+      <div class="pickup-grid">
+        <router-link
+          v-for="item in pickupItems"
+          :key="item.id"
+          :to="`/products/${item.id}`"
+          class="pickup-card"
+        >
+          <div class="pickup-img-wrap">
+            <img :src="item.image" :alt="item.name" />
+          </div>
+          <p class="pickup-name">{{ item.name }}</p>
+          <p class="pickup-price">₩{{ Number(item.price).toLocaleString() }}</p>
+        </router-link>
+      </div>
+      <div class="pickup-more">
+        <router-link to="/products" class="btn-outline">모든 상품 보기 →</router-link>
+      </div>
+    </section>
+
     <!-- CTA -->
     <section class="section cta">
       <div class="cta-content">
@@ -158,13 +197,50 @@
       </div>
     </section>
 
+    <!-- 브랜드 푸터 -->
+    <footer class="brand-footer">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
+          <span>VELCRO CAT</span>
+        </div>
+        <div class="footer-nav">
+          <router-link to="/">HOME</router-link>
+          <router-link to="/products">SHOP</router-link>
+          <router-link to="/contact">CONTACT</router-link>
+        </div>
+        <div class="footer-sub">
+          <a href="#">회사 소개</a>
+          <span>|</span>
+          <a href="#">개인정보처리방침</a>
+          <span>|</span>
+          <a href="https://www.instagram.com/" target="_blank">Instagram</a>
+        </div>
+        <p class="footer-copy">© 2026 Velcro Cat / 오사카마켓. All rights reserved.</p>
+      </div>
+    </footer>
+
   </div>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
+import axios from 'axios';
 
 const storyRef = ref(null);
+const pickupItems = ref([]);
+
+async function loadPickup() {
+  try {
+    const res = await axios.get('/api/products?limit=4');
+    pickupItems.value = (res.data.products || res.data).slice(0, 4);
+  } catch { /* ignore */ }
+}
+
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 // 히어로 영상 슬라이드쇼
 const heroVideos = [
@@ -225,6 +301,7 @@ function handleScroll() {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
+  loadPickup();
   // 히어로 텍스트 순차 등장
   setTimeout(() => {
     document.querySelectorAll('.hero-reveal').forEach((el, i) => {
@@ -253,38 +330,94 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 브랜드 전용 네비 */
+/* MRU식 네비게이션 */
 .brand-nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   z-index: 100;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 16px 32px;
-  transition: background 0.3s;
+  gap: 24px;
+  transition: background 0.3s, padding 0.3s;
+}
+.brand-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 .brand-nav-logo img {
-  height: 36px;
+  height: 32px;
   width: auto;
   object-fit: contain;
 }
-.brand-nav-links {
+.brand-nav-name {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #fff;
+}
+.brand-nav-main {
   display: flex;
   gap: 24px;
+  margin-left: auto;
 }
-.brand-nav-links a {
+.brand-nav-main a {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  transition: color 0.2s;
+  text-transform: uppercase;
+}
+.brand-nav-main a:hover,
+.brand-nav-main a.router-link-active { color: #fff; }
+.brand-nav-sub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 16px;
+  border-left: 1px solid rgba(255,255,255,0.15);
+  padding-left: 16px;
+}
+.sub-link {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
   text-decoration: none;
   transition: color 0.2s;
 }
-.brand-nav-links a:hover {
+.sub-link:hover { color: #fff; }
+.sub-social {
+  color: rgba(255,255,255,0.4);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+.sub-social:hover { color: #fff; }
+.brand-nav-btns {
+  margin-left: 16px;
+  flex-shrink: 0;
+}
+.nav-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.3);
   color: #fff;
+  transition: all 0.2s;
+}
+.nav-btn:hover {
+  background: #fff;
+  color: #111;
+}
+.nav-btn-gray {
+  background: rgba(255,255,255,0.1);
 }
 
 /* 공통 */
@@ -657,21 +790,150 @@ onUnmounted(() => {
   color: #fff;
 }
 
+/* PICK UP */
+.pickup { max-width: 1200px; }
+.pickup-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.pickup-sub {
+  font-size: 13px;
+  color: #999;
+  margin-top: 8px;
+}
+.pickup-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.pickup-card {
+  text-decoration: none;
+  color: #111;
+  transition: transform 0.3s;
+}
+.pickup-card:hover { transform: translateY(-4px); }
+.pickup-img-wrap {
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: #f5f5f5;
+  margin-bottom: 10px;
+}
+.pickup-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s;
+}
+.pickup-card:hover .pickup-img-wrap img { transform: scale(1.04); }
+.pickup-name {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.pickup-price {
+  font-size: 13px;
+  font-weight: 700;
+}
+.pickup-more {
+  text-align: center;
+  margin-top: 40px;
+}
+.btn-outline {
+  display: inline-block;
+  padding: 14px 40px;
+  border: 1px solid #111;
+  color: #111;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-outline:hover { background: #111; color: #fff; }
+
+/* 브랜드 푸터 */
+.brand-footer {
+  background: #111;
+  padding: 48px 32px 32px;
+  border-top: 1px solid #222;
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+.footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.footer-logo img { height: 28px; }
+.footer-logo span {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 3px;
+}
+.footer-nav {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.footer-nav a {
+  font-size: 11px;
+  color: #666;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+.footer-nav a:hover { color: #fff; }
+.footer-sub {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.footer-sub a {
+  font-size: 10px;
+  color: #555;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-sub a:hover { color: #fff; }
+.footer-sub span {
+  color: #333;
+  font-size: 10px;
+}
+.footer-copy {
+  font-size: 11px;
+  color: #444;
+}
+
 /* 모바일 반응형 */
 @media (max-width: 768px) {
   .brand-nav {
     padding: 12px 16px;
+    flex-wrap: wrap;
   }
-  .brand-nav-logo img {
-    height: 28px;
-  }
-  .brand-nav-links {
+  .brand-nav-logo img { height: 24px; }
+  .brand-nav-name { font-size: 11px; letter-spacing: 2px; }
+  .brand-nav-main {
+    order: 3;
+    width: 100%;
+    justify-content: center;
     gap: 14px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: 10px;
   }
-  .brand-nav-links a {
-    font-size: 10px;
-    letter-spacing: 1px;
-  }
+  .brand-nav-main a { font-size: 10px; letter-spacing: 1px; }
+  .brand-nav-sub { display: none; }
+  .brand-nav-btns { display: none; }
+  .pickup-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-title {
     font-size: 42px;
     letter-spacing: 4px;
