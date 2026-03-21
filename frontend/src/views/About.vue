@@ -962,8 +962,13 @@ onUnmounted(() => {
   color: #fff;
 }
 @media (max-width: 768px) {
-  .second-hero { height: 60vh; min-height: 360px; }
-  .second-hero-title { font-size: 32px; }
+  .second-hero { height: 70vh; min-height: 400px; }
+  .second-hero-bg { object-fit: cover; }
+  .second-hero-title { font-size: 28px; margin-bottom: 14px; }
+  .second-hero-label { font-size: 10px; letter-spacing: 4px; margin-bottom: 14px; }
+  .second-hero-desc { font-size: 13px; margin-bottom: 24px; }
+  .second-hero-btn { padding: 12px 28px; font-size: 11px; }
+  .second-hero-actions { gap: 10px; }
 }
 
 
@@ -1126,7 +1131,8 @@ onUnmounted(() => {
   }
   .story-visual {
     width: 100%;
-    height: 280px;
+    height: auto;
+    aspect-ratio: 4/3;
   }
   .values-grid {
     grid-template-columns: 1fr;
@@ -1137,7 +1143,8 @@ onUnmounted(() => {
   }
   .features-visual {
     width: 100%;
-    height: 280px;
+    height: auto;
+    aspect-ratio: 4/3;
     position: static;
   }
   .section-title {
