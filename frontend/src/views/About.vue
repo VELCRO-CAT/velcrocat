@@ -880,6 +880,10 @@ onUnmounted(() => {
   height: 85vh;
   min-height: 500px;
   overflow: hidden;
+  margin-bottom: 0;
+}
+.second-hero + .brand-footer {
+  margin-top: 0;
 }
 .second-hero-bg {
   position: absolute;
@@ -1028,7 +1032,7 @@ onUnmounted(() => {
 .brand-footer {
   background: #111;
   padding: 48px 32px 32px;
-  border-top: 1px solid #222;
+  margin-top: 0;
 }
 .footer-inner {
   max-width: 1200px;
@@ -1042,12 +1046,12 @@ onUnmounted(() => {
   gap: 10px;
   margin-bottom: 20px;
 }
-.footer-logo img { height: 28px; }
+.footer-logo img { height: 48px; }
 .footer-logo span {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 800;
   color: #fff;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
 }
 .footer-nav {
   display: flex;
