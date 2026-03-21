@@ -233,18 +233,23 @@
     <footer class="brand-footer">
       <div class="footer-inner">
         <div class="footer-logo">
-          <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" />
+          <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
           <span>VELCRO CAT</span>
         </div>
         <div class="footer-nav">
           <router-link to="/">HOME</router-link>
           <router-link to="/products">SHOP</router-link>
           <router-link to="/contact">CONTACT</router-link>
+          <router-link to="/about">BRAND</router-link>
         </div>
         <div class="footer-sub">
           <a href="#">회사 소개</a>
           <span>|</span>
           <a href="#">개인정보처리방침</a>
+          <span>|</span>
+          <a href="#">이용약관</a>
+          <span>|</span>
+          <router-link to="/contact">고객센터</router-link>
           <span>|</span>
           <a href="https://www.instagram.com/" target="_blank">Instagram</a>
         </div>
@@ -1047,14 +1052,14 @@ onUnmounted(() => {
 }
 .footer-logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
-.footer-logo img { height: 72px; }
+.footer-logo img { height: 80px; }
 .footer-logo span {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 800;
   color: #fff;
   letter-spacing: 5px;
