@@ -153,7 +153,7 @@
     <footer v-if="!isAboutPage" class="site-footer">
       <div class="footer-inner">
         <div class="footer-brand">
-          <img src="./image/osakamarketLOGO5.png" alt="Velcro Cat" class="footer-logo" />
+          <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="footer-logo" />
           <span class="footer-brand-name">VELCRO CAT</span>
         </div>
         <div class="footer-nav">
@@ -622,12 +622,13 @@ function logout() {
 }
 .footer-brand {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 .footer-logo {
-  height: 56px;
+  height: 80px;
   width: auto;
   object-fit: contain;
 }
@@ -635,7 +636,7 @@ function logout() {
   font-size: 18px;
   font-weight: 800;
   color: #fff;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
 }
 .footer-nav {
   display: flex;
