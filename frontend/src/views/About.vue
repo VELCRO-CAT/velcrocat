@@ -1134,6 +1134,11 @@ onUnmounted(() => {
     height: auto;
     aspect-ratio: 4/3;
   }
+  .story-gif {
+    object-fit: cover;
+  }
+  .story-desc { font-size: 14px; }
+  .section { padding: 60px 16px; }
   .values-grid {
     grid-template-columns: 1fr;
   }
@@ -1145,8 +1150,14 @@ onUnmounted(() => {
     width: 100%;
     height: auto;
     aspect-ratio: 4/3;
-    position: static;
+    position: static !important;
   }
+  .features-gif {
+    position: relative !important;
+  }
+  .feature-item h3 { font-size: 16px; }
+  .feature-item p { font-size: 13px; }
+  .feature-item { padding: 24px 0; }
   .section-title {
     font-size: 26px;
   }
