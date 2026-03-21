@@ -627,15 +627,15 @@ function logout() {
   margin-bottom: 4px;
 }
 .footer-logo {
-  height: 28px;
+  height: 56px;
   width: auto;
   object-fit: contain;
 }
 .footer-brand-name {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 800;
   color: #fff;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
 }
 .footer-nav {
   display: flex;

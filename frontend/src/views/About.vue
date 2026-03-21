@@ -1046,9 +1046,9 @@ onUnmounted(() => {
   gap: 10px;
   margin-bottom: 20px;
 }
-.footer-logo img { height: 64px; }
+.footer-logo img { height: 72px; }
 .footer-logo span {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: #fff;
   letter-spacing: 5px;
