@@ -37,7 +37,7 @@
         <div class="field-group reveal">
           <div class="field">
             <label>이름 <span class="required">*</span></label>
-            <input v-model="form.name" type="text" placeholder="이름을 입력해주세요" required />
+            <input v-model="form.name" type="text" placeholder="이름을 입력해주세요" required @input="filterName" />
           </div>
           <div class="field">
             <label>전화번호 <span class="required">*</span></label>
@@ -45,8 +45,9 @@
               v-model="form.phone"
               type="tel"
               placeholder="010-0000-0000"
-              pattern="[0-9\-]+"
               required
+              @input="formatPhone"
+              maxlength="13"
             />
           </div>
         </div>
@@ -107,6 +108,22 @@ const form = ref({
 const loading = ref(false);
 const sent = ref(false);
 const error = ref('');
+
+function filterName() {
+  form.value.name = form.value.name.replace(/[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s]/g, '');
+}
+
+function formatPhone() {
+  let num = form.value.phone.replace(/[^0-9]/g, '');
+  if (num.length > 11) num = num.slice(0, 11);
+  if (num.length > 7) {
+    form.value.phone = num.replace(/(\d{3})(\d{4})(\d{0,4})/, '$1-$2-$3');
+  } else if (num.length > 3) {
+    form.value.phone = num.replace(/(\d{3})(\d{0,4})/, '$1-$2');
+  } else {
+    form.value.phone = num;
+  }
+}
 
 async function submit() {
   error.value = '';

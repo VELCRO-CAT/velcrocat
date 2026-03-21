@@ -275,6 +275,32 @@
       "images": "[\"/uploads/1774006587108.jpg\",\"/uploads/1774006597313.jpg\",\"/uploads/1774006638893.jpg\"]",
       "created_at": "2026-03-20T11:38:47.569Z",
       "updated_at": "2026-03-20T11:38:47.569Z"
+    },
+    {
+      "id": 7,
+      "name": "VELCRO CAT 여성 네코 울 100% 베이직 가디건",
+      "price": 165000,
+      "stock": 27,
+      "category": "w-tops",
+      "description": "[VELCRO CAT] 여성 네코 울 100% 베이직 가디건",
+      "image": "/uploads/1774070393470.jpg",
+      "seller": "오사카마켓",
+      "images": "[\"/uploads/1774070393470.jpg\"]",
+      "created_at": "2026-03-21T05:20:42.122Z",
+      "updated_at": "2026-03-21T05:20:42.122Z"
+    },
+    {
+      "id": 8,
+      "name": "VELCRO CAT 여성 네코 울 100% 그레이 가디건 ",
+      "price": 135000,
+      "stock": 27,
+      "category": "w-tops",
+      "description": "[VELCRO CAT] 여성 네코 울 100% 그레이 가디건 ",
+      "image": "/uploads/1774070451540.jpg",
+      "seller": "오사카마켓",
+      "images": "[\"/uploads/1774070451540.jpg\",\"/uploads/1774070454701.jpg\"]",
+      "created_at": "2026-03-21T05:21:38.449Z",
+      "updated_at": "2026-03-21T05:21:38.449Z"
     }
   ],
   "orders": [
