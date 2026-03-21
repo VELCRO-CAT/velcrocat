@@ -211,6 +211,18 @@
       </div>
     </section>
 
+    <!-- 세컨드 히어로 (video3.gif) -->
+    <section class="second-hero">
+      <img src="../image/video3.gif" alt="Velcro Cat Collection" class="second-hero-bg" />
+      <div class="second-hero-overlay"></div>
+      <div class="second-hero-content">
+        <p class="second-hero-label">NEW COLLECTION</p>
+        <h2 class="second-hero-title">Velcro Cat<br>2026 S/S</h2>
+        <p class="second-hero-desc">새로운 시즌, 새로운 감각.<br>일상의 편안함을 스타일로.</p>
+        <router-link to="/products" class="second-hero-btn">SHOP NOW →</router-link>
+      </div>
+    </section>
+
     <!-- CTA -->
     <section class="section cta">
       <div class="cta-content">
@@ -871,6 +883,79 @@ onUnmounted(() => {
 }
 
 /* CTA */
+/* 세컨드 히어로 (video3.gif) */
+.second-hero {
+  position: relative;
+  width: 100%;
+  height: 85vh;
+  min-height: 500px;
+  overflow: hidden;
+}
+.second-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.second-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
+  z-index: 1;
+}
+.second-hero-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 24px;
+}
+.second-hero-label {
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+.second-hero-title {
+  font-size: 52px;
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+.second-hero-desc {
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 36px;
+}
+.second-hero-btn {
+  display: inline-block;
+  padding: 14px 40px;
+  border: 1px solid #fff;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.second-hero-btn:hover {
+  background: #fff;
+  color: #111;
+}
+@media (max-width: 768px) {
+  .second-hero { height: 60vh; min-height: 360px; }
+  .second-hero-title { font-size: 32px; }
+}
+
 .cta {
   text-align: center;
   background: #0a0a0a;
