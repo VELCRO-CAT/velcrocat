@@ -171,7 +171,7 @@ async function loadCategories() {
   try {
     const res = await axios.get('/api/categories');
     categoryItems.value = res.data.map(c => ({
-      title: `[${c.gender === 'women' ? 'W' : 'M'}] ${c.name}`,
+      title: `[${c.gender === 'women' ? 'W' : c.gender === 'unisex' ? 'U' : 'M'}] ${c.name}`,
       value: c.slug
     }));
   } catch { /* ignore */ }

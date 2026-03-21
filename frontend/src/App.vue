@@ -200,7 +200,8 @@ const activeGender = ref(null);
 const categories = ref([]);
 const genders = [
   { key: 'men', label: 'MEN' },
-  { key: 'women', label: 'WOMEN' }
+  { key: 'women', label: 'WOMEN' },
+  { key: 'unisex', label: 'UNISEX' }
 ];
 const filteredCategories = computed(() =>
   categories.value.filter(c => c.gender === activeGender.value)
