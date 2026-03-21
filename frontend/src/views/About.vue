@@ -1046,12 +1046,12 @@ onUnmounted(() => {
   gap: 10px;
   margin-bottom: 20px;
 }
-.footer-logo img { height: 48px; }
+.footer-logo img { height: 64px; }
 .footer-logo span {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 800;
   color: #fff;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
 }
 .footer-nav {
   display: flex;
