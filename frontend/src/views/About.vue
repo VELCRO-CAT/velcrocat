@@ -213,7 +213,7 @@
 
     <!-- CTA (video3.gif 배경) -->
     <section class="second-hero">
-      <img src="../image/video3.gif" alt="Velcro Cat Collection" class="second-hero-bg" />
+      <img src="../image/video.gif" alt="Velcro Cat Collection" class="second-hero-bg" />
       <div class="second-hero-overlay"></div>
       <div class="second-hero-content">
         <p class="second-hero-label">Shop Now</p>
