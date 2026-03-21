@@ -10,7 +10,7 @@
     </div>
 
     <!-- 관리자 버튼 (우측 상단 고정) -->
-    <router-link v-if="authStore.isAdmin" to="/admin" class="admin-fab hvr-grow">
+    <router-link v-if="authStore.isAdmin" to="/admin" class="admin-fab hvr-grow" @click="ensureAdminFlag">
       <v-icon size="16">mdi-shield-crown</v-icon>
       관리자
     </router-link>
@@ -216,6 +216,10 @@ onMounted(async () => {
     categories.value = res.data;
   } catch { /* ignore */ }
 });
+
+function ensureAdminFlag() {
+  sessionStorage.setItem('__osaka_admin', '1');
+}
 
 function logout() {
   authStore.logout();
