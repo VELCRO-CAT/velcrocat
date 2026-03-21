@@ -211,30 +211,20 @@
       </div>
     </section>
 
-    <!-- 세컨드 히어로 (video3.gif) -->
+    <!-- CTA (video3.gif 배경) -->
     <section class="second-hero">
       <img src="../image/video3.gif" alt="Velcro Cat Collection" class="second-hero-bg" />
       <div class="second-hero-overlay"></div>
       <div class="second-hero-content">
-        <p class="second-hero-label">NEW COLLECTION</p>
-        <h2 class="second-hero-title">Velcro Cat<br>2026 S/S</h2>
-        <p class="second-hero-desc">새로운 시즌, 새로운 감각.<br>일상의 편안함을 스타일로.</p>
-        <router-link to="/products" class="second-hero-btn">SHOP NOW →</router-link>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="section cta">
-      <div class="cta-content">
-        <p class="section-label">Shop Now</p>
-        <h2 class="section-title">오늘의 스타일을<br>만나보세요</h2>
-        <p class="cta-desc">
+        <p class="second-hero-label">Shop Now</p>
+        <h2 class="second-hero-title">오늘의 스타일을<br>만나보세요</h2>
+        <p class="second-hero-desc">
           Velcro Cat의 새로운 컬렉션을 지금 확인하세요.<br>
           편안함과 스타일, 두 가지 모두를 놓치지 마세요.
         </p>
-        <div class="cta-actions">
-          <router-link to="/products" class="btn-primary">SHOP 바로가기</router-link>
-          <router-link to="/contact" class="btn-secondary">문의하기</router-link>
+        <div class="second-hero-actions">
+          <router-link to="/products" class="second-hero-btn">SHOP 바로가기</router-link>
+          <router-link to="/contact" class="second-hero-btn btn-outline">문의하기</router-link>
         </div>
       </div>
     </section>
@@ -951,62 +941,26 @@ onUnmounted(() => {
   background: #fff;
   color: #111;
 }
-@media (max-width: 768px) {
-  .second-hero { height: 60vh; min-height: 360px; }
-  .second-hero-title { font-size: 32px; }
-}
-
-.cta {
-  text-align: center;
-  background: #0a0a0a;
-  max-width: 100%;
-  padding: 100px 24px;
-  color: #fff;
-}
-.cta .section-label { color: #666; }
-.cta .section-title { color: #fff; }
-.cta-desc {
-  font-size: 16px;
-  line-height: 1.9;
-  color: #888;
-  margin-bottom: 36px;
-}
-.cta-actions {
+.second-hero-actions {
   display: flex;
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
 }
-.btn-primary {
-  display: inline-block;
-  padding: 14px 36px;
-  background: #fff;
-  color: #111;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-decoration: none;
-  transition: background 0.2s, transform 0.2s;
+.second-hero-btn.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.5);
 }
-.btn-primary:hover {
-  background: #e0e0e0;
-  transform: translateY(-2px);
-}
-.btn-secondary {
-  display: inline-block;
-  padding: 14px 36px;
-  border: 1px solid #555;
-  color: #aaa;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-decoration: none;
-  transition: border-color 0.2s, color 0.2s;
-}
-.btn-secondary:hover {
+.second-hero-btn.btn-outline:hover {
   border-color: #fff;
+  background: rgba(255,255,255,0.1);
   color: #fff;
 }
+@media (max-width: 768px) {
+  .second-hero { height: 60vh; min-height: 360px; }
+  .second-hero-title { font-size: 32px; }
+}
+
 
 /* PICK UP */
 .pickup { max-width: 1200px; }
