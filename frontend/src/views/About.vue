@@ -108,7 +108,7 @@
     <section id="concept" class="section story" ref="storyRef">
       <div class="story-layout">
         <div class="story-visual">
-          <img src="../image/video.gif" alt="Velcro Cat Lookbook" class="story-gif" />
+          <img src="../image/video3.gif" alt="Velcro Cat Lookbook" class="story-gif" />
           <div class="visual-label">EST. 2026 — SEOUL</div>
         </div>
         <div class="story-text">
