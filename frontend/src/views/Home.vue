@@ -129,7 +129,8 @@ function addToCart(product) {
 .product-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
+  border-top: 1px solid #e8e8e8;
+  border-left: 1px solid #e8e8e8;
 }
 
 /* 모바일: 2열 */
@@ -154,18 +155,20 @@ function addToCart(product) {
   text-decoration: none;
   color: #111;
   display: block;
+  border-right: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
   position: relative;
   z-index: 0;
 }
 .product-item:hover {
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
   z-index: 2;
 }
 
 .product-img-wrap {
   position: relative;
   overflow: hidden;
-  background: #f8f8f8;
+  background: #fff;
   aspect-ratio: 3 / 4;
 }
 .product-img {
@@ -230,11 +233,11 @@ function addToCart(product) {
 }
 
 .product-info {
-  padding: 16px 8px 20px;
+  padding: 12px 14px 16px;
 }
 .product-name {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
   color: #111;
   margin-bottom: 6px;
   overflow: hidden;
@@ -245,7 +248,7 @@ function addToCart(product) {
   min-height: 36px;
 }
 .product-price {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: #111;
 }
