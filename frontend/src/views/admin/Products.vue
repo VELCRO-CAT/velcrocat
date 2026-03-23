@@ -138,33 +138,62 @@
 
           <v-divider class="mb-4" />
 
-          <!-- 상세 설명 이미지 (별도) -->
-          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">상세 설명 이미지 (최대 20장)</p>
-          <p class="text-caption text-grey mb-3">상품 상세페이지 하단에 표시되는 설명 이미지입니다.</p>
-          <div class="images-grid mb-3">
-            <div v-for="(img, i) in detailImageList" :key="'d'+i" class="img-thumb">
-              <img :src="img" class="img-thumb-pic" />
-              <button class="img-thumb-remove" @click.prevent="removeDetailImage(i)">&times;</button>
-              <span class="img-thumb-order">{{ i + 1 }}</span>
+          <!-- 블로그식 상세 설명 에디터 -->
+          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">상세 설명 (블로그 에디터)</p>
+          <p class="text-caption text-grey mb-3">텍스트와 이미지를 자유롭게 추가하세요. 순서를 바꿀 수 있습니다.</p>
+
+          <!-- 블록 리스트 -->
+          <div class="blog-editor">
+            <div v-for="(block, i) in detailBlocks" :key="i" class="blog-block">
+              <div class="blog-block-header">
+                <span class="blog-block-type">
+                  <v-icon size="14">{{ block.type === 'text' ? 'mdi-text' : 'mdi-image' }}</v-icon>
+                  {{ block.type === 'text' ? '텍스트' : '이미지' }}
+                </span>
+                <div class="blog-block-actions">
+                  <button class="blog-action-btn" @click.prevent="moveBlock(i, -1)" :disabled="i === 0" title="위로">
+                    <v-icon size="14">mdi-arrow-up</v-icon>
+                  </button>
+                  <button class="blog-action-btn" @click.prevent="moveBlock(i, 1)" :disabled="i === detailBlocks.length - 1" title="아래로">
+                    <v-icon size="14">mdi-arrow-down</v-icon>
+                  </button>
+                  <button class="blog-action-btn blog-delete-btn" @click.prevent="removeBlock(i)" title="삭제">
+                    <v-icon size="14">mdi-close</v-icon>
+                  </button>
+                </div>
+              </div>
+              <!-- 텍스트 블록 -->
+              <textarea
+                v-if="block.type === 'text'"
+                v-model="block.content"
+                class="blog-textarea"
+                placeholder="텍스트를 입력하세요..."
+                rows="3"
+              ></textarea>
+              <!-- 이미지 블록 -->
+              <div v-else class="blog-img-block">
+                <img v-if="block.content" :src="block.content" class="blog-img-preview" />
+                <div v-else class="blog-img-placeholder">
+                  <label class="blog-img-upload-btn">
+                    <v-icon size="20" color="grey">mdi-upload</v-icon>
+                    <span>이미지 업로드</span>
+                    <input type="file" accept="image/*" style="display:none" @change="uploadBlockImage($event, i)" />
+                  </label>
+                </div>
+              </div>
             </div>
-            <label v-if="detailImageList.length < 20" class="img-thumb img-thumb-add">
-              <v-icon size="28" color="grey-lighten-1">mdi-plus</v-icon>
-              <span class="text-caption text-grey">추가</span>
-              <input type="file" accept="image/*" multiple style="display:none" @change="handleDetailUpload" />
-            </label>
-          </div>
-          <div class="mb-4">
-            <v-text-field
-              v-model="detailUrlInput"
-              label="상세 이미지 URL 직접 입력"
-              variant="outlined"
-              density="compact"
-              hide-details
-              placeholder="https://..."
-              append-inner-icon="mdi-plus-circle"
-              @click:append-inner="addDetailUrlImage"
-              @keyup.enter="addDetailUrlImage"
-            />
+
+            <!-- 블록 추가 버튼 -->
+            <div class="blog-add-btns">
+              <button class="blog-add-btn" @click.prevent="addBlock('text')">
+                <v-icon size="16">mdi-text</v-icon>
+                텍스트 추가
+              </button>
+              <button class="blog-add-btn" @click.prevent="addBlock('image')">
+                <v-icon size="16">mdi-image-plus</v-icon>
+                이미지 추가
+              </button>
+            </div>
           </div>
 
           <v-alert v-if="formError" type="error" variant="tonal" density="compact" class="mt-2">{{ formError }}</v-alert>
@@ -195,8 +224,7 @@ const saving = ref(false);
 const formError = ref('');
 const imageList = ref([]);
 const urlInput = ref('');
-const detailImageList = ref([]);
-const detailUrlInput = ref('');
+const detailBlocks = ref([]);
 
 const categoryItems = ref([]);
 
@@ -236,9 +264,16 @@ function parseImages(p) {
   return p.image ? [p.image] : [];
 }
 
-function parseDetailImages(p) {
+function parseDetailBlocks(p) {
+  if (p.detail_blocks) {
+    try { return JSON.parse(p.detail_blocks); } catch { /* ignore */ }
+  }
+  // 이전 detail_images 호환
   if (p.detail_images) {
-    try { return JSON.parse(p.detail_images); } catch { /* ignore */ }
+    try {
+      const imgs = JSON.parse(p.detail_images);
+      return imgs.map(url => ({ type: 'image', content: url }));
+    } catch { /* ignore */ }
   }
   return [];
 }
@@ -247,9 +282,8 @@ function openAdd() {
   editingProduct.value = null;
   form.value = defaultForm();
   imageList.value = [];
-  detailImageList.value = [];
+  detailBlocks.value = [];
   urlInput.value = '';
-  detailUrlInput.value = '';
   formError.value = '';
   showDialog.value = true;
 }
@@ -258,9 +292,8 @@ function openEdit(p) {
   editingProduct.value = p;
   form.value = { ...p };
   imageList.value = [...parseImages(p)];
-  detailImageList.value = [...parseDetailImages(p)];
+  detailBlocks.value = [...parseDetailBlocks(p)];
   urlInput.value = '';
-  detailUrlInput.value = '';
   formError.value = '';
   showDialog.value = true;
 }
@@ -268,34 +301,35 @@ function openEdit(p) {
 function closeDialog() {
   showDialog.value = false;
   imageList.value = [];
-  detailImageList.value = [];
+  detailBlocks.value = [];
 }
 
-function removeDetailImage(i) {
-  detailImageList.value.splice(i, 1);
+function addBlock(type) {
+  detailBlocks.value.push({ type, content: '' });
 }
 
-function addDetailUrlImage() {
-  const url = detailUrlInput.value.trim();
-  if (!url) return;
-  if (detailImageList.value.length >= 20) return;
-  detailImageList.value.push(url);
-  detailUrlInput.value = '';
+function removeBlock(i) {
+  detailBlocks.value.splice(i, 1);
 }
 
-async function handleDetailUpload(event) {
-  const files = Array.from(event.target.files);
-  if (!files.length) return;
-  const remaining = 20 - detailImageList.value.length;
-  const toUpload = files.slice(0, remaining);
-  for (const file of toUpload) {
-    try {
-      const fd = new FormData();
-      fd.append('image', file);
-      const res = await axios.post('/api/upload', fd);
-      detailImageList.value.push(res.data.url);
-    } catch { /* skip */ }
-  }
+function moveBlock(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= detailBlocks.value.length) return;
+  const temp = detailBlocks.value[i];
+  detailBlocks.value[i] = detailBlocks.value[j];
+  detailBlocks.value[j] = temp;
+  detailBlocks.value = [...detailBlocks.value];
+}
+
+async function uploadBlockImage(event, blockIndex) {
+  const file = event.target.files[0];
+  if (!file) return;
+  try {
+    const fd = new FormData();
+    fd.append('image', file);
+    const res = await axios.post('/api/upload', fd);
+    detailBlocks.value[blockIndex].content = res.data.url;
+  } catch { /* skip */ }
   event.target.value = '';
 }
 
@@ -334,7 +368,7 @@ async function saveProduct() {
     const data = { ...form.value };
     data.image = imageList.value[0] || '';
     data.images = JSON.stringify(imageList.value);
-    data.detail_images = JSON.stringify(detailImageList.value);
+    data.detail_blocks = JSON.stringify(detailBlocks.value.filter(b => b.content.trim()));
     if (editingProduct.value) {
       await axios.put(`/api/admin/products/${editingProduct.value.id}`, data);
     } else {
@@ -481,6 +515,115 @@ async function confirmDelete(p) {
   padding: 1px 0;
   letter-spacing: 1px;
 }
+/* 블로그 에디터 */
+.blog-editor {
+  margin-bottom: 16px;
+}
+.blog-block {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.blog-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+.blog-block-type {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+}
+.blog-block-actions {
+  display: flex;
+  gap: 2px;
+}
+.blog-action-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: #777;
+  transition: background 0.15s;
+}
+.blog-action-btn:hover { background: #e0e0e0; }
+.blog-action-btn:disabled { opacity: 0.3; cursor: default; }
+.blog-action-btn:disabled:hover { background: none; }
+.blog-delete-btn:hover { background: #ffebee; color: #c62828; }
+.blog-textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 60px;
+  color: #111;
+}
+.blog-img-block {
+  padding: 8px;
+}
+.blog-img-preview {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  display: block;
+  background: #f9f9f9;
+}
+.blog-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  background: #fafafa;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+}
+.blog-img-upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #777;
+  cursor: pointer;
+}
+.blog-img-upload-btn:hover { color: #111; }
+.blog-add-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.blog-add-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border: 1px dashed #ccc;
+  background: #fafafa;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.blog-add-btn:hover { border-color: #111; color: #111; background: #f0f0f0; }
+
 .img-thumb-order {
   position: absolute;
   bottom: 0;

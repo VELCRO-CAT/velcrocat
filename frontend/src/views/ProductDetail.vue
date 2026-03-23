@@ -105,8 +105,17 @@
             <p class="info-desc">{{ product.description }}</p>
           </div>
 
-          <!-- 상품 이미지들 (여러 장이면 모두 표시) -->
-          <div v-if="productImages.length > 0" class="info-images">
+          <!-- 블로그식 상세 콘텐츠 -->
+          <div v-if="detailBlocks.length > 0" class="info-blocks">
+            <template v-for="(block, i) in detailBlocks" :key="i">
+              <p v-if="block.type === 'text'" class="info-block-text">{{ block.content }}</p>
+              <div v-else-if="block.type === 'image'" class="info-block-img">
+                <img :src="block.content" :alt="product.name" />
+              </div>
+            </template>
+          </div>
+          <!-- 이전 방식 호환 (detail_images) -->
+          <div v-else-if="productImages.length > 0" class="info-images">
             <img v-for="(img, i) in productImages" :key="i" :src="img" :alt="product.name" class="info-image" />
           </div>
 
@@ -232,6 +241,7 @@ const snackMsg = ref('');
 const activeTab = ref('info');
 const similarProducts = ref([]);
 const productImages = ref([]);
+const detailBlocks = ref([]);
 const recentProducts = ref([]);
 
 function saveRecent(p) {
@@ -266,7 +276,11 @@ async function loadProduct(id) {
     const res = await axios.get(`/api/products/${id}`);
     product.value = res.data;
     activeTab.value = 'info';
-    // 상세 설명 이미지 파싱 (detail_images 우선, 없으면 빈 배열)
+    // 블로그 블록 파싱
+    try {
+      detailBlocks.value = JSON.parse(res.data.detail_blocks || '[]');
+    } catch { detailBlocks.value = []; }
+    // 이전 방식 호환
     try {
       productImages.value = JSON.parse(res.data.detail_images || '[]');
     } catch { productImages.value = []; }
@@ -687,6 +701,30 @@ function buyNow() {
   max-width: 700px;
   height: auto;
   display: block;
+}
+
+/* 블로그식 블록 */
+.info-blocks {
+  margin-bottom: 48px;
+}
+.info-block-text {
+  font-size: 14px;
+  color: #444;
+  line-height: 2;
+  max-width: 700px;
+  margin: 0 auto 24px;
+  padding: 0 16px;
+  white-space: pre-line;
+}
+.info-block-img {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.info-block-img img {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  display: inline-block;
 }
 
 /* 케어 가이드 */
