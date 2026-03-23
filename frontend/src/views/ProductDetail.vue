@@ -266,11 +266,10 @@ async function loadProduct(id) {
     const res = await axios.get(`/api/products/${id}`);
     product.value = res.data;
     activeTab.value = 'info';
-    // 상세 이미지 파싱
+    // 상세 설명 이미지 파싱 (detail_images 우선, 없으면 빈 배열)
     try {
-      const imgs = JSON.parse(res.data.images || '[]');
-      productImages.value = imgs.length > 0 ? imgs : (res.data.image ? [res.data.image] : []);
-    } catch { productImages.value = res.data.image ? [res.data.image] : []; }
+      productImages.value = JSON.parse(res.data.detail_images || '[]');
+    } catch { productImages.value = []; }
     saveRecent(res.data);
 
     // 같은 카테고리 상품 (자신 제외, 최대 6개)

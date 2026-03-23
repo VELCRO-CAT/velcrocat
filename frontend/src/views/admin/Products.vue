@@ -136,6 +136,37 @@
             </v-col>
           </v-row>
 
+          <v-divider class="mb-4" />
+
+          <!-- 상세 설명 이미지 (별도) -->
+          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">상세 설명 이미지 (최대 20장)</p>
+          <p class="text-caption text-grey mb-3">상품 상세페이지 하단에 표시되는 설명 이미지입니다.</p>
+          <div class="images-grid mb-3">
+            <div v-for="(img, i) in detailImageList" :key="'d'+i" class="img-thumb">
+              <img :src="img" class="img-thumb-pic" />
+              <button class="img-thumb-remove" @click.prevent="removeDetailImage(i)">&times;</button>
+              <span class="img-thumb-order">{{ i + 1 }}</span>
+            </div>
+            <label v-if="detailImageList.length < 20" class="img-thumb img-thumb-add">
+              <v-icon size="28" color="grey-lighten-1">mdi-plus</v-icon>
+              <span class="text-caption text-grey">추가</span>
+              <input type="file" accept="image/*" multiple style="display:none" @change="handleDetailUpload" />
+            </label>
+          </div>
+          <div class="mb-4">
+            <v-text-field
+              v-model="detailUrlInput"
+              label="상세 이미지 URL 직접 입력"
+              variant="outlined"
+              density="compact"
+              hide-details
+              placeholder="https://..."
+              append-inner-icon="mdi-plus-circle"
+              @click:append-inner="addDetailUrlImage"
+              @keyup.enter="addDetailUrlImage"
+            />
+          </div>
+
           <v-alert v-if="formError" type="error" variant="tonal" density="compact" class="mt-2">{{ formError }}</v-alert>
         </v-form>
       </v-card-text>
@@ -164,6 +195,8 @@ const saving = ref(false);
 const formError = ref('');
 const imageList = ref([]);
 const urlInput = ref('');
+const detailImageList = ref([]);
+const detailUrlInput = ref('');
 
 const categoryItems = ref([]);
 
@@ -203,11 +236,20 @@ function parseImages(p) {
   return p.image ? [p.image] : [];
 }
 
+function parseDetailImages(p) {
+  if (p.detail_images) {
+    try { return JSON.parse(p.detail_images); } catch { /* ignore */ }
+  }
+  return [];
+}
+
 function openAdd() {
   editingProduct.value = null;
   form.value = defaultForm();
   imageList.value = [];
+  detailImageList.value = [];
   urlInput.value = '';
+  detailUrlInput.value = '';
   formError.value = '';
   showDialog.value = true;
 }
@@ -216,7 +258,9 @@ function openEdit(p) {
   editingProduct.value = p;
   form.value = { ...p };
   imageList.value = [...parseImages(p)];
+  detailImageList.value = [...parseDetailImages(p)];
   urlInput.value = '';
+  detailUrlInput.value = '';
   formError.value = '';
   showDialog.value = true;
 }
@@ -224,6 +268,35 @@ function openEdit(p) {
 function closeDialog() {
   showDialog.value = false;
   imageList.value = [];
+  detailImageList.value = [];
+}
+
+function removeDetailImage(i) {
+  detailImageList.value.splice(i, 1);
+}
+
+function addDetailUrlImage() {
+  const url = detailUrlInput.value.trim();
+  if (!url) return;
+  if (detailImageList.value.length >= 20) return;
+  detailImageList.value.push(url);
+  detailUrlInput.value = '';
+}
+
+async function handleDetailUpload(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  const remaining = 20 - detailImageList.value.length;
+  const toUpload = files.slice(0, remaining);
+  for (const file of toUpload) {
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await axios.post('/api/upload', fd);
+      detailImageList.value.push(res.data.url);
+    } catch { /* skip */ }
+  }
+  event.target.value = '';
 }
 
 function removeImage(i) {
@@ -261,6 +334,7 @@ async function saveProduct() {
     const data = { ...form.value };
     data.image = imageList.value[0] || '';
     data.images = JSON.stringify(imageList.value);
+    data.detail_images = JSON.stringify(detailImageList.value);
     if (editingProduct.value) {
       await axios.put(`/api/admin/products/${editingProduct.value.id}`, data);
     } else {
@@ -401,6 +475,18 @@ async function confirmDelete(p) {
   left: 0;
   right: 0;
   background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 9px;
+  text-align: center;
+  padding: 1px 0;
+  letter-spacing: 1px;
+}
+.img-thumb-order {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
   color: #fff;
   font-size: 9px;
   text-align: center;

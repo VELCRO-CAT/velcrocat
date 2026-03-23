@@ -365,6 +365,19 @@
       "images": "[\"/uploads/1774070451540.jpg\",\"/uploads/1774070454701.jpg\"]",
       "created_at": "2026-03-21T05:21:38.449Z",
       "updated_at": "2026-03-21T05:21:38.449Z"
+    },
+    {
+      "id": 9,
+      "name": "VELCRO CAT 네코 여성 울 100% 브이넥 가디건 ",
+      "price": 134500,
+      "stock": 10,
+      "category": "w-bottoms",
+      "description": "[VELCRO CAT] 네코 여성 울 100% 브이넥 가디건 ",
+      "image": "/uploads/1774231106051.png",
+      "seller": "오사카마켓",
+      "images": "[\"/uploads/1774231106051.png\",\"/uploads/1774231111017.png\",\"/uploads/1774231121518.png\"]",
+      "created_at": "2026-03-23T01:59:35.763Z",
+      "updated_at": "2026-03-23T01:59:35.763Z"
     }
   ],
   "orders": [],
