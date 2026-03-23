@@ -10,11 +10,18 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + ext);
   }
 });
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } });
 
-router.post('/', upload.single('image'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: '파일이 없습니다' });
-  res.json({ url: `/uploads/${req.file.filename}` });
+router.post('/', (req, res) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error('Upload error:', err.message);
+      if (err.code === 'LIMIT_FILE_SIZE') return res.status(400).json({ error: '파일 크기가 20MB를 초과합니다' });
+      return res.status(500).json({ error: err.message });
+    }
+    if (!req.file) return res.status(400).json({ error: '파일이 없습니다' });
+    res.json({ url: `/uploads/${req.file.filename}` });
+  });
 });
 
 // 다중 이미지 업로드 (최대 10장)
