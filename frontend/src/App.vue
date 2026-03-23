@@ -152,28 +152,55 @@
     <!-- 푸터 -->
     <footer v-if="!isAboutPage" class="site-footer">
       <div class="footer-inner">
-        <div class="footer-brand">
-          <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="footer-logo" />
-          <span class="footer-brand-name">VELCRO CAT</span>
+        <!-- 상단: 4컬럼 -->
+        <div class="footer-cols">
+          <!-- 고객센터 -->
+          <div class="footer-col">
+            <h4>고객센터</h4>
+            <p class="footer-phone">02-0000-0000</p>
+            <p class="footer-info">운영시간 : 오전10 ~ 오후5시</p>
+            <p class="footer-info">점심시간 : 11 ~ 12시</p>
+            <p class="footer-info">주말, 휴일, 공휴일 휴무</p>
+          </div>
+          <!-- 회사정보 -->
+          <div class="footer-col">
+            <h4>회사정보</h4>
+            <p class="footer-info">회사명 : Velcro Cat / 대표 : 오사카마켓</p>
+            <p class="footer-info">사업자등록번호 : 000-00-00000</p>
+            <p class="footer-info">주소 : 서울특별시 강남구 00로 00길</p>
+            <p class="footer-info">TEL : 02-0000-0000</p>
+            <p class="footer-info">E-MAIL : info@velcrocat.com</p>
+          </div>
+          <!-- 교환/반품 -->
+          <div class="footer-col">
+            <h4>교환 / 반품</h4>
+            <p class="footer-info">교환/반품 주소 :</p>
+            <p class="footer-info">서울특별시 강남구 00로 00길</p>
+            <p class="footer-info" style="margin-top:12px">배송조회 : 1588-0000</p>
+          </div>
+          <!-- 상점 메뉴 -->
+          <div class="footer-col">
+            <h4>상점 메뉴</h4>
+            <router-link to="/" class="footer-menu-link">메인페이지</router-link>
+            <router-link to="/about" class="footer-menu-link">회사소개</router-link>
+            <router-link to="/products" class="footer-menu-link">이용안내</router-link>
+            <router-link to="/contact" class="footer-menu-link">이용약관</router-link>
+            <a href="#" class="footer-menu-link">개인정보취급방침</a>
+          </div>
         </div>
-        <div class="footer-nav">
-          <router-link to="/">HOME</router-link>
-          <router-link to="/products">SHOP</router-link>
-          <router-link to="/contact">CONTACT</router-link>
-          <router-link to="/about">BRAND</router-link>
+        <!-- 하단 -->
+        <div class="footer-bottom">
+          <div class="footer-bottom-brand">
+            <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="footer-logo" />
+            <span class="footer-brand-name">VELCRO CAT</span>
+          </div>
+          <p class="footer-copy">© 2026 Velcro Cat / 오사카마켓. All rights reserved.</p>
+          <div class="footer-social">
+            <a href="https://www.instagram.com/" target="_blank" title="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+          </div>
         </div>
-        <div class="footer-sub">
-          <a href="#">회사 소개</a>
-          <span class="footer-divider">|</span>
-          <a href="#">개인정보처리방침</a>
-          <span class="footer-divider">|</span>
-          <a href="#">이용약관</a>
-          <span class="footer-divider">|</span>
-          <router-link to="/contact">고객센터</router-link>
-          <span class="footer-divider">|</span>
-          <a href="https://www.instagram.com/" target="_blank">Instagram</a>
-        </div>
-        <p class="footer-copy">© 2026 Velcro Cat / 오사카마켓. All rights reserved.</p>
       </div>
     </footer>
   </v-app>
@@ -613,72 +640,98 @@ function logout() {
 
 /* 푸터 */
 .site-footer {
-  background: #111;
-  padding: 48px 24px 32px;
-  border-top: 1px solid #222;
+  background: #fff;
+  padding: 48px 24px 24px;
+  border-top: 1px solid #ddd;
 }
 .footer-inner {
   max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
 }
-.footer-brand {
+.footer-cols {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.footer-col h4 {
+  font-size: 14px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 14px;
+  letter-spacing: 0.5px;
+}
+.footer-phone {
+  font-size: 22px;
+  font-weight: 900;
+  color: #111;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.footer-info {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.8;
+  margin: 0;
+}
+.footer-menu-link {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  text-decoration: none;
+  line-height: 2.2;
+  transition: color 0.15s;
+}
+.footer-menu-link:hover { color: #111; }
+.footer-bottom {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+.footer-bottom-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .footer-logo {
-  height: 80px;
+  height: 36px;
   width: auto;
   object-fit: contain;
 }
 .footer-brand-name {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 800;
-  color: #fff;
-  letter-spacing: 5px;
-}
-.footer-nav {
-  display: flex;
-  gap: 24px;
-  justify-content: center;
-}
-.footer-nav a {
-  font-size: 11px;
-  color: #666;
-  text-decoration: none;
-  letter-spacing: 1px;
-  transition: color 0.2s;
-}
-.footer-nav a:hover { color: #fff; }
-.footer-sub {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.footer-sub a {
-  font-size: 10px;
-  color: #555;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.footer-sub a:hover { color: #fff; }
-.footer-divider {
-  color: #333;
-  font-size: 10px;
+  color: #111;
+  letter-spacing: 4px;
 }
 .footer-copy {
-  color: #444;
+  color: #999;
   font-size: 11px;
   margin: 0;
-  letter-spacing: 0.5px;
+}
+.footer-social a {
+  color: #999;
+  transition: color 0.2s;
+}
+.footer-social a:hover { color: #111; }
+@media (max-width: 768px) {
+  .footer-cols {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+@media (max-width: 480px) {
+  .footer-cols {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
 }
 </style>
 
