@@ -79,6 +79,91 @@
       <div v-else class="text-center py-12 text-grey">상품을 찾을 수 없습니다</div>
     </div>
 
+    <!-- 상세 설명 섹션 -->
+    <section v-if="product" class="detail-section">
+      <div class="detail-inner">
+        <!-- 탭 메뉴 -->
+        <div class="detail-tabs">
+          <button class="detail-tab" :class="{ active: activeTab === 'info' }" @click="activeTab = 'info'">상품 상세정보</button>
+          <button class="detail-tab" :class="{ active: activeTab === 'guide' }" @click="activeTab = 'guide'">배송/교환/반품</button>
+        </div>
+
+        <!-- 상세정보 탭 -->
+        <div v-if="activeTab === 'info'" class="detail-content">
+          <!-- 브랜드 헤더 -->
+          <div class="brand-header">
+            <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" class="brand-header-logo" />
+            <div>
+              <p class="brand-header-name">VELCRO CAT</p>
+              <p class="brand-header-sub">Comfortable & Minimal</p>
+            </div>
+          </div>
+
+          <!-- 상품 설명 -->
+          <div class="info-block">
+            <h3 class="info-title">{{ product.name }}</h3>
+            <p class="info-desc">{{ product.description }}</p>
+          </div>
+
+          <!-- 상품 이미지들 (여러 장이면 모두 표시) -->
+          <div v-if="productImages.length > 0" class="info-images">
+            <img v-for="(img, i) in productImages" :key="i" :src="img" :alt="product.name" class="info-image" />
+          </div>
+
+          <!-- 소재/관리 가이드 -->
+          <div class="care-guide">
+            <h4 class="care-title">CARE GUIDE</h4>
+            <div class="care-items">
+              <div class="care-item">
+                <v-icon size="20" color="#555">mdi-washing-machine</v-icon>
+                <span>찬물 손세탁 권장</span>
+              </div>
+              <div class="care-item">
+                <v-icon size="20" color="#555">mdi-iron</v-icon>
+                <span>낮은 온도 다림질</span>
+              </div>
+              <div class="care-item">
+                <v-icon size="20" color="#555">mdi-tumble-dryer-off</v-icon>
+                <span>건조기 사용 불가</span>
+              </div>
+              <div class="care-item">
+                <v-icon size="20" color="#555">mdi-hanger</v-icon>
+                <span>그늘에서 평평하게 건조</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 배송/교환/반품 탭 -->
+        <div v-if="activeTab === 'guide'" class="detail-content">
+          <div class="guide-section">
+            <h4>배송 안내</h4>
+            <ul>
+              <li>배송비 : 무료</li>
+              <li>배송 기간 : 결제 완료 후 1~3일 이내 출고</li>
+              <li>제주 및 도서 산간 지역은 추가 배송비가 발생할 수 있습니다.</li>
+            </ul>
+          </div>
+          <div class="guide-section">
+            <h4>교환 / 반품 안내</h4>
+            <ul>
+              <li>상품 수령 후 7일 이내 교환/반품 가능</li>
+              <li>단순 변심에 의한 교환/반품 시 배송비 고객 부담</li>
+              <li>상품 하자 시 배송비 무료</li>
+              <li>착용 흔적, 택 제거 시 교환/반품 불가</li>
+            </ul>
+          </div>
+          <div class="guide-section">
+            <h4>환불 안내</h4>
+            <ul>
+              <li>반품 상품 확인 후 3영업일 이내 환불 처리</li>
+              <li>카드 결제 시 카드사 정책에 따라 3~5일 소요</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 최근 본 상품 -->
     <section v-if="recentProducts.length > 1" class="related-section">
       <div class="related-inner">
@@ -144,7 +229,9 @@ const loading = ref(true);
 const qty = ref(1);
 const snackbar = ref(false);
 const snackMsg = ref('');
+const activeTab = ref('info');
 const similarProducts = ref([]);
+const productImages = ref([]);
 const recentProducts = ref([]);
 
 function saveRecent(p) {
@@ -178,6 +265,12 @@ async function loadProduct(id) {
   try {
     const res = await axios.get(`/api/products/${id}`);
     product.value = res.data;
+    activeTab.value = 'info';
+    // 상세 이미지 파싱
+    try {
+      const imgs = JSON.parse(res.data.images || '[]');
+      productImages.value = imgs.length > 0 ? imgs : (res.data.image ? [res.data.image] : []);
+    } catch { productImages.value = res.data.image ? [res.data.image] : []; }
     saveRecent(res.data);
 
     // 같은 카테고리 상품 (자신 제외, 최대 6개)
@@ -491,5 +584,183 @@ function buyNow() {
   font-weight: 700;
   color: #111;
   padding: 0 10px 10px;
+}
+
+/* 상세 설명 섹션 */
+.detail-section {
+  border-top: 1px solid #e8e8e8;
+}
+.detail-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* 탭 메뉴 */
+.detail-tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+}
+.detail-tab {
+  flex: 1;
+  padding: 18px 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #999;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.detail-tab:hover { color: #555; }
+.detail-tab.active {
+  color: #111;
+  border-bottom-color: #111;
+}
+
+/* 상세 콘텐츠 */
+.detail-content {
+  padding: 48px 0 64px;
+}
+
+/* 브랜드 헤더 */
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 32px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  margin-bottom: 48px;
+}
+.brand-header-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+.brand-header-name {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #111;
+}
+.brand-header-sub {
+  font-size: 11px;
+  color: #999;
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+/* 상품 설명 블록 */
+.info-block {
+  text-align: center;
+  margin-bottom: 48px;
+  padding: 0 16px;
+}
+.info-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -0.3px;
+  margin-bottom: 16px;
+}
+.info-desc {
+  font-size: 14px;
+  color: #555;
+  line-height: 2;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 상품 이미지 나열 */
+.info-images {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 48px;
+}
+.info-image {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  display: block;
+}
+
+/* 케어 가이드 */
+.care-guide {
+  background: #fafafa;
+  border: 1px solid #eee;
+  padding: 32px;
+}
+.care-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #111;
+  text-align: center;
+  margin-bottom: 24px;
+}
+.care-items {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.care-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+/* 배송/교환/반품 가이드 */
+.guide-section {
+  margin-bottom: 36px;
+}
+.guide-section h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+}
+.guide-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.guide-section li {
+  font-size: 13px;
+  color: #555;
+  line-height: 2.2;
+  padding-left: 16px;
+  position: relative;
+}
+.guide-section li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: #999;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .care-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .brand-header {
+    padding: 16px 20px;
+  }
+  .detail-content {
+    padding: 32px 0 48px;
+  }
 }
 </style>
