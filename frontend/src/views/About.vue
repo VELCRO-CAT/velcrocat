@@ -241,6 +241,7 @@
           <router-link to="/products">SHOP</router-link>
           <router-link to="/contact">CONTACT</router-link>
           <router-link to="/about">BRAND</router-link>
+          <a href="https://smartstore.naver.com/vcat" target="_blank">NAVER STORE</a>
         </div>
         <div class="footer-biz">
           <p>상호 : 벨크로캣(velcrocat) | 대표 : 김충성</p>

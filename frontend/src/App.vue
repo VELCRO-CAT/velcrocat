@@ -157,35 +157,35 @@
           <!-- 고객센터 -->
           <div class="footer-col">
             <h4>고객센터</h4>
-            <p class="footer-phone">02-0000-0000</p>
-            <p class="footer-info">운영시간 : 오전10 ~ 오후5시</p>
-            <p class="footer-info">점심시간 : 11 ~ 12시</p>
-            <p class="footer-info">주말, 휴일, 공휴일 휴무</p>
+            <p class="footer-phone">070-0000-0000</p>
+            <p class="footer-info">운영시간 : 오전10시 ~ 오후5시</p>
+            <p class="footer-info">점심시간 : 오전11시 ~ 오후12시</p>
+            <p class="footer-info">주말, 공휴일 휴무</p>
           </div>
           <!-- 회사정보 -->
           <div class="footer-col">
             <h4>회사정보</h4>
-            <p class="footer-info">회사명 : Velcro Cat / 대표 : 오사카마켓</p>
-            <p class="footer-info">사업자등록번호 : 000-00-00000</p>
-            <p class="footer-info">주소 : 서울특별시 강남구 00로 00길</p>
-            <p class="footer-info">TEL : 02-0000-0000</p>
-            <p class="footer-info">E-MAIL : info@velcrocat.com</p>
+            <p class="footer-info">상호 : 벨크로캣(velcrocat)</p>
+            <p class="footer-info">대표 : 김충성</p>
+            <p class="footer-info">사업자등록번호 : 180-02-03888</p>
+            <p class="footer-info">업태 : 도소매 / 종목 : 전자상거래 소매업</p>
+            <p class="footer-info">주소 : 경기도 안양시 동안구 동편로183번길 86, 201호(관양동)</p>
+            <p class="footer-info">E-MAIL : velcrocat@velcrocat.com</p>
           </div>
           <!-- 교환/반품 -->
           <div class="footer-col">
             <h4>교환 / 반품</h4>
             <p class="footer-info">교환/반품 주소 :</p>
-            <p class="footer-info">서울특별시 강남구 00로 00길</p>
-            <p class="footer-info" style="margin-top:12px">배송조회 : 1588-0000</p>
+            <p class="footer-info">경기도 안양시 동안구 동편로183번길 86, 201호</p>
+            <p class="footer-info" style="margin-top:12px">상품 수령 후 7일 이내 교환/반품 가능</p>
           </div>
           <!-- 상점 메뉴 -->
           <div class="footer-col">
             <h4>상점 메뉴</h4>
             <router-link to="/" class="footer-menu-link">메인페이지</router-link>
             <router-link to="/about" class="footer-menu-link">회사소개</router-link>
-            <router-link to="/products" class="footer-menu-link">이용안내</router-link>
-            <router-link to="/contact" class="footer-menu-link">이용약관</router-link>
-            <a href="#" class="footer-menu-link">개인정보취급방침</a>
+            <router-link to="/products" class="footer-menu-link">전체상품</router-link>
+            <router-link to="/contact" class="footer-menu-link">고객문의</router-link>
           </div>
         </div>
         <!-- 하단 -->
@@ -194,8 +194,11 @@
             <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="footer-logo" />
             <span class="footer-brand-name">VELCRO CAT</span>
           </div>
-          <p class="footer-copy">© 2026 Velcro Cat / 오사카마켓. All rights reserved.</p>
+          <p class="footer-copy">© 2026 벨크로캣(velcrocat). All rights reserved.</p>
           <div class="footer-social">
+            <a href="https://smartstore.naver.com/vcat" target="_blank" title="Naver SmartStore">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.273 12.845 7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"/></svg>
+            </a>
             <a href="https://www.instagram.com/" target="_blank" title="Instagram">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
             </a>
