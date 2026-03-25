@@ -714,6 +714,11 @@ function logout() {
   font-size: 11px;
   margin: 0;
 }
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 .footer-social a {
   color: #999;
   transition: color 0.2s;

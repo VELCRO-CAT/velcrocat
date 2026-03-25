@@ -88,88 +88,147 @@
           <button class="detail-tab" :class="{ active: activeTab === 'guide' }" @click="activeTab = 'guide'">배송/교환/반품</button>
         </div>
 
-        <!-- 상세정보 탭 -->
-        <div v-if="activeTab === 'info'" class="detail-content">
-          <!-- 브랜드 헤더 -->
-          <div class="brand-header">
-            <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" class="brand-header-logo" />
-            <div>
-              <p class="brand-header-name">VELCRO CAT</p>
-              <p class="brand-header-sub">Comfortable & Minimal</p>
+        <!-- 접히는 래퍼 -->
+        <div class="detail-collapse" :class="{ expanded: detailExpanded }">
+          <!-- 상세정보 탭 -->
+          <div v-if="activeTab === 'info'" class="detail-content">
+            <!-- 브랜드 헤더 -->
+            <div class="brand-header">
+              <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" class="brand-header-logo" />
+              <div>
+                <p class="brand-header-name">VELCRO CAT</p>
+                <p class="brand-header-sub">Comfortable & Minimal</p>
+              </div>
+            </div>
+
+            <!-- 상품 설명 -->
+            <div class="info-block">
+              <h3 class="info-title">{{ product.name }}</h3>
+              <p class="info-desc">{{ product.description }}</p>
+            </div>
+
+            <!-- 블로그식 상세 콘텐츠 -->
+            <div v-if="detailBlocks.length > 0" class="info-blocks">
+              <template v-for="(block, i) in detailBlocks" :key="i">
+                <p v-if="block.type === 'text'" class="info-block-text">{{ block.content }}</p>
+                <div v-else-if="block.type === 'image'" class="info-block-img">
+                  <img :src="block.content" :alt="product.name" />
+                </div>
+              </template>
+            </div>
+            <!-- 이전 방식 호환 (detail_images) -->
+            <div v-else-if="productImages.length > 0" class="info-images">
+              <img v-for="(img, i) in productImages" :key="i" :src="img" :alt="product.name" class="info-image" />
+            </div>
+
+            <!-- 소재/관리 가이드 -->
+            <div class="care-guide">
+              <h4 class="care-title">CARE GUIDE</h4>
+              <div class="care-items">
+                <div class="care-item">
+                  <v-icon size="20" color="#555">mdi-washing-machine</v-icon>
+                  <span>찬물 손세탁 권장</span>
+                </div>
+                <div class="care-item">
+                  <v-icon size="20" color="#555">mdi-iron</v-icon>
+                  <span>낮은 온도 다림질</span>
+                </div>
+                <div class="care-item">
+                  <v-icon size="20" color="#555">mdi-tumble-dryer-off</v-icon>
+                  <span>건조기 사용 불가</span>
+                </div>
+                <div class="care-item">
+                  <v-icon size="20" color="#555">mdi-hanger</v-icon>
+                  <span>그늘에서 평평하게 건조</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- 상품 설명 -->
-          <div class="info-block">
-            <h3 class="info-title">{{ product.name }}</h3>
-            <p class="info-desc">{{ product.description }}</p>
-          </div>
+          <!-- 배송/교환/반품 탭 -->
+          <div v-if="activeTab === 'guide'" class="detail-content">
+            <!-- 반품/교환 안내 박스 -->
+            <div class="return-notice">
+              <h4 class="return-notice-title">벨크로캣 반품/교환 안내</h4>
+              <p class="return-notice-desc">반품 시 먼저 판매자와 연락하셔서 반품사유, 택배사, 배송비, 반품지 주소 등을 협의하신 후 반품상품을 발송해 주시기 바랍니다.</p>
+            </div>
 
-          <!-- 블로그식 상세 콘텐츠 -->
-          <div v-if="detailBlocks.length > 0" class="info-blocks">
-            <template v-for="(block, i) in detailBlocks" :key="i">
-              <p v-if="block.type === 'text'" class="info-block-text">{{ block.content }}</p>
-              <div v-else-if="block.type === 'image'" class="info-block-img">
-                <img :src="block.content" :alt="product.name" />
-              </div>
-            </template>
-          </div>
-          <!-- 이전 방식 호환 (detail_images) -->
-          <div v-else-if="productImages.length > 0" class="info-images">
-            <img v-for="(img, i) in productImages" :key="i" :src="img" :alt="product.name" class="info-image" />
-          </div>
+            <div class="guide-section">
+              <h4>배송 안내</h4>
+              <table class="guide-table">
+                <tr>
+                  <th>판매자 지정택배사</th>
+                  <td>한진택배</td>
+                </tr>
+                <tr>
+                  <th>반품배송비</th>
+                  <td>편도 5,000원 (최초 배송비 무료인 경우 10,000원 부과)</td>
+                </tr>
+                <tr>
+                  <th>교환배송비</th>
+                  <td>10,000원</td>
+                </tr>
+                <tr>
+                  <th>보내실 곳</th>
+                  <td>경기도 안양시 동안구 동편로183번길 86 201호 (우 : 13930)</td>
+                </tr>
+              </table>
+            </div>
 
-          <!-- 소재/관리 가이드 -->
-          <div class="care-guide">
-            <h4 class="care-title">CARE GUIDE</h4>
-            <div class="care-items">
-              <div class="care-item">
-                <v-icon size="20" color="#555">mdi-washing-machine</v-icon>
-                <span>찬물 손세탁 권장</span>
-              </div>
-              <div class="care-item">
-                <v-icon size="20" color="#555">mdi-iron</v-icon>
-                <span>낮은 온도 다림질</span>
-              </div>
-              <div class="care-item">
-                <v-icon size="20" color="#555">mdi-tumble-dryer-off</v-icon>
-                <span>건조기 사용 불가</span>
-              </div>
-              <div class="care-item">
-                <v-icon size="20" color="#555">mdi-hanger</v-icon>
-                <span>그늘에서 평평하게 건조</span>
-              </div>
+            <div class="guide-section">
+              <h4>반품/교환 사유에 따른 요청 가능 기간</h4>
+              <ul>
+                <li>구매자 단순 변심은 상품 수령 후 <strong>7일 이내</strong> (구매자 반품배송비 부담)</li>
+                <li>표시/광고와 상이, 계약 내용과 다르게 이행된 경우 상품 수령 후 <strong>3개월 이내</strong>, 또는 표시/광고와 다른 사실을 안 날로부터 <strong>30일 이내</strong> (판매자 반품배송비 부담)</li>
+              </ul>
+            </div>
+
+            <div class="guide-section">
+              <h4>반품/교환 불가능 사유</h4>
+              <ul>
+                <li>반품요청기간이 지난 경우</li>
+                <li>구매자의 책임 있는 사유로 상품 등이 멸실 또는 훼손된 경우 (단, 상품의 내용을 확인하기 위하여 포장 등을 훼손한 경우는 제외)</li>
+                <li>구매자의 책임있는 사유로 포장이 훼손되어 상품가치가 현저히 상실된 경우 (예: 식품, 화장품, 향수류, 음반 등)</li>
+                <li>구매자의 사용 또는 일부 소비에 의하여 상품의 가치가 현저히 감소한 경우 (라벨이 , 떨어진 의류 또는 태그가 , 떨어진 명품 등의 상품인 경우)</li>
+                <li>시간의 경과에 의하여 재판매가 곤란할 정도로 상품 등의 가치가 현저히 감소한 경우</li>
+                <li>고객의 요청사항에 맞춰 제작에 들어가는 맞춤제작상품의 경우 (판매자에게 회복불가능한 손해가 예상되고, 그러한 예정으로 청약철회권 행사가 불가하다는 사실을 서면 동의 받은 경우)</li>
+                <li>복제가 가능한 상품 등의 포장을 훼손한 경우 (CD/DVD/GAME/도서의 경우 포장 개봉 시)</li>
+              </ul>
+            </div>
+
+            <div class="guide-section">
+              <h4>판매자 정보</h4>
+              <table class="guide-table">
+                <tr>
+                  <th>상호명</th>
+                  <td>김충성 (개인)</td>
+                </tr>
+                <tr>
+                  <th>대표자</th>
+                  <td>김충성</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="guide-section guide-notice">
+              <h4>주의사항</h4>
+              <ul class="notice-list">
+                <li>전자상거래 등에서의 소비자보호에 관한 법률에 의한 반품규정이 판매자가 지정한 반품 조건보다 우선합니다.</li>
+                <li>전자상거래 등에서의 소비자보호에 관한 법률로 미성년자 물품을 구매하는 경우, 법정대리인이 동의하지 않으면 미성년자 본인 또는 법정대리인이 구매를 취소할 수 있습니다.</li>
+                <li>전기용품 및 생활용품 안전관리법에 의하여 다른 법률에서 안전관리대상 공산품인 전자제품, 생활용품, 어린이제품은 구매하실 경우에는 해당 제품이 안전인증, 안전확인, 공급자적합성확인, 안전기준준수 적용 제품인지 확인하시기 바랍니다.</li>
+              </ul>
             </div>
           </div>
+
+          <!-- 그라데이션 오버레이 (접혀있을 때만) -->
+          <div v-if="!detailExpanded" class="detail-fade-overlay"></div>
         </div>
 
-        <!-- 배송/교환/반품 탭 -->
-        <div v-if="activeTab === 'guide'" class="detail-content">
-          <div class="guide-section">
-            <h4>배송 안내</h4>
-            <ul>
-              <li>배송비 : 무료</li>
-              <li>배송 기간 : 결제 완료 후 1~3일 이내 출고</li>
-              <li>제주 및 도서 산간 지역은 추가 배송비가 발생할 수 있습니다.</li>
-            </ul>
-          </div>
-          <div class="guide-section">
-            <h4>교환 / 반품 안내</h4>
-            <ul>
-              <li>상품 수령 후 7일 이내 교환/반품 가능</li>
-              <li>단순 변심에 의한 교환/반품 시 배송비 고객 부담</li>
-              <li>상품 하자 시 배송비 무료</li>
-              <li>착용 흔적, 택 제거 시 교환/반품 불가</li>
-            </ul>
-          </div>
-          <div class="guide-section">
-            <h4>환불 안내</h4>
-            <ul>
-              <li>반품 상품 확인 후 3영업일 이내 환불 처리</li>
-              <li>카드 결제 시 카드사 정책에 따라 3~5일 소요</li>
-            </ul>
-          </div>
-        </div>
+        <!-- 더보기 / 접기 버튼 -->
+        <button class="detail-toggle-btn" @click="detailExpanded = !detailExpanded">
+          <span>{{ detailExpanded ? '상세정보 접기' : '상품 상세정보 더보기' }}</span>
+          <v-icon size="18">{{ detailExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+        </button>
       </div>
     </section>
 
@@ -243,29 +302,34 @@ const similarProducts = ref([]);
 const productImages = ref([]);
 const detailBlocks = ref([]);
 const recentProducts = ref([]);
+const detailExpanded = ref(false);
 
 function saveRecent(p) {
   const key = 'osaka_recent';
-  let list = [];
-  try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
-  list = list.filter(item => item.id !== p.id);
-  list.unshift({ id: p.id, name: p.name, price: p.price, image: p.image, category: p.category });
-  if (list.length > 10) list = list.slice(0, 10);
-  localStorage.setItem(key, JSON.stringify(list));
-  recentProducts.value = list;
+  let ids = [];
+  try { ids = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
+  ids = ids.filter(id => id !== p.id);
+  ids.unshift(p.id);
+  if (ids.length > 10) ids = ids.slice(0, 10);
+  localStorage.setItem(key, JSON.stringify(ids));
+  loadRecent();
 }
 
 async function loadRecent() {
   try {
-    const list = JSON.parse(localStorage.getItem('osaka_recent') || '[]');
-    // 서버에 존재하는 상품만 필터링
+    const ids = JSON.parse(localStorage.getItem('osaka_recent') || '[]');
+    if (ids.length === 0) { recentProducts.value = []; return; }
+    // 서버에서 최신 상품 정보 가져오기
     const res = await axios.get('/api/products?limit=100');
-    const serverIds = (res.data.products || res.data).map(p => p.id);
-    const filtered = list.filter(item => serverIds.includes(item.id));
-    if (filtered.length !== list.length) {
-      localStorage.setItem('osaka_recent', JSON.stringify(filtered));
+    const serverProducts = res.data.products || res.data;
+    const serverMap = {};
+    serverProducts.forEach(p => { serverMap[p.id] = p; });
+    // 존재하는 상품만 순서 유지하면서 최신 데이터로 구성
+    const validIds = ids.filter(id => serverMap[id]);
+    if (validIds.length !== ids.length) {
+      localStorage.setItem('osaka_recent', JSON.stringify(validIds));
     }
-    recentProducts.value = filtered;
+    recentProducts.value = validIds.map(id => serverMap[id]);
   } catch {}
 }
 
@@ -276,6 +340,7 @@ async function loadProduct(id) {
     const res = await axios.get(`/api/products/${id}`);
     product.value = res.data;
     activeTab.value = 'info';
+    detailExpanded.value = false;
     // 블로그 블록 파싱
     try {
       detailBlocks.value = JSON.parse(res.data.detail_blocks || '[]');
@@ -547,12 +612,11 @@ function buyNow() {
 
 .related-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 0;
   border-top: 1px solid #e8e8e8;
   border-left: 1px solid #e8e8e8;
 }
-@media (max-width: 900px) { .related-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 480px) { .related-grid { grid-template-columns: repeat(2, 1fr); } }
 
 .related-item {
@@ -607,6 +671,53 @@ function buyNow() {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 24px;
+}
+
+/* 접히는 래퍼 */
+.detail-collapse {
+  position: relative;
+  max-height: 400px;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+.detail-collapse.expanded {
+  max-height: none;
+}
+
+/* 그라데이션 오버레이 */
+.detail-fade-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,1) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 더보기 / 접기 버튼 */
+.detail-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 18px 0;
+  background: none;
+  border: 1px solid #ddd;
+  border-top: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.2s, color 0.2s;
+  margin-bottom: 48px;
+}
+.detail-toggle-btn:hover {
+  background: #f5f5f5;
+  color: #111;
 }
 
 /* 탭 메뉴 */
@@ -789,7 +900,80 @@ function buyNow() {
   font-weight: 700;
 }
 
+/* 반품/교환 안내 박스 */
+.return-notice {
+  background: #f9f9f9;
+  border: 1px solid #e8e8e8;
+  padding: 24px 28px;
+  margin-bottom: 36px;
+  text-align: center;
+}
+.return-notice-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 10px;
+}
+.return-notice-desc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.8;
+}
+
+/* 가이드 테이블 */
+.guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.guide-table th {
+  background: #f9f9f9;
+  border: 1px solid #e8e8e8;
+  padding: 10px 14px;
+  text-align: left;
+  color: #333;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 140px;
+}
+.guide-table td {
+  border: 1px solid #e8e8e8;
+  padding: 10px 14px;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* 주의사항 */
+.guide-notice {
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  padding: 20px 24px;
+  margin-top: 16px;
+}
+.guide-notice h4 {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 10px;
+}
+.notice-list li {
+  font-size: 12px;
+  color: #777;
+  line-height: 2;
+}
+
 @media (max-width: 768px) {
+  .guide-table th {
+    width: 100px;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  .guide-table td {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  .return-notice {
+    padding: 16px 20px;
+  }
   .care-items {
     grid-template-columns: repeat(2, 1fr);
   }
