@@ -172,7 +172,14 @@
               ></textarea>
               <!-- 이미지 블록 -->
               <div v-else class="blog-img-block">
-                <img v-if="block.content" :src="block.content" class="blog-img-preview" />
+                <div v-if="block.content" class="blog-img-has-image">
+                  <img :src="block.content" class="blog-img-preview" />
+                  <label class="blog-img-change-btn">
+                    <v-icon size="14">mdi-pencil</v-icon>
+                    <span>이미지 변경</span>
+                    <input type="file" accept="image/*" style="display:none" @change="uploadBlockImage($event, i)" />
+                  </label>
+                </div>
                 <div v-else class="blog-img-placeholder">
                   <label class="blog-img-upload-btn">
                     <v-icon size="20" color="grey">mdi-upload</v-icon>
@@ -576,12 +583,34 @@ async function confirmDelete(p) {
 .blog-img-block {
   padding: 8px;
 }
+.blog-img-has-image {
+  position: relative;
+}
 .blog-img-preview {
   width: 100%;
   max-height: 300px;
   object-fit: contain;
   display: block;
   background: #f9f9f9;
+}
+.blog-img-change-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.blog-img-change-btn:hover {
+  background: rgba(0,0,0,0.9);
 }
 .blog-img-placeholder {
   display: flex;

@@ -161,7 +161,7 @@
     <section class="section features">
       <div class="features-layout">
         <div class="features-visual">
-          <img src="../image/video2.gif" alt="Velcro Cat Collection" class="features-gif" />
+          <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" class="features-gif" />
           <div class="visual-label-dark">Velcro Cat Collection</div>
         </div>
         <div class="features-list">
@@ -242,18 +242,13 @@
           <router-link to="/contact">CONTACT</router-link>
           <router-link to="/about">BRAND</router-link>
         </div>
-        <div class="footer-sub">
-          <a href="#">회사 소개</a>
-          <span>|</span>
-          <a href="#">개인정보처리방침</a>
-          <span>|</span>
-          <a href="#">이용약관</a>
-          <span>|</span>
-          <router-link to="/contact">고객센터</router-link>
-          <span>|</span>
-          <a href="https://www.instagram.com/" target="_blank">Instagram</a>
+        <div class="footer-biz">
+          <p>상호 : 벨크로캣(velcrocat) | 대표 : 김충성</p>
+          <p>사업자등록번호 : 180-02-03888 | 업태 : 도소매 | 종목 : 전자상거래 소매업</p>
+          <p>주소 : 경기도 안양시 동안구 동편로183번길 86, 201호(관양동)</p>
+          <p>E-MAIL : velcrocat@velcrocat.com</p>
         </div>
-        <p class="footer-copy">© 2026 Velcro Cat / 오사카마켓. All rights reserved.</p>
+        <p class="footer-copy">© 2026 벨크로캣(velcrocat). All rights reserved.</p>
       </div>
     </footer>
 
@@ -1084,16 +1079,15 @@ onUnmounted(() => {
   justify-content: center;
   margin-bottom: 20px;
 }
-.footer-sub a {
-  font-size: 10px;
-  color: #555;
-  text-decoration: none;
-  transition: color 0.2s;
+.footer-biz {
+  text-align: center;
+  margin-bottom: 20px;
 }
-.footer-sub a:hover { color: #fff; }
-.footer-sub span {
-  color: #333;
-  font-size: 10px;
+.footer-biz p {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.9;
+  margin: 0;
 }
 .footer-copy {
   font-size: 11px;
