@@ -68,7 +68,7 @@
       <div class="marquee-track">
         <span class="marquee-item" v-for="n in 2" :key="n">
           VELCROCAT <span class="dot"></span>
-          MILLENNIUM WOOL 100% <span class="dot"></span>
+          PREMIUM WOOL 100% <span class="dot"></span>
           HIGH QUALITY <span class="dot"></span>
           COMFORTABLE <span class="dot"></span>
           MINIMAL <span class="dot"></span>
