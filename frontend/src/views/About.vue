@@ -85,10 +85,7 @@
     <div class="parallax-wrap">
       <!-- 로고 고정 배경 -->
       <div class="parallax-bg">
-        <div class="parallax-logo-group">
-          <img src="../image/osakamarketLOGO6.png" alt="Velcro" class="parallax-logo-top" />
-          <img src="../image/osakamarketLOGO7.png" alt="Cat" class="parallax-logo-bottom" />
-        </div>
+        <img src="../image/osakamarketLOGO6.png" alt="Velcro Cat" class="parallax-logo" />
       </div>
       <!-- 스크롤 콘텐츠 -->
       <div class="parallax-content">
