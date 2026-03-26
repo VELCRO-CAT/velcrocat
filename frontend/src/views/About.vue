@@ -333,11 +333,13 @@ function handleScroll() {
   const scrollTop = page.scrollTop;
   const heroHeight = window.innerHeight;
   if (scrollTop > heroHeight - 80) {
-    nav.style.opacity = '0';
-    nav.style.pointerEvents = 'none';
+    nav.style.background = '#fff';
+    nav.classList.add('nav-light');
+    nav.classList.add('nav-logo-only');
   } else {
-    nav.style.opacity = '1';
-    nav.style.pointerEvents = 'auto';
+    nav.style.background = 'transparent';
+    nav.classList.remove('nav-light');
+    nav.classList.remove('nav-logo-only');
   }
 }
 
@@ -406,6 +408,11 @@ onUnmounted(() => {
 .brand-nav.nav-light .sub-social:hover { color: #111; }
 .brand-nav.nav-light .nav-btn { border-color: #111; color: #111; }
 .brand-nav.nav-light .nav-btn:hover { background: #111; color: #fff; }
+
+/* 로고만 보이기 (메뉴 숨김) */
+.brand-nav.nav-logo-only .brand-nav-main,
+.brand-nav.nav-logo-only .brand-nav-sub,
+.brand-nav.nav-logo-only .brand-nav-btns { opacity: 0; pointer-events: none; }
 
 .brand-nav-logo {
   display: flex;
