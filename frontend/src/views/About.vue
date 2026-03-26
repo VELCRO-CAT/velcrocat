@@ -331,12 +331,21 @@ function handleScroll() {
   const page = document.querySelector('.about-page');
   if (!nav || !page) return;
   const scrollTop = page.scrollTop;
-  const heroHeight = window.innerHeight;
-  if (scrollTop > heroHeight - 80) {
-    nav.style.background = 'transparent';
+  // 히어로(100vh) + 마키(~60px) + 로고 섹션(100vh) 이후부터 nav-light
+  const marquee = page.querySelector('.marquee-section');
+  const parallax = page.querySelector('.parallax-wrap');
+  const darkEnd = (marquee ? marquee.offsetTop + marquee.offsetHeight : window.innerHeight) +
+                  (parallax ? parallax.offsetHeight : 0);
+  if (scrollTop > darkEnd - 80) {
+    nav.style.background = '#fff';
     nav.classList.add('nav-light');
+  } else if (scrollTop > 80) {
+    nav.style.background = 'rgba(0,0,0,0.7)';
+    nav.style.backdropFilter = 'blur(8px)';
+    nav.classList.remove('nav-light');
   } else {
     nav.style.background = 'transparent';
+    nav.style.backdropFilter = 'none';
     nav.classList.remove('nav-light');
   }
 }
