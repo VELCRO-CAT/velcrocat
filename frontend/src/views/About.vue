@@ -239,7 +239,7 @@
       <div class="footer-inner">
         <div class="footer-logo">
           <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
-          <span>VELCRO CAT</span>
+          <span>VELCROCAT</span>
         </div>
         <div class="footer-nav">
           <router-link to="/home">HOME</router-link>
@@ -395,7 +395,7 @@ onUnmounted(() => {
   margin-left: 60px;
 }
 .brand-nav-logo img {
-  height: 32px;
+  height: 26px;
   width: auto;
   object-fit: contain;
 }
