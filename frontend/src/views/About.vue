@@ -46,11 +46,7 @@
       </div>
       <div class="hero-content">
         <span class="hero-label hero-reveal">Brand Concept</span>
-        <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" class="hero-logo hero-reveal" />
-        <h1 class="hero-title hero-reveal hero-reveal-2">
-          VELCRO<br>
-          <span class="accent">CAT</span>
-        </h1>
+        <img src="../image/osakamarketLOGO6.png" alt="Velcro Cat" class="hero-main-logo hero-reveal hero-reveal-2" />
         <p class="hero-desc hero-reveal hero-reveal-3">
           일상과 스타일의 경계를 허무는 브랜드.<br>
           편안함 속에서 나만의 감각을 찾다.
@@ -605,6 +601,13 @@ onUnmounted(() => {
   object-fit: contain;
   display: block;
   margin: 0 auto -10px;
+}
+.hero-main-logo {
+  height: 280px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 16px;
 }
 .hero-desc {
   font-size: 17px;
