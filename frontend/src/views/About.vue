@@ -731,22 +731,22 @@ onUnmounted(() => {
   height: 100px;
   width: auto;
   object-fit: contain;
-  margin-bottom: -14px;
+  margin-bottom: -6px;
 }
 .parallax-velcro {
   font-size: 80px;
   font-weight: 900;
   color: #111;
   letter-spacing: 6px;
-  line-height: 1.1;
+  line-height: 1;
 }
 .parallax-cat-text {
   font-size: 68px;
   font-weight: 900;
   color: #111;
   letter-spacing: 8px;
-  line-height: 1.1;
-  margin-top: -6px;
+  line-height: 1;
+  margin-top: -2px;
 }
 
 .parallax-logo-group {
