@@ -333,13 +333,11 @@ function handleScroll() {
   const scrollTop = page.scrollTop;
   const heroHeight = window.innerHeight;
   if (scrollTop > heroHeight - 80) {
-    nav.style.background = '#fff';
-    nav.style.backdropFilter = 'none';
-    nav.classList.add('nav-light');
+    nav.style.opacity = '0';
+    nav.style.pointerEvents = 'none';
   } else {
-    nav.style.background = 'transparent';
-    nav.style.backdropFilter = 'none';
-    nav.classList.remove('nav-light');
+    nav.style.opacity = '1';
+    nav.style.pointerEvents = 'auto';
   }
 }
 
@@ -730,7 +728,7 @@ onUnmounted(() => {
   pointer-events: none;
 }
 .parallax-cat {
-  height: 100px;
+  height: 130px;
   width: auto;
   object-fit: contain;
   margin-bottom: -6px;
