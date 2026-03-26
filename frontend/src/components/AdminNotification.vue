@@ -59,6 +59,11 @@ async function fetchNotifications() {
       toShow.forEach(n => {
         knownIds.value.add(n.id);
         visibleNotifs.value.unshift(n);
+
+        // 회원가입 알림은 한 번 뜨고 바로 읽음 처리
+        if (n.type === 'user') {
+          axios.patch(`/api/admin/notifications/${n.id}/read`).catch(() => {});
+        }
       });
 
       if (visibleNotifs.value.length > 5) {

@@ -52,9 +52,11 @@ router.get('/inquiries', adminMiddleware, async (req, res) => {
   res.json(inquiries);
 });
 
-// 문의 읽음 처리
+// 문의 읽음 처리 + 해당 알림도 읽음 처리
 router.patch('/inquiries/:id/read', adminMiddleware, async (req, res) => {
   await db('inquiries').where('id', req.params.id).update({ status: 'read' });
+  // 해당 문의의 알림도 읽음 처리
+  await db('notifications').where('type', 'inquiry').where('reference_id', String(req.params.id)).update({ is_read: true });
   res.json({ message: '읽음 처리되었습니다' });
 });
 
