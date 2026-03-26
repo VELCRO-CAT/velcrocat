@@ -20,6 +20,15 @@ router.post('/', authMiddleware, async (req, res) => {
     status: status || 'paid'
   });
 
+  // 관리자 알림 생성
+  await db('notifications').insert({
+    type: 'order',
+    title: '새 주문이 접수되었습니다',
+    message: `${req.user.name}님이 ₩${Number(total).toLocaleString()} 주문`,
+    reference_id: orderNo,
+    is_read: false
+  });
+
   res.status(201).json({ message: '주문이 완료되었습니다', orderNo });
 });
 

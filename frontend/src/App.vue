@@ -206,6 +206,9 @@
         </div>
       </div>
     </footer>
+
+    <!-- 관리자 알림 (관리자 로그인 시에만) -->
+    <AdminNotification v-if="authStore.isAdmin && isAdminPage" />
   </v-app>
 </template>
 
@@ -215,6 +218,7 @@ import { useCartStore } from './stores/cart';
 import { useAuthStore } from './stores/auth';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
+import AdminNotification from './components/AdminNotification.vue';
 
 const route = useRoute();
 const isAboutPage = computed(() => route.path === '/about');

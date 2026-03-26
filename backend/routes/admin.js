@@ -81,6 +81,25 @@ router.delete('/inquiries/:id', adminMiddleware, async (req, res) => {
   res.json({ message: '삭제되었습니다' });
 });
 
+// 알림 목록 (읽지 않은 것만)
+router.get('/notifications', adminMiddleware, async (req, res) => {
+  const notifications = await db('notifications').orderBy('created_at', 'desc');
+  const unread = notifications.filter(n => !n.is_read);
+  res.json({ notifications: unread, total: notifications.length });
+});
+
+// 알림 전체 읽음 처리 (반드시 :id 라우트보다 위에)
+router.patch('/notifications/read-all', adminMiddleware, async (req, res) => {
+  await db('notifications').where('is_read', false).update({ is_read: true });
+  res.json({ message: '전체 읽음 처리되었습니다' });
+});
+
+// 알림 개별 읽음 처리
+router.patch('/notifications/:id/read', adminMiddleware, async (req, res) => {
+  await db('notifications').where('id', req.params.id).update({ is_read: true });
+  res.json({ message: '읽음 처리되었습니다' });
+});
+
 router.get('/users', adminMiddleware, async (req, res) => {
   const users = await db('users').select('id', 'name', 'email', 'role', 'created_at');
   res.json(users);

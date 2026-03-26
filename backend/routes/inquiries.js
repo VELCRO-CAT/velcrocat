@@ -15,6 +15,15 @@ router.post('/', async (req, res) => {
     message,
     status: 'unread'
   });
+  // 관리자 알림 생성
+  await db('notifications').insert({
+    type: 'inquiry',
+    title: '새 문의가 접수되었습니다',
+    message: `${name}님 - ${inquiryType || '기타'} 문의`,
+    reference_id: String(id),
+    is_read: false
+  });
+
   res.status(201).json({ id, message: '문의가 접수되었습니다' });
 });
 
