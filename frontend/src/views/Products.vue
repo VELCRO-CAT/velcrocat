@@ -371,8 +371,8 @@ function toggleWish(product) {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #fff;
-  border: 1.5px solid #111;
+  background: none;
+  border: none;
   width: 34px;
   height: 34px;
   display: flex;
@@ -380,19 +380,16 @@ function toggleWish(product) {
   justify-content: center;
   cursor: pointer;
   z-index: 4;
-  color: #111;
+  color: #999;
   opacity: 0;
-  transition: opacity 0.2s, background 0.15s;
+  transition: opacity 0.2s, color 0.15s;
 }
 .product-item:hover .product-wish-btn { opacity: 1; }
 .product-wish-btn.active {
   opacity: 1;
-  background: #fff;
   color: #f59e0b;
-  border-color: #f59e0b;
 }
 .product-wish-btn:hover {
-  border-color: #f59e0b;
   color: #f59e0b;
 }
 .product-cart-btn {
