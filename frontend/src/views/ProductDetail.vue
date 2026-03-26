@@ -762,7 +762,7 @@ function buyNow() {
 .brand-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   padding: 24px 32px;
   background: #fafafa;
   border: 1px solid #eee;
@@ -779,12 +779,13 @@ function buyNow() {
   letter-spacing: 3px;
   color: #111;
   line-height: 1;
+  margin-bottom: -1px;
 }
 .brand-header-sub {
   font-size: 11px;
   color: #999;
   letter-spacing: 2px;
-  margin-top: 1px;
+  margin-top: 0;
 }
 
 /* 상품 설명 블록 */
