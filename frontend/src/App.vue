@@ -848,18 +848,19 @@ function logout() {
 .footer-bottom-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 .footer-logo {
-  height: 36px;
+  height: 28px;
   width: auto;
   object-fit: contain;
 }
 .footer-brand-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   color: #111;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
+  line-height: 28px;
 }
 .footer-copy {
   color: #999;
