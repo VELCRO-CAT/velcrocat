@@ -333,13 +333,11 @@ function handleScroll() {
   const scrollTop = page.scrollTop;
   const heroHeight = window.innerHeight;
   if (scrollTop > heroHeight - 80) {
-    nav.style.background = '#fff';
+    nav.style.background = 'transparent';
     nav.classList.add('nav-light');
-    nav.classList.add('nav-logo-only');
   } else {
     nav.style.background = 'transparent';
     nav.classList.remove('nav-light');
-    nav.classList.remove('nav-logo-only');
   }
 }
 
@@ -409,10 +407,14 @@ onUnmounted(() => {
 .brand-nav.nav-light .nav-btn { border-color: #111; color: #111; }
 .brand-nav.nav-light .nav-btn:hover { background: #111; color: #fff; }
 
-/* 로고만 보이기 (메뉴 숨김) */
-.brand-nav.nav-logo-only .brand-nav-main,
-.brand-nav.nav-logo-only .brand-nav-sub,
-.brand-nav.nav-logo-only .brand-nav-btns { opacity: 0; pointer-events: none; }
+/* 흰 배경 영역: 네비 메뉴는 콘텐츠 뒤로, 로고만 앞에 */
+.brand-nav.nav-light {
+  z-index: 1;
+}
+.brand-nav.nav-light .brand-nav-logo {
+  position: relative;
+  z-index: 201;
+}
 
 .brand-nav-logo {
   display: flex;
@@ -507,6 +509,8 @@ onUnmounted(() => {
   padding: 100px 24px;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 100;
   opacity: 0;
   transform: translateY(40px);
   transition: opacity 0.7s ease, transform 0.7s ease;
@@ -787,7 +791,7 @@ onUnmounted(() => {
 }
 .parallax-content {
   position: relative;
-  z-index: 1;
+  z-index: 100;
 }
 .parallax-spacer {
   height: 100vh;
