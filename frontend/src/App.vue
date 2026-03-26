@@ -1,7 +1,7 @@
 <template>
   <v-app style="background:#fff" :class="{ 'about-active': isAboutPage }">
     <!-- 로고 영역 (Brand 페이지에서는 숨김) -->
-    <div v-if="!isAboutPage" class="logo-section">
+    <div v-if="!isAboutPage && !isAdminPage" class="logo-section">
       <router-link to="/" class="logo-link hvr-bob">
         <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="logo-cat" />
         <div class="logo-text">VELCROCAT</div>
@@ -10,13 +10,13 @@
     </div>
 
     <!-- 관리자 버튼 (우측 상단 고정) -->
-    <router-link v-if="authStore.isAdmin" to="/admin" class="admin-fab hvr-grow" @click="ensureAdminFlag">
+    <router-link v-if="authStore.isAdmin && !isAdminPage" to="/admin" class="admin-fab hvr-grow" @click="ensureAdminFlag">
       <v-icon size="16">mdi-shield-crown</v-icon>
       관리자
     </router-link>
 
     <!-- 네비게이션 바 (Brand 페이지에서는 숨김) -->
-    <nav v-if="!isAboutPage" class="sticky-nav">
+    <nav v-if="!isAboutPage && !isAdminPage" class="sticky-nav">
       <div class="nav-inner">
         <!-- 모바일 햄버거 버튼 (좌측) -->
         <button class="hamburger" @click="menuOpen = true" aria-label="메뉴">
@@ -150,7 +150,7 @@
     </v-main>
 
     <!-- 푸터 -->
-    <footer v-if="!isAboutPage" class="site-footer">
+    <footer v-if="!isAboutPage && !isAdminPage" class="site-footer">
       <div class="footer-inner">
         <!-- 상단: 4컬럼 -->
         <div class="footer-cols">
@@ -218,6 +218,7 @@ import axios from 'axios';
 
 const route = useRoute();
 const isAboutPage = computed(() => route.path === '/about');
+const isAdminPage = computed(() => route.path.startsWith('/admin'));
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();

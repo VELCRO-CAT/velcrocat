@@ -1,7 +1,7 @@
 <template>
   <AdminSidebar />
 
-  <v-main class="admin-main bg-grey-lighten-4">
+  <v-main class="bg-grey-lighten-4 admin-page">
     <v-container class="admin-container">
       <h1 class="dash-title">대시보드</h1>
       <p class="dash-sub">오사카마켓 관리자 페이지</p>
@@ -187,9 +187,6 @@ onMounted(async () => {
 
 /* 모바일 */
 @media (max-width: 768px) {
-  .admin-main {
-    padding-top: 52px !important;
-  }
   .admin-container {
     padding: 16px;
   }
