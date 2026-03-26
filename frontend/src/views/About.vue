@@ -734,23 +734,23 @@ onUnmounted(() => {
   margin-bottom: -20px;
 }
 .parallax-velcro {
-  font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
   font-size: 120px;
   font-weight: 900;
-  font-style: italic;
-  color: #111;
-  letter-spacing: 4px;
-  line-height: 1;
-}
-.parallax-cat-text {
-  font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
-  font-size: 100px;
-  font-weight: 900;
-  font-style: italic;
   color: #111;
   letter-spacing: 8px;
-  line-height: 1;
-  margin-top: -10px;
+  line-height: 1.1;
+}
+.parallax-cat-text {
+  font-size: 100px;
+  font-weight: 900;
+  color: #888;
+  letter-spacing: 8px;
+  line-height: 1.1;
+  margin-top: -6px;
+  background: linear-gradient(135deg, #e0e0e0, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .parallax-logo-group {
