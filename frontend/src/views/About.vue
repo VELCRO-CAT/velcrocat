@@ -333,7 +333,7 @@ function handleScroll() {
   const scrollTop = page.scrollTop;
   const heroHeight = window.innerHeight;
   if (scrollTop > heroHeight - 80) {
-    nav.style.background = 'transparent';
+    nav.style.background = '#fff';
     nav.classList.add('nav-light');
   } else {
     nav.style.background = 'transparent';
@@ -407,13 +407,7 @@ onUnmounted(() => {
 .brand-nav.nav-light .nav-btn { border-color: #111; color: #111; }
 .brand-nav.nav-light .nav-btn:hover { background: #111; color: #fff; }
 
-/* 흰 배경 영역: 메뉴 숨기고 로고만 표시 */
-.brand-nav.nav-light .brand-nav-main,
-.brand-nav.nav-light .brand-nav-sub,
-.brand-nav.nav-light .brand-nav-btns {
-  visibility: hidden;
-  pointer-events: none;
-}
+/* 흰 배경 영역: 흰 배경 + 검은 글씨 */
 
 .brand-nav-logo {
   display: flex;
