@@ -8,7 +8,7 @@
         <span class="brand-nav-name">VELCRO CAT</span>
       </router-link>
       <div class="brand-nav-main">
-        <router-link to="/">HOME</router-link>
+        <router-link to="/home">HOME</router-link>
         <a href="#concept" @click.prevent="scrollTo('concept')">CONCEPT</a>
         <a href="#pickup" @click.prevent="scrollTo('pickup')">PICK UP</a>
         <router-link to="/products">SHOP</router-link>
@@ -237,10 +237,10 @@
           <span>VELCRO CAT</span>
         </div>
         <div class="footer-nav">
-          <router-link to="/">HOME</router-link>
+          <router-link to="/home">HOME</router-link>
           <router-link to="/products">SHOP</router-link>
           <router-link to="/contact">CONTACT</router-link>
-          <router-link to="/about">BRAND</router-link>
+          <router-link to="/">BRAND</router-link>
           <a href="https://smartstore.naver.com/vcat" target="_blank">NAVER STORE</a>
         </div>
         <div class="footer-biz">

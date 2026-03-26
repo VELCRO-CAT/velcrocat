@@ -27,7 +27,7 @@
 
         <!-- PC 네비 -->
         <div class="nav-desktop">
-          <router-link to="/" class="nav-link hvr-underline-from-center">HOME</router-link>
+          <router-link to="/home" class="nav-link hvr-underline-from-center">HOME</router-link>
           <router-link to="/products" class="nav-link hvr-underline-from-center">SHOP</router-link>
           <!-- CATEGORY 드롭다운 -->
           <div class="nav-category" @mouseenter="catOpen = true" @mouseleave="catOpen = false; activeGender = null">
@@ -68,7 +68,7 @@
             </transition>
           </div>
           <router-link to="/contact" class="nav-link hvr-underline-from-center">CONTACT</router-link>
-          <router-link to="/about" class="nav-link hvr-underline-from-center">BRAND</router-link>
+          <router-link to="/" class="nav-link hvr-underline-from-center">BRAND</router-link>
           <template v-if="authStore.isLoggedIn">
             <a class="nav-link hvr-underline-from-center" @click="logout" style="cursor:pointer">SIGN OUT</a>
           </template>
@@ -133,7 +133,7 @@
           <button class="drawer-close" @click="menuOpen = false">✕</button>
         </div>
         <nav class="drawer-nav">
-          <router-link to="/" class="drawer-link" @click="menuOpen = false">HOME</router-link>
+          <router-link to="/home" class="drawer-link" @click="menuOpen = false">HOME</router-link>
           <router-link to="/products" class="drawer-link" @click="menuOpen = false">SHOP</router-link>
           <!-- 모바일 카테고리 -->
           <button class="drawer-link drawer-cat-toggle" @click="drawerCatOpen = !drawerCatOpen">
@@ -164,7 +164,7 @@
             </div>
           </div>
           <router-link to="/contact" class="drawer-link" @click="menuOpen = false">CONTACT</router-link>
-          <router-link to="/about" class="drawer-link" @click="menuOpen = false">BRAND</router-link>
+          <router-link to="/" class="drawer-link" @click="menuOpen = false">BRAND</router-link>
           <div class="drawer-divider" />
           <template v-if="authStore.isLoggedIn">
             <a class="drawer-link" @click="logout" style="cursor:pointer">SIGN OUT</a>
@@ -215,8 +215,8 @@
           <!-- 상점 메뉴 -->
           <div class="footer-col">
             <h4>상점 메뉴</h4>
-            <router-link to="/" class="footer-menu-link">메인페이지</router-link>
-            <router-link to="/about" class="footer-menu-link">회사소개</router-link>
+            <router-link to="/home" class="footer-menu-link">메인페이지</router-link>
+            <router-link to="/" class="footer-menu-link">회사소개</router-link>
             <router-link to="/products" class="footer-menu-link">전체상품</router-link>
             <router-link to="/contact" class="footer-menu-link">고객문의</router-link>
           </div>
@@ -255,7 +255,7 @@ import AdminNotification from './components/AdminNotification.vue';
 import { useWishlistStore } from './stores/wishlist';
 
 const route = useRoute();
-const isAboutPage = computed(() => route.path === '/about');
+const isAboutPage = computed(() => route.path === '/' || route.path === '/about');
 const isAdminPage = computed(() => route.path.startsWith('/admin'));
 
 const cartStore = useCartStore();

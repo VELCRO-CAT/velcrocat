@@ -19,7 +19,8 @@ import AdminNaver from '../views/admin/Naver.vue';
 import AdminUsers from '../views/admin/Users.vue';
 
 const routes = [
-  { path: '/', component: Home },
+  { path: '/', component: About },
+  { path: '/home', component: Home },
   { path: '/products', component: Products },
   { path: '/products/:id', component: ProductDetail },
   { path: '/cart', component: Cart },
@@ -28,7 +29,7 @@ const routes = [
   { path: '/checkout', component: Checkout, meta: { requiresAuth: true } },
   { path: '/order-complete', component: OrderComplete },
   { path: '/contact', component: Contact },
-  { path: '/about', component: About },
+  { path: '/about', redirect: '/' },
   { path: '/privacy', component: Privacy },
   { path: '/admin-login', component: AdminLogin, meta: { requiresConsole: true } },
   { path: '/admin', component: AdminDashboard, meta: { requiresAdmin: true } },
