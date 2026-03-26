@@ -643,11 +643,15 @@ function buyNow() {
   aspect-ratio: 1/1;
   overflow: hidden;
   background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12%;
 }
 .related-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   transition: transform 0.35s;
 }
