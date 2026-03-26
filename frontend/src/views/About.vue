@@ -331,13 +331,28 @@ function handleScroll() {
   const page = document.querySelector('.about-page');
   if (!nav || !page) return;
   const scrollTop = page.scrollTop;
-  const heroHeight = window.innerHeight;
-  if (scrollTop > heroHeight - 80) {
+  const marquee = page.querySelector('.marquee-section');
+  const parallax = page.querySelector('.parallax-wrap');
+  const darkEnd = (marquee ? marquee.offsetTop + marquee.offsetHeight : window.innerHeight) +
+                  (parallax ? parallax.offsetHeight : 0);
+  if (scrollTop > darkEnd - 80) {
+    // 흰 콘텐츠 영역: 흰 배경 + 로고만
     nav.style.background = '#fff';
+    nav.style.backdropFilter = 'none';
     nav.classList.add('nav-light');
-  } else {
-    nav.style.background = 'transparent';
+    nav.classList.add('nav-logo-only');
+  } else if (scrollTop > 80) {
+    // 마키+로고 영역: 반투명 검은 배경
+    nav.style.background = 'rgba(0,0,0,0.7)';
+    nav.style.backdropFilter = 'blur(8px)';
     nav.classList.remove('nav-light');
+    nav.classList.remove('nav-logo-only');
+  } else {
+    // 히어로 최상단: 투명
+    nav.style.background = 'transparent';
+    nav.style.backdropFilter = 'none';
+    nav.classList.remove('nav-light');
+    nav.classList.remove('nav-logo-only');
   }
 }
 
@@ -394,6 +409,14 @@ onUnmounted(() => {
   flex-wrap: nowrap;
   overflow: hidden;
 }
+/* 흰 배경 영역: 로고만 보이고 메뉴 숨김 */
+.brand-nav.nav-logo-only .brand-nav-main,
+.brand-nav.nav-logo-only .brand-nav-sub,
+.brand-nav.nav-logo-only .brand-nav-btns {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* 흰 배경일 때 검은 글씨 */
 .brand-nav.nav-light .brand-nav-name { color: #111; }
 .brand-nav.nav-light .brand-nav-main a { color: rgba(0,0,0,0.5); }
