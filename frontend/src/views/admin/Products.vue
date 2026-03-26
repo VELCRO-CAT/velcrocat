@@ -408,11 +408,15 @@ async function confirmDelete(p) {
   aspect-ratio: 1/1;
   overflow: hidden;
   background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12%;
 }
 .product-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.3s;
 }
 .product-card:hover .product-img { transform: scale(1.03); }
