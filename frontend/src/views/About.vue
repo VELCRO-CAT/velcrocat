@@ -71,11 +71,12 @@
     <div class="marquee-section">
       <div class="marquee-track">
         <span class="marquee-item" v-for="n in 2" :key="n">
+          VELCROCAT <span class="dot"></span>
+          MILLENNIUM WOOL 100% <span class="dot"></span>
+          HIGH QUALITY <span class="dot"></span>
           COMFORTABLE <span class="dot"></span>
           MINIMAL <span class="dot"></span>
           EVERYDAY <span class="dot"></span>
-          JAPANESE STYLE <span class="dot"></span>
-          VELCRO CAT <span class="dot"></span>
         </span>
       </div>
     </div>
