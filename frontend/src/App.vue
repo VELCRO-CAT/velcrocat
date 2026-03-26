@@ -318,7 +318,7 @@ function logout() {
   color: #111;
 }
 .logo-cat {
-  height: 150px;
+  height: 180px;
   width: auto;
   object-fit: contain;
   display: block;
