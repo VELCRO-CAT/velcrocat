@@ -332,11 +332,13 @@ function handleScroll() {
   if (!nav || !page) return;
   const scrollTop = page.scrollTop;
   const heroHeight = window.innerHeight;
-  nav.style.background = 'transparent';
-  nav.style.backdropFilter = 'none';
   if (scrollTop > heroHeight - 80) {
+    nav.style.background = '#fff';
+    nav.style.backdropFilter = 'none';
     nav.classList.add('nav-light');
   } else {
+    nav.style.background = 'transparent';
+    nav.style.backdropFilter = 'none';
     nav.classList.remove('nav-light');
   }
 }
