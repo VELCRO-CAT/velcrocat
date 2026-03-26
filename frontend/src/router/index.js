@@ -9,6 +9,7 @@ import Checkout from '../views/Checkout.vue';
 import OrderComplete from '../views/OrderComplete.vue';
 import Contact from '../views/Contact.vue';
 import About from '../views/About.vue';
+import Privacy from '../views/Privacy.vue';
 import AdminLogin from '../views/admin/Login.vue';
 import AdminDashboard from '../views/admin/Dashboard.vue';
 import AdminProducts from '../views/admin/Products.vue';
@@ -28,6 +29,7 @@ const routes = [
   { path: '/order-complete', component: OrderComplete },
   { path: '/contact', component: Contact },
   { path: '/about', component: About },
+  { path: '/privacy', component: Privacy },
   { path: '/admin-login', component: AdminLogin, meta: { requiresConsole: true } },
   { path: '/admin', component: AdminDashboard, meta: { requiresAdmin: true } },
   { path: '/admin/products', component: AdminProducts, meta: { requiresAdmin: true } },
