@@ -408,7 +408,7 @@ onUnmounted(() => {
 .brand-nav-main {
   display: flex;
   gap: 20px;
-  margin-left: 300px;
+  margin-left: 800px;
   flex-shrink: 0;
 }
 .brand-nav-main a {
