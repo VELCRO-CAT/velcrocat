@@ -9,62 +9,63 @@
       <v-progress-circular v-if="loading" indeterminate color="grey-darken-3" class="d-block mx-auto my-12" />
 
       <template v-else>
-        <!-- 총 매출 (상단 강조) -->
-        <div class="revenue-card">
-          <v-icon size="28" color="white">mdi-currency-krw</v-icon>
-          <div class="revenue-amount">₩{{ Number(stats.totalRevenue || 0).toLocaleString() }}</div>
-          <div class="revenue-label">총 매출</div>
-        </div>
-
         <!-- 통계 카드 -->
         <div class="stat-grid">
-          <div class="stat-card">
-            <v-icon size="28" color="blue">mdi-hanger</v-icon>
+          <router-link to="/admin/products" class="stat-card">
+            <div class="stat-icon">
+              <v-icon size="22" color="#111">mdi-hanger</v-icon>
+            </div>
             <div class="stat-num">{{ stats.totalProducts }}</div>
             <div class="stat-label">상품 수</div>
-          </div>
-          <div class="stat-card">
-            <v-icon size="28" color="orange">mdi-receipt</v-icon>
+          </router-link>
+          <router-link to="/admin/orders" class="stat-card">
+            <div class="stat-icon">
+              <v-icon size="22" color="#111">mdi-receipt-text-outline</v-icon>
+            </div>
             <div class="stat-num">{{ stats.totalOrders }}</div>
             <div class="stat-label">주문 수</div>
-          </div>
-          <div class="stat-card">
-            <v-icon size="28" color="purple">mdi-account-group</v-icon>
+          </router-link>
+          <router-link to="/admin/users" class="stat-card">
+            <div class="stat-icon">
+              <v-icon size="22" color="#111">mdi-account-group-outline</v-icon>
+            </div>
             <div class="stat-num">{{ stats.totalUsers }}</div>
             <div class="stat-label">회원 수</div>
-          </div>
-          <div class="stat-card">
-            <v-icon size="28" color="teal">mdi-email-outline</v-icon>
+          </router-link>
+          <router-link to="/admin/inquiries" class="stat-card">
+            <div class="stat-icon">
+              <v-icon size="22" color="#111">mdi-email-outline</v-icon>
+            </div>
             <div class="stat-num">{{ stats.totalInquiries }}</div>
             <div class="stat-label">문의 수</div>
-          </div>
+          </router-link>
         </div>
 
         <!-- 빠른 메뉴 -->
         <h2 class="quick-title">빠른 메뉴</h2>
         <div class="quick-grid">
           <router-link to="/admin/products" class="quick-card">
-            <v-icon size="22" color="#555">mdi-hanger</v-icon>
+            <v-icon size="20" color="#111">mdi-hanger</v-icon>
             <span>상품 관리</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>
           </router-link>
           <router-link to="/admin/orders" class="quick-card">
-            <v-icon size="22" color="#555">mdi-receipt</v-icon>
+            <v-icon size="20" color="#111">mdi-receipt-text-outline</v-icon>
             <span>주문 관리</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>
           </router-link>
           <router-link to="/admin/users" class="quick-card">
-            <v-icon size="22" color="#555">mdi-account-group</v-icon>
+            <v-icon size="20" color="#111">mdi-account-group-outline</v-icon>
             <span>회원 관리</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>
           </router-link>
           <router-link to="/admin/inquiries" class="quick-card">
-            <v-icon size="22" color="#555">mdi-email-outline</v-icon>
+            <v-icon size="20" color="#111">mdi-email-outline</v-icon>
             <span>문의 관리</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>
           </router-link>
           <router-link to="/admin/naver" class="quick-card">
-            <v-icon size="22" color="#555">mdi-store-outline</v-icon>
+            <v-icon size="20" color="#111">mdi-store-outline</v-icon>
             <span>네이버 스마트스토어</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>
           </router-link>
@@ -103,53 +104,52 @@ onMounted(async () => {
 .dash-sub {
   font-size: 12px;
   color: #999;
-  margin-bottom: 24px;
-}
-
-/* 총 매출 카드 */
-.revenue-card {
-  background: #111;
-  padding: 28px 24px;
-  text-align: center;
-  margin-bottom: 20px;
-  border-radius: 8px;
-}
-.revenue-amount {
-  font-size: 28px;
-  font-weight: 900;
-  color: #fff;
-  margin: 8px 0 4px;
-}
-.revenue-label {
-  font-size: 12px;
-  color: #888;
-  letter-spacing: 1px;
+  margin-bottom: 28px;
 }
 
 /* 통계 그리드 */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: 0;
+  margin-bottom: 36px;
+  border: 1.5px solid #111;
 }
 .stat-card {
   background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  padding: 20px 12px;
+  border-right: 1.5px solid #111;
+  padding: 24px 12px;
   text-align: center;
+  text-decoration: none;
+  color: #111;
+  transition: background 0.15s;
+}
+.stat-card:last-child {
+  border-right: none;
+}
+.stat-card:hover {
+  background: #f5f5f5;
+}
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
 }
 .stat-num {
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 28px;
+  font-weight: 900;
   color: #111;
-  margin: 8px 0 4px;
+  margin-bottom: 4px;
 }
 .stat-label {
   font-size: 11px;
-  color: #999;
-  letter-spacing: 0.5px;
+  color: #777;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
 
 /* 빠른 메뉴 */
@@ -162,27 +162,30 @@ onMounted(async () => {
 .quick-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
+  border: 1.5px solid #111;
 }
 .quick-card {
   display: flex;
   align-items: center;
   gap: 12px;
   background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  padding: 16px;
+  border-bottom: 1.5px solid #111;
+  padding: 16px 20px;
   text-decoration: none;
-  color: #333;
+  color: #111;
   font-size: 13px;
   font-weight: 600;
   transition: background 0.15s;
+}
+.quick-card:last-child {
+  border-bottom: none;
 }
 .quick-card span {
   flex: 1;
 }
 .quick-card:hover {
-  background: #f8f8f8;
+  background: #f5f5f5;
 }
 
 /* 모바일 */
@@ -193,18 +196,15 @@ onMounted(async () => {
   .dash-title {
     font-size: 18px;
   }
-  .revenue-card {
-    padding: 20px 16px;
-  }
-  .revenue-amount {
-    font-size: 24px;
-  }
   .stat-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
   }
-  .stat-card {
-    padding: 16px 8px;
+  .stat-card:nth-child(2) {
+    border-right: none;
+  }
+  .stat-card:nth-child(1),
+  .stat-card:nth-child(2) {
+    border-bottom: 1.5px solid #111;
   }
   .stat-num {
     font-size: 22px;
