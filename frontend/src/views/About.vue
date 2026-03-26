@@ -581,7 +581,7 @@ onUnmounted(() => {
   width: auto;
   object-fit: contain;
   display: block;
-  margin: 0 auto 4px;
+  margin: 0 auto -10px;
 }
 .hero-desc {
   font-size: 17px;
