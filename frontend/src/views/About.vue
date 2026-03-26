@@ -332,20 +332,11 @@ function handleScroll() {
   if (!nav || !page) return;
   const scrollTop = page.scrollTop;
   const heroHeight = window.innerHeight;
+  nav.style.background = 'transparent';
+  nav.style.backdropFilter = 'none';
   if (scrollTop > heroHeight - 80) {
-    nav.style.background = '#fff';
-    nav.style.backdropFilter = 'none';
-    nav.style.borderBottom = '1px solid #e0e0e0';
     nav.classList.add('nav-light');
-  } else if (scrollTop > 80) {
-    nav.style.background = 'rgba(0,0,0,0.85)';
-    nav.style.backdropFilter = 'blur(10px)';
-    nav.style.borderBottom = 'none';
-    nav.classList.remove('nav-light');
   } else {
-    nav.style.background = 'transparent';
-    nav.style.backdropFilter = 'none';
-    nav.style.borderBottom = 'none';
     nav.classList.remove('nav-light');
   }
 }
