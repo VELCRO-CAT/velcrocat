@@ -407,13 +407,12 @@ onUnmounted(() => {
 .brand-nav.nav-light .nav-btn { border-color: #111; color: #111; }
 .brand-nav.nav-light .nav-btn:hover { background: #111; color: #fff; }
 
-/* 흰 배경 영역: 네비 메뉴는 콘텐츠 뒤로, 로고만 앞에 */
-.brand-nav.nav-light {
-  z-index: 1;
-}
-.brand-nav.nav-light .brand-nav-logo {
-  position: relative;
-  z-index: 201;
+/* 흰 배경 영역: 메뉴 숨기고 로고만 표시 */
+.brand-nav.nav-light .brand-nav-main,
+.brand-nav.nav-light .brand-nav-sub,
+.brand-nav.nav-light .brand-nav-btns {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .brand-nav-logo {
