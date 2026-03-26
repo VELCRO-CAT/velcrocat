@@ -743,14 +743,10 @@ onUnmounted(() => {
 .parallax-cat-text {
   font-size: 100px;
   font-weight: 900;
-  color: #888;
+  color: #111;
   letter-spacing: 8px;
   line-height: 1.1;
   margin-top: -6px;
-  background: linear-gradient(135deg, #e0e0e0, #888);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .parallax-logo-group {
