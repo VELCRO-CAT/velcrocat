@@ -24,6 +24,16 @@ router.post('/register', async (req, res) => {
   const hashed = await bcrypt.hash(password, 10);
   const [id] = await db('users').insert({ name, email, password: hashed, role: 'user' });
   const user = { id, name, email, role: 'user' };
+
+  // 관리자 알림 생성
+  await db('notifications').insert({
+    type: 'user',
+    title: '새 회원이 가입했습니다',
+    message: `${name}님 (${email})`,
+    reference_id: String(id),
+    is_read: false
+  });
+
   res.status(201).json({ message: '회원가입이 완료되었습니다', token: generateToken(user), user });
 });
 

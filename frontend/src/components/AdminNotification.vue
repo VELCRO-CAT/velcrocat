@@ -11,7 +11,7 @@
         <div class="notif-left">
           <div class="notif-icon">
             <v-icon size="20" color="#111">
-              {{ n.type === 'order' ? 'mdi-receipt-text-outline' : 'mdi-email-outline' }}
+              {{ n.type === 'order' ? 'mdi-receipt-text-outline' : n.type === 'user' ? 'mdi-account-plus-outline' : 'mdi-email-outline' }}
             </v-icon>
           </div>
         </div>
@@ -86,6 +86,8 @@ function handleClick(n) {
   dismiss(n);
   if (n.type === 'order') {
     router.push('/admin/orders');
+  } else if (n.type === 'user') {
+    router.push('/admin/users');
   } else {
     router.push('/admin/inquiries');
   }
