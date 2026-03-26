@@ -3,7 +3,7 @@
 
     <!-- MRU식 네비게이션 -->
     <nav class="brand-nav">
-      <router-link to="/" class="brand-nav-logo">
+      <router-link to="/home" class="brand-nav-logo">
         <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
         <span class="brand-nav-name">VELCROCAT</span>
       </router-link>
