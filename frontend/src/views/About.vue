@@ -85,7 +85,10 @@
     <div class="parallax-wrap">
       <!-- 로고 고정 배경 -->
       <div class="parallax-bg">
-        <img src="../image/osakamarketLOGO3.png" alt="Velcro Cat" class="parallax-logo" />
+        <div class="parallax-logo-group">
+          <img src="../image/osakamarketLOGO6.png" alt="Velcro" class="parallax-logo-top" />
+          <img src="../image/osakamarketLOGO7.png" alt="Cat" class="parallax-logo-bottom" />
+        </div>
       </div>
       <!-- 스크롤 콘텐츠 -->
       <div class="parallax-content">
@@ -712,6 +715,27 @@ onUnmounted(() => {
   justify-content: center;
   background: #fff;
   z-index: 0;
+}
+.parallax-logo-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  user-select: none;
+  pointer-events: none;
+}
+.parallax-logo-top {
+  height: 55vh;
+  max-height: 420px;
+  width: auto;
+  object-fit: contain;
+}
+.parallax-logo-bottom {
+  height: 14vh;
+  max-height: 110px;
+  width: auto;
+  object-fit: contain;
+  margin-top: -10px;
 }
 .parallax-logo {
   height: 80vh;
