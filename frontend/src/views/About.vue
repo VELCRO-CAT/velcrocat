@@ -343,8 +343,8 @@ function handleScroll() {
     nav.classList.add('nav-logo-only');
   } else if (scrollTop > 80) {
     // 마키+로고 영역: 반투명 검은 배경
-    nav.style.background = 'rgba(0,0,0,0.7)';
-    nav.style.backdropFilter = 'blur(8px)';
+    nav.style.background = 'rgba(0,0,0,0.4)';
+    nav.style.backdropFilter = 'blur(6px)';
     nav.classList.remove('nav-light');
     nav.classList.remove('nav-logo-only');
   } else {
@@ -1006,8 +1006,8 @@ onUnmounted(() => {
 .second-hero {
   position: relative;
   width: 100%;
-  height: 100vh;
-  min-height: 600px;
+  height: 80vh;
+  min-height: 480px;
   overflow: hidden;
   margin-bottom: 0;
   z-index: 100;
