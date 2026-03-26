@@ -54,6 +54,10 @@
           일상과 스타일의 경계를 허무는 브랜드.<br>
           편안함 속에서 나만의 감각을 찾다.
         </p>
+        <div class="hero-btns hero-reveal hero-reveal-4">
+          <router-link to="/products" class="second-hero-btn">SHOP 바로가기</router-link>
+          <router-link to="/contact" class="second-hero-btn btn-outline">문의하기</router-link>
+        </div>
       </div>
       <!-- 스크롤 인디케이터 (우측 하단, hero-content 밖) -->
       <div class="scroll-indicator">
@@ -578,6 +582,15 @@ onUnmounted(() => {
   letter-spacing: 0.5px;
   max-width: 480px;
   margin: 0 auto;
+}
+.hero-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 32px;
+}
+.hero-reveal-4 {
+  transition-delay: 1.2s;
 }
 /* 스크롤 인디케이터 (우측 하단) */
 .scroll-indicator {
