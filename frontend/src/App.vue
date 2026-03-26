@@ -322,7 +322,7 @@ function logout() {
   width: auto;
   object-fit: contain;
   display: block;
-  margin-bottom: -18px;
+  margin-bottom: -10px;
 }
 .logo-text {
   font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
