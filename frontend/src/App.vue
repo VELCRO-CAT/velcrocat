@@ -322,6 +322,7 @@ function logout() {
   width: auto;
   object-fit: contain;
   display: block;
+  margin-bottom: -8px;
 }
 .logo-text {
   font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
@@ -330,7 +331,7 @@ function logout() {
   letter-spacing: 8px;
   line-height: 1;
   color: #111;
-  margin-top: 4px;
+  margin-top: 0;
 }
 .logo-sub {
   font-family: 'Arial', 'Helvetica Neue', sans-serif;
@@ -338,7 +339,7 @@ function logout() {
   font-weight: 400;
   letter-spacing: 14px;
   color: #111;
-  margin-top: 2px;
+  margin-top: -2px;
   padding-left: 14px;
 }
 

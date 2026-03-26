@@ -778,12 +778,13 @@ function buyNow() {
   font-weight: 800;
   letter-spacing: 3px;
   color: #111;
+  line-height: 1;
 }
 .brand-header-sub {
   font-size: 11px;
   color: #999;
   letter-spacing: 2px;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 /* 상품 설명 블록 */
