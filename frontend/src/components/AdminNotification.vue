@@ -8,10 +8,12 @@
         class="notif-toast"
         @click="handleClick(n)"
       >
-        <div class="notif-icon">
-          <v-icon size="18" :color="n.type === 'order' ? '#2a9d5c' : '#e8913a'">
-            {{ n.type === 'order' ? 'mdi-receipt' : 'mdi-email-outline' }}
-          </v-icon>
+        <div class="notif-left">
+          <div class="notif-icon">
+            <v-icon size="20" color="#111">
+              {{ n.type === 'order' ? 'mdi-receipt-text-outline' : 'mdi-email-outline' }}
+            </v-icon>
+          </div>
         </div>
         <div class="notif-body">
           <p class="notif-title">{{ n.title }}</p>
@@ -19,7 +21,7 @@
           <p class="notif-time">{{ timeAgo(n.created_at) }}</p>
         </div>
         <button class="notif-close" @click.stop="dismiss(n)">
-          <v-icon size="14" color="#999">mdi-close</v-icon>
+          <v-icon size="16" color="#111">mdi-close</v-icon>
         </button>
       </div>
     </transition-group>
@@ -53,25 +55,23 @@ async function fetchNotifications() {
     const newNotifs = res.data.notifications.filter(n => !knownIds.value.has(n.id));
 
     if (newNotifs.length > 0) {
-      // 최대 5개만 표시
       const toShow = newNotifs.slice(0, 5);
       toShow.forEach(n => {
         knownIds.value.add(n.id);
         visibleNotifs.value.unshift(n);
       });
 
-      // 5개 초과 시 오래된 것 제거
       if (visibleNotifs.value.length > 5) {
         visibleNotifs.value = visibleNotifs.value.slice(0, 5);
       }
 
-      // 8초 후 자동 사라짐
+      // 10초 후 자동 사라짐
       setTimeout(() => {
         toShow.forEach(n => {
           const idx = visibleNotifs.value.findIndex(v => v.id === n.id);
           if (idx !== -1) visibleNotifs.value.splice(idx, 1);
         });
-      }, 8000);
+      }, 10000);
     }
   } catch {}
 }
@@ -79,7 +79,6 @@ async function fetchNotifications() {
 function dismiss(n) {
   const idx = visibleNotifs.value.findIndex(v => v.id === n.id);
   if (idx !== -1) visibleNotifs.value.splice(idx, 1);
-  // 읽음 처리
   axios.patch(`/api/admin/notifications/${n.id}/read`).catch(() => {});
 }
 
@@ -93,9 +92,7 @@ function handleClick(n) {
 }
 
 onMounted(() => {
-  // 첫 로드 시 바로 확인
   fetchNotifications();
-  // 30초마다 폴링
   pollTimer = setInterval(fetchNotifications, 30000);
 });
 
@@ -112,36 +109,36 @@ onUnmounted(() => {
   z-index: 9999;
   display: flex;
   flex-direction: column-reverse;
-  gap: 8px;
-  max-width: 360px;
+  gap: 10px;
+  width: 400px;
 }
 
 .notif-toast {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 14px;
   background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 10px;
-  padding: 14px 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1.5px solid #111;
+  border-radius: 0;
+  padding: 18px 20px;
   cursor: pointer;
   transition: all 0.2s;
 }
 .notif-toast:hover {
-  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
+  background: #fafafa;
+}
+
+.notif-left {
+  flex-shrink: 0;
 }
 
 .notif-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: #f5f5f5;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #111;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
 }
 
 .notif-body {
@@ -150,35 +147,42 @@ onUnmounted(() => {
 }
 
 .notif-title {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   color: #111;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
 }
 .notif-msg {
-  font-size: 11px;
-  color: #666;
-  margin-bottom: 4px;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .notif-time {
   font-size: 10px;
-  color: #aaa;
+  color: #999;
+  letter-spacing: 0.3px;
 }
 
 .notif-close {
   background: none;
-  border: none;
+  border: 1.5px solid #ddd;
   cursor: pointer;
-  padding: 2px;
+  padding: 4px;
   flex-shrink: 0;
-  opacity: 0;
-  transition: opacity 0.15s;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
 }
-.notif-toast:hover .notif-close {
-  opacity: 1;
+.notif-close:hover {
+  border-color: #111;
+  background: #f5f5f5;
 }
 
 /* 애니메이션 */
@@ -202,7 +206,7 @@ onUnmounted(() => {
     right: 12px;
     bottom: 12px;
     left: 12px;
-    max-width: none;
+    width: auto;
   }
 }
 </style>
