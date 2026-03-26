@@ -994,6 +994,7 @@ onUnmounted(() => {
   min-height: 600px;
   overflow: hidden;
   margin-bottom: 0;
+  z-index: 100;
 }
 .second-hero + .brand-footer {
   margin-top: 0;
@@ -1157,6 +1158,8 @@ onUnmounted(() => {
   background: #111;
   padding: 48px 32px 32px;
   margin-top: 0;
+  position: relative;
+  z-index: 100;
 }
 .footer-inner {
   max-width: 1200px;
