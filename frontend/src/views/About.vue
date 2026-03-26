@@ -577,11 +577,11 @@ onUnmounted(() => {
   background-clip: text;
 }
 .hero-logo {
-  height: 80px;
+  height: 120px;
   width: auto;
   object-fit: contain;
   display: block;
-  margin: 0 auto 12px;
+  margin: 0 auto 4px;
 }
 .hero-desc {
   font-size: 17px;
