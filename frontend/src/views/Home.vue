@@ -188,7 +188,11 @@ function toggleWish(product) {
   position: relative;
   overflow: hidden;
   background: #fff;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1 / 1;
+  padding: 12%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .product-img {
   width: 100%;
