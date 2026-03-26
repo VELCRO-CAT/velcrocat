@@ -385,8 +385,6 @@ onUnmounted(() => {
   min-height: 52px;
   flex-wrap: nowrap;
   overflow: hidden;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 .brand-nav-logo {
   display: flex;
