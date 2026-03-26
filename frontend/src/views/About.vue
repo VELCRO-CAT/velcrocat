@@ -731,11 +731,11 @@ onUnmounted(() => {
   object-fit: contain;
 }
 .parallax-logo-bottom {
-  height: 14vh;
-  max-height: 110px;
+  height: 22vh;
+  max-height: 180px;
   width: auto;
   object-fit: contain;
-  margin-top: -10px;
+  margin-top: -8px;
 }
 .parallax-logo {
   height: 80vh;
