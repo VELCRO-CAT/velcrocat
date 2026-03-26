@@ -328,22 +328,21 @@ function startFirstVideo() {
 // 스크롤 시 네비바 배경 + 글씨 색 전환
 function handleScroll() {
   const nav = document.querySelector('.brand-nav');
-  if (!nav) return;
+  const page = document.querySelector('.about-page');
+  if (!nav || !page) return;
+  const scrollTop = page.scrollTop;
   const heroHeight = window.innerHeight;
-  if (window.scrollY > heroHeight - 80) {
-    // 흰 배경 영역 → 흰 배경 + 검은 글씨
+  if (scrollTop > heroHeight - 80) {
     nav.style.background = '#fff';
     nav.style.backdropFilter = 'none';
     nav.style.borderBottom = '1px solid #e0e0e0';
     nav.classList.add('nav-light');
-  } else if (window.scrollY > 80) {
-    // 히어로 중간 → 반투명 검은 배경 + 흰 글씨
+  } else if (scrollTop > 80) {
     nav.style.background = 'rgba(0,0,0,0.85)';
     nav.style.backdropFilter = 'blur(10px)';
     nav.style.borderBottom = 'none';
     nav.classList.remove('nav-light');
   } else {
-    // 최상단 → 투명 + 흰 글씨
     nav.style.background = 'transparent';
     nav.style.backdropFilter = 'none';
     nav.style.borderBottom = 'none';
@@ -352,6 +351,8 @@ function handleScroll() {
 }
 
 onMounted(() => {
+  const page = document.querySelector('.about-page');
+  if (page) page.addEventListener('scroll', handleScroll);
   window.addEventListener('scroll', handleScroll);
   loadPickup();
   // 히어로 텍스트 순차 등장
@@ -377,6 +378,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  const page = document.querySelector('.about-page');
+  if (page) page.removeEventListener('scroll', handleScroll);
   window.removeEventListener('scroll', handleScroll);
 });
 </script>
