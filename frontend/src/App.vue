@@ -78,6 +78,39 @@
           </template>
         </div>
 
+        <!-- 찜 목록 -->
+        <div class="nav-wish" @mouseenter="wishOpen = true" @mouseleave="wishOpen = false">
+          <button class="nav-wish-btn">
+            <v-badge :content="wishlistStore.count" :model-value="wishlistStore.count > 0" color="black">
+              <v-icon size="20" color="#111">mdi-star-outline</v-icon>
+            </v-badge>
+          </button>
+          <!-- 찜 드롭다운 -->
+          <div v-if="wishOpen" class="wish-dropdown">
+            <div class="wish-header">
+              <span>찜 목록</span>
+              <span class="wish-count">{{ wishlistStore.count }}개</span>
+            </div>
+            <div v-if="wishlistStore.items.length === 0" class="wish-empty">
+              찜한 상품이 없습니다
+            </div>
+            <div v-else class="wish-list">
+              <div v-for="item in wishlistStore.items" :key="item.id" class="wish-item">
+                <router-link :to="`/products/${item.id}`" class="wish-item-link" @click="wishOpen = false">
+                  <img :src="item.image" :alt="item.name" class="wish-item-img" />
+                  <div class="wish-item-info">
+                    <p class="wish-item-name">{{ item.name }}</p>
+                    <p class="wish-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+                  </div>
+                </router-link>
+                <button class="wish-item-remove" @click="wishlistStore.remove(item.id)">
+                  <v-icon size="14" color="#999">mdi-close</v-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- 카트 (항상 표시) -->
         <router-link to="/cart" class="nav-cart hvr-buzz-out">
           <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
@@ -219,6 +252,7 @@ import { useAuthStore } from './stores/auth';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import AdminNotification from './components/AdminNotification.vue';
+import { useWishlistStore } from './stores/wishlist';
 
 const route = useRoute();
 const isAboutPage = computed(() => route.path === '/about');
@@ -226,6 +260,8 @@ const isAdminPage = computed(() => route.path.startsWith('/admin'));
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const wishlistStore = useWishlistStore();
+const wishOpen = ref(false);
 const router = useRouter();
 const menuOpen = ref(false);
 
@@ -346,6 +382,116 @@ function logout() {
   display: flex;
   align-items: center;
 }
+
+/* 찜 + 카트 우측 정렬 */
+.nav-wish {
+  position: absolute;
+  right: 52px;
+  display: flex;
+  align-items: center;
+  padding: 9px 0;
+}
+.nav-wish-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #111;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
+}
+.nav-wish-btn:hover { opacity: 0.5; }
+
+/* 찜 드롭다운 */
+.wish-dropdown {
+  position: absolute;
+  top: 100%;
+  right: -10px;
+  width: 320px;
+  background: #fff;
+  border: 1.5px solid #111;
+  z-index: 150;
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+.wish-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 13px;
+  font-weight: 800;
+  color: #111;
+}
+.wish-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #999;
+}
+.wish-empty {
+  padding: 40px 16px;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+}
+.wish-list {
+  overflow-y: auto;
+  max-height: 340px;
+}
+.wish-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+}
+.wish-item:hover { background: #fafafa; }
+.wish-item:last-child { border-bottom: none; }
+.wish-item-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #111;
+  min-width: 0;
+}
+.wish-item-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border: 1px solid #e8e8e8;
+  flex-shrink: 0;
+}
+.wish-item-info {
+  flex: 1;
+  min-width: 0;
+}
+.wish-item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+.wish-item-price {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111;
+}
+.wish-item-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.wish-item-remove:hover { opacity: 0.5; }
 
 .nav-cart {
   position: absolute;

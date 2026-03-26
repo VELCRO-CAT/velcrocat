@@ -22,6 +22,9 @@
             class="product-img"
             :class="{ active: (slideIndex[product.id] || 0) === si }"
           />
+          <button class="product-wish-btn" :class="{ active: wishlistStore.isWished(product.id) }" @click.prevent="toggleWish(product)">
+            <v-icon size="18">{{ wishlistStore.isWished(product.id) ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
+          </button>
           <span v-if="product.stock === 0" class="sold-out-badge">SOLD OUT</span>
           <button v-else class="product-cart-btn hvr-grow" @click.prevent="addToCart(product)" aria-label="장바구니 담기">
             <v-icon size="18">mdi-cart-plus</v-icon>
@@ -36,7 +39,7 @@
 
     <v-snackbar v-model="snackbar" color="#222" timeout="2000" location="bottom right">
       <v-icon start color="white">mdi-check-circle</v-icon>
-      <span style="color:#fff">장바구니에 담았습니다</span>
+      <span style="color:#fff">{{ snackMsg }}</span>
     </v-snackbar>
   </div>
 </template>
@@ -45,11 +48,14 @@
 import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
+import { useWishlistStore } from '../stores/wishlist';
 
 const cartStore = useCartStore();
+const wishlistStore = useWishlistStore();
 const products = ref([]);
 const loading = ref(true);
 const snackbar = ref(false);
+const snackMsg = ref('');
 const slideIndex = reactive({});
 const slideTimers = {};
 
@@ -109,6 +115,13 @@ onMounted(async () => {
 
 function addToCart(product) {
   cartStore.addItem(product);
+  snackMsg.value = '장바구니에 담았습니다';
+  snackbar.value = true;
+}
+
+function toggleWish(product) {
+  wishlistStore.toggle(product);
+  snackMsg.value = wishlistStore.isWished(product.id) ? '찜 목록에 추가했습니다' : '찜 목록에서 제거했습니다';
   snackbar.value = true;
 }
 </script>
@@ -180,6 +193,37 @@ function addToCart(product) {
 }
 .product-item:hover .product-img {
   transform: scale(1.05);
+}
+
+/* 찜 버튼 (별) */
+.product-wish-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fff;
+  border: 1.5px solid #111;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 4;
+  color: #111;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.15s;
+}
+.product-item:hover .product-wish-btn {
+  opacity: 1;
+}
+.product-wish-btn.active {
+  opacity: 1;
+  background: #111;
+  color: #fff;
+}
+.product-wish-btn:hover {
+  background: #111;
+  color: #fff;
 }
 
 .product-cart-btn {
