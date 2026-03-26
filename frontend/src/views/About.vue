@@ -5,7 +5,7 @@
     <nav class="brand-nav">
       <router-link to="/" class="brand-nav-logo">
         <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
-        <span class="brand-nav-name">VELCRO CAT</span>
+        <span class="brand-nav-name">VELCROCAT</span>
       </router-link>
       <div class="brand-nav-main">
         <router-link to="/home">HOME</router-link>
