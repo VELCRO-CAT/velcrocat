@@ -1006,8 +1006,8 @@ onUnmounted(() => {
 .second-hero {
   position: relative;
   width: 100%;
-  height: 80vh;
-  min-height: 480px;
+  height: 65vh;
+  min-height: 400px;
   overflow: hidden;
   margin-bottom: 0;
   z-index: 100;
