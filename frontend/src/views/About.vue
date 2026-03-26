@@ -376,7 +376,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 18px 48px;
+  padding: 24px 48px;
   gap: 20px;
   background: transparent;
   backdrop-filter: none;
@@ -392,6 +392,7 @@ onUnmounted(() => {
   gap: 8px;
   text-decoration: none;
   flex-shrink: 0;
+  margin-left: 20px;
 }
 .brand-nav-logo img {
   height: 32px;
@@ -407,7 +408,7 @@ onUnmounted(() => {
 .brand-nav-main {
   display: flex;
   gap: 20px;
-  margin-left: auto;
+  margin-left: 40px;
   flex-shrink: 0;
 }
 .brand-nav-main a {
