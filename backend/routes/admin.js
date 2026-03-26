@@ -5,12 +5,16 @@ const db = require('../db');
 const { adminMiddleware } = require('../middleware/auth');
 
 // 관리자 전용 로그인 (아이디/비밀번호 방식)
+const ADMIN_ACCOUNTS = [
+  { username: 'osakamarket0316', password: 'osakamarket0316' },
+  { username: 'wnwlgh0719', password: 'wnwlgh0719' }
+];
+
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  const ADMIN_ID = 'osakamarket0316';
-  const ADMIN_PW = 'osakamarket0316';
 
-  if (username !== ADMIN_ID || password !== ADMIN_PW) {
+  const account = ADMIN_ACCOUNTS.find(a => a.username === username && a.password === password);
+  if (!account) {
     return res.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다' });
   }
 
@@ -22,7 +26,7 @@ router.post('/login', async (req, res) => {
     process.env.JWT_SECRET || 'osakamarket_secret',
     { expiresIn: '7d' }
   );
-  res.json({ token, user: { id: admin.id, name: admin.name, role: admin.role } });
+  res.json({ token, user: { id: admin.id, name: admin.name, role: admin.role, username: account.username } });
 });
 
 router.get('/stats', adminMiddleware, async (req, res) => {

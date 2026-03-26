@@ -3,7 +3,7 @@
     <div class="admin-nav-inner">
       <!-- 좌측: 로고 -->
       <router-link to="/admin" class="admin-nav-logo">
-        ADMIN
+        {{ adminUsername }}
       </router-link>
 
       <!-- 중앙: 메뉴 (PC) -->
@@ -80,8 +80,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useAuthStore } from '../stores/auth';
 
+const authStore = useAuthStore();
+const adminUsername = computed(() => authStore.user?.username || 'ADMIN');
 const mobileOpen = ref(false);
 const isMobile = ref(false);
 
