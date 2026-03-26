@@ -389,10 +389,10 @@ onUnmounted(() => {
 .brand-nav-logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   text-decoration: none;
   flex-shrink: 0;
-  margin-left: 20px;
+  margin-left: 60px;
 }
 .brand-nav-logo img {
   height: 32px;
@@ -402,7 +402,7 @@ onUnmounted(() => {
 .brand-nav-name {
   font-size: 15px;
   font-weight: 800;
-  letter-spacing: 3px;
+  letter-spacing: 1px;
   color: #fff;
 }
 .brand-nav-main {
