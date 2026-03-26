@@ -318,11 +318,11 @@ function logout() {
   color: #111;
 }
 .logo-cat {
-  height: 120px;
+  height: 150px;
   width: auto;
   object-fit: contain;
   display: block;
-  margin-bottom: -10px;
+  margin-bottom: -16px;
 }
 .logo-text {
   font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
@@ -339,7 +339,7 @@ function logout() {
   font-weight: 400;
   letter-spacing: 14px;
   color: #111;
-  margin-top: -2px;
+  margin-top: -4px;
   padding-left: 14px;
 }
 
