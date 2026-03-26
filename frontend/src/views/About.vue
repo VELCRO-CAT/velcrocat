@@ -735,7 +735,7 @@ onUnmounted(() => {
   max-height: 180px;
   width: auto;
   object-fit: contain;
-  margin-top: -8px;
+  margin-top: 4px;
 }
 .parallax-logo {
   height: 80vh;
