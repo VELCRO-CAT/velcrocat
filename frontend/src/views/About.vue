@@ -728,7 +728,7 @@ onUnmounted(() => {
   pointer-events: none;
 }
 .parallax-cat {
-  height: 140px;
+  height: 100px;
   width: auto;
   object-fit: contain;
   margin-bottom: -14px;
