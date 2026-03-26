@@ -146,7 +146,7 @@ function startSlide(product) {
   slideTimers[product.id] = setInterval(() => {
     const current = slideIndex[product.id] || 0;
     slideIndex[product.id] = (current + 1) % imgs.length;
-  }, 1200);
+  }, 2500);
 }
 
 function stopSlide(product) {
