@@ -155,7 +155,7 @@
 
             <div class="guide-section">
               <h4>배송 안내</h4>
-              <table class="guide-table">
+              <table class="guide-table"><tbody>
                 <tr>
                   <th>판매자 지정택배사</th>
                   <td>한진택배</td>
@@ -172,7 +172,7 @@
                   <th>보내실 곳</th>
                   <td>경기도 안양시 동안구 동편로183번길 86 201호 (우 : 13930)</td>
                 </tr>
-              </table>
+              </tbody></table>
             </div>
 
             <div class="guide-section">
@@ -198,7 +198,7 @@
 
             <div class="guide-section">
               <h4>판매자 정보</h4>
-              <table class="guide-table">
+              <table class="guide-table"><tbody>
                 <tr>
                   <th>상호명</th>
                   <td>김충성 (개인)</td>
@@ -207,7 +207,7 @@
                   <th>대표자</th>
                   <td>김충성</td>
                 </tr>
-              </table>
+              </tbody></table>
             </div>
 
             <div class="guide-section guide-notice">
