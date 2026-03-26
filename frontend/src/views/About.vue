@@ -977,6 +977,7 @@ onUnmounted(() => {
 .second-hero-btn.btn-outline {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.5);
+  color: #fff;
 }
 .second-hero-btn.btn-outline:hover {
   border-color: #fff;
