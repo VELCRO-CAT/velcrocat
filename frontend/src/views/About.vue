@@ -1021,7 +1021,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: #0a0a0a;
+  background: #fff;
 }
 .second-hero-overlay {
   position: absolute;
