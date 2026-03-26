@@ -728,20 +728,20 @@ onUnmounted(() => {
   pointer-events: none;
 }
 .parallax-cat {
-  height: 200px;
+  height: 140px;
   width: auto;
   object-fit: contain;
-  margin-bottom: -20px;
+  margin-bottom: -14px;
 }
 .parallax-velcro {
-  font-size: 120px;
+  font-size: 80px;
   font-weight: 900;
   color: #111;
-  letter-spacing: 8px;
+  letter-spacing: 6px;
   line-height: 1.1;
 }
 .parallax-cat-text {
-  font-size: 100px;
+  font-size: 68px;
   font-weight: 900;
   color: #111;
   letter-spacing: 8px;
