@@ -375,6 +375,7 @@ onUnmounted(() => {
   z-index: 200;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   padding: 18px 48px;
   gap: 20px;
   background: transparent;
@@ -384,6 +385,8 @@ onUnmounted(() => {
   min-height: 52px;
   flex-wrap: nowrap;
   overflow: hidden;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 .brand-nav-logo {
   display: flex;
