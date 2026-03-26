@@ -1018,10 +1018,14 @@ onUnmounted(() => {
 }
 .pickup-card:hover { transform: translateY(-4px); }
 .pickup-img-wrap {
-  aspect-ratio: 3/4;
+  aspect-ratio: 1/1;
   overflow: hidden;
   background: #f5f5f5;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12%;
 }
 .pickup-img-wrap img {
   width: 100%;
