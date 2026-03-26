@@ -52,7 +52,7 @@
     <div v-else-if="products.length" class="product-grid-wrap">
       <div class="product-grid">
         <router-link
-          v-for="(product, idx) in products"
+          v-for="(product, idx) in sortedProducts"
           :key="product.id"
           :to="`/products/${product.id}`"
           class="product-item reveal"
@@ -120,6 +120,13 @@ const total = ref(0);
 const loading = ref(true);
 const snackbar = ref(false);
 const snackMsg = ref('');
+
+const sortedProducts = computed(() => {
+  const wished = products.value.filter(p => wishlistStore.isWished(p.id));
+  const rest = products.value.filter(p => !wishlistStore.isWished(p.id));
+  return [...wished, ...rest];
+});
+
 const slideIndex = reactive({});
 const slideTimers = {};
 
@@ -380,12 +387,13 @@ function toggleWish(product) {
 .product-item:hover .product-wish-btn { opacity: 1; }
 .product-wish-btn.active {
   opacity: 1;
-  background: #111;
-  color: #fff;
+  background: #fff;
+  color: #f59e0b;
+  border-color: #f59e0b;
 }
 .product-wish-btn:hover {
-  background: #111;
-  color: #fff;
+  border-color: #f59e0b;
+  color: #f59e0b;
 }
 .product-cart-btn {
   position: absolute;
