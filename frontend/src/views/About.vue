@@ -46,6 +46,7 @@
       </div>
       <div class="hero-content">
         <span class="hero-label hero-reveal">Brand Concept</span>
+        <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" class="hero-logo hero-reveal hero-reveal-2" />
         <h1 class="hero-title hero-reveal hero-reveal-2">
           VELCRO<br>
           <span class="accent">CAT</span>
@@ -574,6 +575,12 @@ onUnmounted(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+.hero-logo {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 16px;
 }
 .hero-desc {
   font-size: 17px;
