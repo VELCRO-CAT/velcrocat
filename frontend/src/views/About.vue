@@ -1222,27 +1222,30 @@ onUnmounted(() => {
   .parallax-card { padding: 60px 20px; }
   .parallax-spacer { height: 80vh; }
   .brand-nav {
-    padding: 12px 16px;
-    flex-wrap: wrap;
+    padding: 14px 20px;
+    flex-wrap: nowrap;
   }
-  .brand-nav-logo img { height: 24px; }
-  .brand-nav-name { font-size: 11px; letter-spacing: 2px; }
+  .brand-nav-logo {
+    margin-left: 0;
+    gap: 6px;
+  }
+  .brand-nav-logo img { height: 22px; }
+  .brand-nav-name { font-size: 12px; letter-spacing: 1px; }
   .brand-nav-main {
-    order: 3;
-    width: 100%;
-    justify-content: center;
-    gap: 14px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    margin-top: 10px;
+    margin-left: auto;
+    gap: 12px;
   }
-  .brand-nav-main a { font-size: 10px; letter-spacing: 1px; }
+  .brand-nav-main a { font-size: 9px; letter-spacing: 1px; }
   .brand-nav-sub { display: none; }
   .brand-nav-btns { display: none; }
   .pickup-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-title {
     font-size: 42px;
     letter-spacing: 4px;
+  }
+  .hero-main-logo {
+    height: 200px;
+    margin: 0 auto 12px;
   }
   .story-layout {
     flex-direction: column;
