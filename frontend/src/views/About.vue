@@ -325,16 +325,29 @@ function startFirstVideo() {
   }, 2000);
 }
 
-// 스크롤 시 네비바 배경 추가
+// 스크롤 시 네비바 배경 + 글씨 색 전환
 function handleScroll() {
   const nav = document.querySelector('.brand-nav');
   if (!nav) return;
-  if (window.scrollY > 80) {
+  const heroHeight = window.innerHeight;
+  if (window.scrollY > heroHeight - 80) {
+    // 흰 배경 영역 → 흰 배경 + 검은 글씨
+    nav.style.background = '#fff';
+    nav.style.backdropFilter = 'none';
+    nav.style.borderBottom = '1px solid #e0e0e0';
+    nav.classList.add('nav-light');
+  } else if (window.scrollY > 80) {
+    // 히어로 중간 → 반투명 검은 배경 + 흰 글씨
     nav.style.background = 'rgba(0,0,0,0.85)';
     nav.style.backdropFilter = 'blur(10px)';
+    nav.style.borderBottom = 'none';
+    nav.classList.remove('nav-light');
   } else {
+    // 최상단 → 투명 + 흰 글씨
     nav.style.background = 'transparent';
     nav.style.backdropFilter = 'none';
+    nav.style.borderBottom = 'none';
+    nav.classList.remove('nav-light');
   }
 }
 
@@ -387,6 +400,19 @@ onUnmounted(() => {
   flex-wrap: nowrap;
   overflow: hidden;
 }
+/* 흰 배경일 때 검은 글씨 */
+.brand-nav.nav-light .brand-nav-name { color: #111; }
+.brand-nav.nav-light .brand-nav-main a { color: rgba(0,0,0,0.5); }
+.brand-nav.nav-light .brand-nav-main a:hover,
+.brand-nav.nav-light .brand-nav-main a.router-link-active { color: #111; }
+.brand-nav.nav-light .brand-nav-sub { border-left-color: rgba(0,0,0,0.15); }
+.brand-nav.nav-light .sub-link { color: rgba(0,0,0,0.4); }
+.brand-nav.nav-light .sub-link:hover { color: #111; }
+.brand-nav.nav-light .sub-social { color: rgba(0,0,0,0.4); }
+.brand-nav.nav-light .sub-social:hover { color: #111; }
+.brand-nav.nav-light .nav-btn { border-color: #111; color: #111; }
+.brand-nav.nav-light .nav-btn:hover { background: #111; color: #fff; }
+
 .brand-nav-logo {
   display: flex;
   align-items: center;
