@@ -33,10 +33,15 @@
         <v-btn type="submit" color="#111" block size="large" :loading="loading">로그인</v-btn>
       </v-form>
 
-      <p class="text-center text-body-2 mt-4 reveal reveal-3">
-        계정이 없으신가요?
-        <router-link to="/register" style="color:#111;font-weight:600">회원가입</router-link>
-      </p>
+      <div class="text-center mt-4 reveal reveal-3">
+        <p class="text-body-2 mb-1">
+          <router-link to="/forgot-password" style="color:#888;font-weight:500;text-decoration:none">비밀번호를 잊으셨나요?</router-link>
+        </p>
+        <p class="text-body-2">
+          계정이 없으신가요?
+          <router-link to="/register" style="color:#111;font-weight:600">회원가입</router-link>
+        </p>
+      </div>
     </v-card>
   </v-container>
 </template>

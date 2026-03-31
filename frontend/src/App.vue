@@ -70,6 +70,7 @@
           <router-link to="/contact" class="nav-link hvr-underline-from-center">CONTACT</router-link>
           <router-link to="/" class="nav-link hvr-underline-from-center">BRAND</router-link>
           <template v-if="authStore.isLoggedIn">
+            <router-link to="/mypage" class="nav-link hvr-underline-from-center">MY PAGE</router-link>
             <a class="nav-link hvr-underline-from-center" @click="logout" style="cursor:pointer">SIGN OUT</a>
           </template>
           <template v-else>
@@ -167,6 +168,7 @@
           <router-link to="/" class="drawer-link" @click="menuOpen = false">BRAND</router-link>
           <div class="drawer-divider" />
           <template v-if="authStore.isLoggedIn">
+            <router-link to="/mypage" class="drawer-link" @click="menuOpen = false">MY PAGE</router-link>
             <a class="drawer-link" @click="logout" style="cursor:pointer">SIGN OUT</a>
           </template>
           <template v-else>
@@ -318,11 +320,11 @@ function logout() {
   color: #111;
 }
 .logo-cat {
-  height: 130px;
+  height: 100px;
   width: auto;
   object-fit: contain;
   display: block;
-  margin-bottom: -16px;
+  margin-bottom: -10px;
 }
 .logo-text {
   font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
@@ -743,7 +745,8 @@ function logout() {
     padding-top: 64px;
   }
   .logo-cat {
-    height: 80px;
+    height: 50px;
+    margin-bottom: 6px;
   }
   .logo-text {
     font-size: 42px;
@@ -777,7 +780,7 @@ function logout() {
 /* 관리자 버튼 */
 .admin-fab {
   position: fixed;
-  top: 16px;
+  top: 60px;
   right: 20px;
   z-index: 999;
   background: #111;

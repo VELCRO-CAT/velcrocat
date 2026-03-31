@@ -24,6 +24,20 @@
       <div class="brand-nav-btns">
         <router-link to="/products" class="nav-btn nav-btn-gray">ONLINE SHOP</router-link>
       </div>
+      <!-- 모바일 햄버거 -->
+      <button class="hamburger-btn" @click="mobileMenuOpen = !mobileMenuOpen" :class="{ open: mobileMenuOpen }">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+    <!-- 모바일 메뉴 -->
+    <div class="mobile-menu-overlay" :class="{ open: mobileMenuOpen }" @click="mobileMenuOpen = false"></div>
+    <nav class="mobile-menu" :class="{ open: mobileMenuOpen }">
+      <router-link to="/home" @click="mobileMenuOpen = false">HOME</router-link>
+      <a href="#concept" @click.prevent="scrollTo('concept'); mobileMenuOpen = false">CONCEPT</a>
+      <a href="#pickup" @click.prevent="scrollTo('pickup'); mobileMenuOpen = false">PICK UP</a>
+      <router-link to="/products" @click="mobileMenuOpen = false">SHOP</router-link>
+      <router-link to="/contact" @click="mobileMenuOpen = false">CONTACT</router-link>
+      <router-link to="/products" class="mobile-menu-shop" @click="mobileMenuOpen = false">ONLINE SHOP</router-link>
     </nav>
 
     <!-- 히어로 (배경 영상 슬라이드쇼) -->
@@ -56,10 +70,20 @@
           <router-link to="/contact" class="second-hero-btn btn-outline">문의하기</router-link>
         </div>
       </div>
-      <!-- 스크롤 인디케이터 (우측 하단, hero-content 밖) -->
+      <!-- 스크롤 인디케이터 (우측 하단, 원형 회전 텍스트) -->
       <div class="scroll-indicator">
-        <span class="scroll-text">Scroll</span>
-        <div class="scroll-line"></div>
+        <svg class="scroll-circle-svg" viewBox="0 0 200 200">
+          <defs>
+            <path id="circlePath" d="M 100,100 m -70,0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0"/>
+          </defs>
+          <text class="scroll-circle-text">
+            <textPath href="#circlePath">SCROLL DOWN · SCROLL DOWN · SCROLL DOWN ·</textPath>
+          </text>
+        </svg>
+        <svg class="scroll-arrow" viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="12" y1="0" x2="12" y2="40" stroke="#e53935" stroke-width="5" stroke-linecap="round"/>
+          <polyline points="4,32 12,43 20,32" stroke="#e53935" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
     </section>
 
@@ -220,12 +244,11 @@
     <!-- CTA (video3.gif 배경) -->
     <section class="second-hero">
       <video src="../image/video3.mp4" class="second-hero-bg" autoplay muted loop playsinline />
-      <div class="second-hero-overlay"></div>
       <div class="second-hero-content">
         <p class="second-hero-label">Shop Now</p>
         <h2 class="second-hero-title">오늘의 스타일을<br>만나보세요</h2>
         <p class="second-hero-desc">
-          Velcro Cat의 새로운 컬렉션을 지금 확인하세요.<br>
+          VELCROCAT의 새로운 컬렉션을 지금 확인하세요.<br>
           편안함과 스타일, 두 가지 모두를 놓치지 마세요.
         </p>
         <div class="second-hero-actions">
@@ -265,9 +288,13 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import axios from 'axios';
+import bgMusic from '../image/music.mp3';
 
 const storyRef = ref(null);
 const pickupItems = ref([]);
+const bgAudio = ref(null);
+const musicStarted = ref(false);
+const mobileMenuOpen = ref(false);
 
 async function loadPickup() {
   try {
@@ -325,12 +352,30 @@ function startFirstVideo() {
   }, 2000);
 }
 
+// 음악 시작 (사용자 인터랙션 후)
+function startMusic() {
+  if (musicStarted.value || !bgAudio.value) return;
+  bgAudio.value.volume = 0.1;
+  bgAudio.value.play().then(() => {
+    musicStarted.value = true;
+  }).catch(() => {});
+}
+
+// 스크롤에 따라 음악 볼륨 페이드
+function updateMusicVolume(scrollTop) {
+  if (!bgAudio.value || !musicStarted.value) return;
+  const heroHeight = window.innerHeight;
+  const ratio = Math.max(0, 1 - scrollTop / heroHeight);
+  bgAudio.value.volume = ratio * 0.1;
+}
+
 // 스크롤 시 네비바 배경 + 글씨 색 전환
 function handleScroll() {
   const nav = document.querySelector('.brand-nav');
   const page = document.querySelector('.about-page');
   if (!nav || !page) return;
   const scrollTop = page.scrollTop;
+  updateMusicVolume(scrollTop);
   const marquee = page.querySelector('.marquee-section');
   const parallax = page.querySelector('.parallax-wrap');
   const darkEnd = (marquee ? marquee.offsetTop + marquee.offsetHeight : window.innerHeight) +
@@ -367,6 +412,30 @@ onMounted(() => {
       setTimeout(() => el.classList.add('show'), 300 * (i + 1));
     });
   }, 200);
+  // 배경 음악 설정 — 즉시 재생 시도, 실패 시 첫 인터랙션에서 재생
+  bgAudio.value = new Audio(bgMusic);
+  bgAudio.value.loop = true;
+  bgAudio.value.volume = 0;
+  bgAudio.value.play().then(() => {
+    musicStarted.value = true;
+    // 페이드인: 0 → 0.5
+    let vol = 0;
+    const fadeIn = setInterval(() => {
+      vol = Math.min(vol + 0.01, 0.1);
+      if (bgAudio.value) bgAudio.value.volume = vol;
+      if (vol >= 0.1) clearInterval(fadeIn);
+    }, 100);
+  }).catch(() => {
+    // 자동재생 차단 시 첫 클릭/터치에서 재생
+    const tryStartMusic = () => {
+      startMusic();
+      document.removeEventListener('click', tryStartMusic);
+      document.removeEventListener('touchstart', tryStartMusic);
+    };
+    document.addEventListener('click', tryStartMusic);
+    document.addEventListener('touchstart', tryStartMusic);
+  });
+
   // 첫 영상 자동재생
   setTimeout(startFirstVideo, 300);
 
@@ -387,6 +456,10 @@ onUnmounted(() => {
   const page = document.querySelector('.about-page');
   if (page) page.removeEventListener('scroll', handleScroll);
   window.removeEventListener('scroll', handleScroll);
+  if (bgAudio.value) {
+    bgAudio.value.pause();
+    bgAudio.value = null;
+  }
 });
 </script>
 
@@ -409,13 +482,7 @@ onUnmounted(() => {
   flex-wrap: nowrap;
   overflow: hidden;
 }
-/* 흰 배경 영역: 로고만 보이고 메뉴 숨김 */
-.brand-nav.nav-logo-only .brand-nav-main,
-.brand-nav.nav-logo-only .brand-nav-sub,
-.brand-nav.nav-logo-only .brand-nav-btns {
-  visibility: hidden;
-  pointer-events: none;
-}
+/* 흰 배경 영역에서도 메뉴 항상 표시 */
 
 /* 흰 배경일 때 검은 글씨 */
 .brand-nav.nav-light .brand-nav-name { color: #111; }
@@ -660,43 +727,41 @@ onUnmounted(() => {
 /* 스크롤 인디케이터 (우측 하단) */
 .scroll-indicator {
   position: absolute;
-  bottom: 32px;
-  right: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  bottom: 36px;
+  right: 60px;
+  width: 120px;
+  height: 120px;
   z-index: 3;
 }
-.scroll-text {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 4px;
-  color: rgba(255,255,255,0.55);
-  text-transform: uppercase;
-  writing-mode: vertical-rl;
-  padding-right: 2px;
-}
-.scroll-line {
-  width: 1px;
-  height: 56px;
-  background: rgba(255,255,255,0.3);
-  position: relative;
-  overflow: hidden;
-}
-.scroll-line::after {
-  content: '';
-  position: absolute;
-  top: -100%;
-  left: 0;
-  width: 1px;
+.scroll-circle-svg {
+  width: 100%;
   height: 100%;
-  background: #fff;
-  animation: scrollDown 1.8s ease-in-out infinite;
+  animation: spinCircle 12s linear infinite;
 }
-@keyframes scrollDown {
-  0% { top: -100%; }
-  100% { top: 100%; }
+.scroll-circle-text {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  fill: rgba(255,255,255,0.85);
+  text-transform: uppercase;
+}
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 44px;
+  opacity: 0.9;
+  animation: bounceArrow 1.6s ease-in-out infinite;
+}
+@keyframes spinCircle {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes bounceArrow {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(-50%, -40%); }
 }
 
 /* 마키 텍스트 */
@@ -1006,27 +1071,22 @@ onUnmounted(() => {
 .second-hero {
   position: relative;
   width: 100%;
-  height: 65vh;
-  min-height: 400px;
+  height: 90vh;
+  min-height: 500px;
   overflow: hidden;
   margin-bottom: 0;
   z-index: 100;
+  background: #fff;
 }
 .second-hero + .brand-footer {
-  margin-top: 0;
+  margin-top: 120px;
 }
 .second-hero-bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-}
-.second-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
-  z-index: 1;
+  object-fit: contain;
 }
 .second-hero-content {
   position: relative;
@@ -1092,8 +1152,8 @@ onUnmounted(() => {
   color: #fff;
 }
 @media (max-width: 768px) {
-  .second-hero { height: 70vh; min-height: 400px; }
-  .second-hero-bg { object-fit: cover; }
+  .second-hero { height: 75vh; min-height: 450px; }
+  .second-hero-bg { object-fit: contain; }
   .second-hero-title { font-size: 28px; margin-bottom: 14px; }
   .second-hero-label { font-size: 10px; letter-spacing: 4px; margin-bottom: 14px; }
   .second-hero-desc { font-size: 13px; margin-bottom: 24px; }
@@ -1232,6 +1292,11 @@ onUnmounted(() => {
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
+  .scroll-indicator {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
   .parallax-logo { height: 50vh; }
   .parallax-title { font-size: 28px; }
   .parallax-desc { font-size: 14px; }
@@ -1247,13 +1312,10 @@ onUnmounted(() => {
   }
   .brand-nav-logo img { height: 22px; }
   .brand-nav-name { font-size: 12px; letter-spacing: 1px; }
-  .brand-nav-main {
-    margin-left: auto;
-    gap: 12px;
-  }
-  .brand-nav-main a { font-size: 9px; letter-spacing: 1px; }
+  .brand-nav-main { display: none; }
   .brand-nav-sub { display: none; }
   .brand-nav-btns { display: none; }
+  .hamburger-btn { display: flex; }
   .pickup-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-title {
     font-size: 42px;
@@ -1299,5 +1361,120 @@ onUnmounted(() => {
   .section-title {
     font-size: 26px;
   }
+  .hero-btns {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+    margin-bottom: 140px;
+  }
+  .hero-btns .second-hero-btn {
+    padding: 14px 36px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    width: 200px;
+    text-align: center;
+  }
+}
+/* 햄버거 버튼 */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+  z-index: 1001;
+}
+.hamburger-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.brand-nav.nav-light .hamburger-btn span {
+  background: #111;
+}
+.hamburger-btn.open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger-btn.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-btn.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* 모바일 메뉴 오버레이 */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 모바일 슬라이드 메뉴 */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100vh;
+  background: #fff;
+  z-index: 1000;
+  flex-direction: column;
+  padding: 80px 32px 40px;
+  gap: 0;
+  transition: right 0.35s ease;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+}
+.mobile-menu.open {
+  right: 0;
+}
+.mobile-menu a {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #111;
+  text-decoration: none;
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+  transition: color 0.2s;
+}
+.mobile-menu a:hover {
+  color: #888;
+}
+.mobile-menu-shop {
+  margin-top: 24px;
+  text-align: center;
+  background: #111;
+  color: #fff !important;
+  padding: 14px 0 !important;
+  border: none !important;
+  border-radius: 4px;
+  font-size: 13px !important;
+  letter-spacing: 3px !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-overlay { display: block; }
+  .mobile-menu { display: flex; }
 }
 </style>

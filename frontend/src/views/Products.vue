@@ -431,8 +431,10 @@ function toggleWish(product) {
 /* 이미지 슬라이드 (페이드 전환) */
 .product-img {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 12%;
+  left: 12%;
+  width: 76%;
+  height: 76%;
   opacity: 0;
   transition: opacity 0.6s ease;
 }
@@ -441,6 +443,10 @@ function toggleWish(product) {
 }
 .product-img:first-child {
   position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  height: 100%;
 }
 
 .product-info { padding: 14px 14px 16px; }

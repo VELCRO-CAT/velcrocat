@@ -6,9 +6,16 @@
       <v-progress-circular v-if="loading" indeterminate color="#111" class="d-block mx-auto my-12" />
 
       <div v-else-if="product" class="product-main">
-        <!-- 이미지 -->
+        <!-- 이미지 캐러셀 -->
         <div class="product-img-area">
-          <img :src="product.image" :alt="product.name" class="product-img" />
+          <img :src="allImages[currentImgIndex]" :alt="product.name" class="product-img" />
+          <template v-if="allImages.length > 1">
+            <button class="img-arrow img-arrow-left" @click="prevImage">‹</button>
+            <button class="img-arrow img-arrow-right" @click="nextImage">›</button>
+            <div class="img-dots">
+              <span v-for="(img, i) in allImages" :key="i" class="img-dot" :class="{ active: currentImgIndex === i }" @click="currentImgIndex = i"></span>
+            </div>
+          </template>
         </div>
 
         <!-- 상품 정보 -->
@@ -282,7 +289,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
@@ -303,6 +310,24 @@ const productImages = ref([]);
 const detailBlocks = ref([]);
 const recentProducts = ref([]);
 const detailExpanded = ref(false);
+const currentImgIndex = ref(0);
+
+const allImages = computed(() => {
+  if (product.value?.images) {
+    try {
+      const arr = JSON.parse(product.value.images);
+      if (arr.length) return arr;
+    } catch { /* ignore */ }
+  }
+  return product.value?.image ? [product.value.image] : [];
+});
+
+function prevImage() {
+  currentImgIndex.value = (currentImgIndex.value - 1 + allImages.value.length) % allImages.value.length;
+}
+function nextImage() {
+  currentImgIndex.value = (currentImgIndex.value + 1) % allImages.value.length;
+}
 
 function saveRecent(p) {
   const key = 'osaka_recent';
@@ -336,6 +361,7 @@ async function loadRecent() {
 async function loadProduct(id) {
   loading.value = true;
   qty.value = 1;
+  currentImgIndex.value = 0;
   try {
     const res = await axios.get(`/api/products/${id}`);
     product.value = res.data;
@@ -406,6 +432,7 @@ function buyNow() {
 }
 
 .product-img-area {
+  position: relative;
   background: #f5f5f5;
   aspect-ratio: 1/1;
   overflow: hidden;
@@ -419,6 +446,48 @@ function buyNow() {
   height: 100%;
   object-fit: contain;
   display: block;
+}
+.img-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 2;
+}
+.img-arrow:hover { background: #fff; }
+.img-arrow-left { left: 12px; }
+.img-arrow-right { right: 12px; }
+.img-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+.img-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.img-dot.active {
+  background: #111;
 }
 
 .product-seller {
@@ -621,7 +690,31 @@ function buyNow() {
   border-top: 1px solid #e8e8e8;
   border-left: 1px solid #e8e8e8;
 }
-@media (max-width: 480px) { .related-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+  .related-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 0;
+    border-top: 1px solid #e8e8e8;
+    border-left: none;
+  }
+  .related-grid::-webkit-scrollbar { display: none; }
+  .related-item {
+    flex: 0 0 140px;
+    max-width: 140px;
+    scroll-snap-align: start;
+    border-right: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8;
+    border-left: 1px solid #e8e8e8;
+  }
+  .related-img-wrap {
+    padding: 8%;
+  }
+  .related-name { font-size: 10px; }
+  .related-price { font-size: 11px; }
+}
 
 .related-item {
   text-decoration: none;

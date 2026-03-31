@@ -9,7 +9,7 @@ export default defineConfig({
   ],
   server: {
     port: 8080,
-    allowedHosts: 'all',
+    allowedHosts: true,
     proxy: {
       '/api/upload': {
         target: 'http://localhost:5000',

@@ -5,6 +5,8 @@ import ProductDetail from '../views/ProductDetail.vue';
 import Cart from '../views/Cart.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
+import ForgotPassword from '../views/ForgotPassword.vue';
+import MyPage from '../views/MyPage.vue';
 import Checkout from '../views/Checkout.vue';
 import OrderComplete from '../views/OrderComplete.vue';
 import Contact from '../views/Contact.vue';
@@ -26,6 +28,8 @@ const routes = [
   { path: '/cart', component: Cart },
   { path: '/login', component: Login, meta: { guestOnly: true } },
   { path: '/register', component: Register, meta: { guestOnly: true } },
+  { path: '/forgot-password', component: ForgotPassword, meta: { guestOnly: true } },
+  { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },
   { path: '/checkout', component: Checkout, meta: { requiresAuth: true } },
   { path: '/order-complete', component: OrderComplete },
   { path: '/contact', component: Contact },
