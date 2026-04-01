@@ -52,6 +52,7 @@ import { useWishlistStore } from '../stores/wishlist';
 
 const cartStore = useCartStore();
 const wishlistStore = useWishlistStore();
+
 const products = ref([]);
 const loading = ref(true);
 const snackbar = ref(false);
@@ -304,4 +305,5 @@ function toggleWish(product) {
   font-weight: 700;
   color: #111;
 }
+
 </style>
