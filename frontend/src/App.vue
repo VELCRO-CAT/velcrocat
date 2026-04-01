@@ -179,56 +179,6 @@
       </div>
     </transition>
 
-    <!-- 사이드 문의 위젯 -->
-    <div v-if="!isAboutPage && !isAdminPage" class="side-widget" :class="{ open: widgetOpen }">
-      <button class="side-widget-toggle" @click="widgetOpen = !widgetOpen">
-        <v-icon v-if="!widgetOpen" size="20" color="white">mdi-headset</v-icon>
-        <v-icon v-else size="20" color="white">mdi-close</v-icon>
-      </button>
-      <transition name="widget-slide">
-        <div v-if="widgetOpen" class="side-widget-panel">
-          <div class="widget-header">
-            <span class="widget-title">VELCROCAT</span>
-            <span class="widget-sub">언제든 편하게 연락주세요</span>
-          </div>
-          <div class="widget-body">
-            <a href="tel:010-6433-2889" class="widget-item">
-              <div class="widget-icon" style="background:#E8F5E9"><v-icon size="18" color="#2E7D32">mdi-phone</v-icon></div>
-              <div class="widget-text">
-                <span class="widget-label">전화상담</span>
-                <span class="widget-value">010-6433-2889</span>
-              </div>
-            </a>
-            <a href="mailto:velcrocat@velcrocat.com" class="widget-item">
-              <div class="widget-icon" style="background:#E3F2FD"><v-icon size="18" color="#1565C0">mdi-email-outline</v-icon></div>
-              <div class="widget-text">
-                <span class="widget-label">이메일</span>
-                <span class="widget-value">velcrocat@velcrocat.com</span>
-              </div>
-            </a>
-            <a href="https://pf.kakao.com/" target="_blank" class="widget-item">
-              <div class="widget-icon" style="background:#FFF9C4"><v-icon size="18" color="#F9A825">mdi-chat</v-icon></div>
-              <div class="widget-text">
-                <span class="widget-label">카카오톡</span>
-                <span class="widget-value">24시간 상담</span>
-              </div>
-            </a>
-            <router-link to="/contact" class="widget-item" @click="widgetOpen = false">
-              <div class="widget-icon" style="background:#F3E5F5"><v-icon size="18" color="#7B1FA2">mdi-message-text-outline</v-icon></div>
-              <div class="widget-text">
-                <span class="widget-label">온라인 문의</span>
-                <span class="widget-value">1:1 문의하기</span>
-              </div>
-            </router-link>
-          </div>
-          <div class="widget-footer">
-            <span>평일 10:00 - 17:00</span>
-            <span>주말·공휴일 휴무</span>
-          </div>
-        </div>
-      </transition>
-    </div>
-
     <!-- 메인 콘텐츠 -->
     <v-main class="mobile-body-offset" style="background:#fff; padding-top:0 !important">
       <router-view />
@@ -316,7 +266,6 @@ const wishlistStore = useWishlistStore();
 const wishOpen = ref(false);
 const router = useRouter();
 const menuOpen = ref(false);
-const widgetOpen = ref(false);
 
 // 카테고리 드롭다운
 const catOpen = ref(false);
@@ -965,122 +914,4 @@ function logout() {
   }
 }
 
-/* 사이드 문의 위젯 */
-.side-widget {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 9999;
-}
-.side-widget-toggle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #111;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  transition: transform 0.2s, background 0.2s;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-.side-widget-toggle:hover {
-  transform: scale(1.08);
-  background: #333;
-}
-.side-widget-panel {
-  position: absolute;
-  right: 0;
-  bottom: 60px;
-  width: 280px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  overflow: hidden;
-}
-.widget-header {
-  padding: 20px 20px 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-.widget-title {
-  display: block;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #111;
-}
-.widget-sub {
-  display: block;
-  font-size: 12px;
-  color: #999;
-  margin-top: 4px;
-}
-.widget-body {
-  padding: 12px 16px;
-}
-.widget-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 8px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: inherit;
-  transition: background 0.15s;
-}
-.widget-item:hover {
-  background: #f8f8f8;
-}
-.widget-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.widget-text {
-  display: flex;
-  flex-direction: column;
-}
-.widget-label {
-  font-size: 11px;
-  color: #999;
-  letter-spacing: 0.5px;
-}
-.widget-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: #111;
-}
-.widget-footer {
-  padding: 12px 20px;
-  background: #fafafa;
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid #f0f0f0;
-}
-.widget-footer span {
-  font-size: 11px;
-  color: #999;
-}
-.widget-slide-enter-active,
-.widget-slide-leave-active {
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-.widget-slide-enter-from,
-.widget-slide-leave-to {
-  opacity: 0;
-  transform: translateY(12px) scale(0.95);
-}
-@media (max-width: 640px) {
-  .side-widget { right: 16px; bottom: 16px; }
-  .side-widget-toggle { width: 44px; height: 44px; }
-  .side-widget-panel { width: 260px; bottom: 56px; }
-}
 </style>
