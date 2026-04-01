@@ -35,6 +35,16 @@
       "role": "user",
       "created_at": "2026-03-31T06:23:53.675Z",
       "updated_at": "2026-03-31T06:23:53.675Z"
+    },
+    {
+      "id": 5,
+      "name": "김충성",
+      "email": "velcrocat7@naver.com",
+      "password": "",
+      "role": "user",
+      "naver_id": "DofbFYFxuTYFIwaDOjRi2sE04XfHiHFUuzrRfMXhcgU",
+      "created_at": "2026-04-01T04:26:12.455Z",
+      "updated_at": "2026-04-01T04:26:12.455Z"
     }
   ],
   "categories": [
@@ -565,6 +575,16 @@
       "is_read": false,
       "created_at": "2026-03-31T06:23:53.677Z",
       "updated_at": "2026-03-31T06:23:53.677Z"
+    },
+    {
+      "id": 4,
+      "type": "user",
+      "title": "새 회원이 가입했습니다 (네이버)",
+      "message": "김충성님 (velcrocat7@naver.com)",
+      "reference_id": "5",
+      "is_read": false,
+      "created_at": "2026-04-01T04:26:12.460Z",
+      "updated_at": "2026-04-01T04:26:12.460Z"
     }
   ]
 }

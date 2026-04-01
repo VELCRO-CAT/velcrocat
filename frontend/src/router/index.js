@@ -7,6 +7,7 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import ForgotPassword from '../views/ForgotPassword.vue';
 import MyPage from '../views/MyPage.vue';
+import AuthCallback from '../views/AuthCallback.vue';
 import Checkout from '../views/Checkout.vue';
 import OrderComplete from '../views/OrderComplete.vue';
 import Contact from '../views/Contact.vue';
@@ -30,6 +31,7 @@ const routes = [
   { path: '/register', component: Register, meta: { guestOnly: true } },
   { path: '/forgot-password', component: ForgotPassword, meta: { guestOnly: true } },
   { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },
+  { path: '/auth/:provider/callback', component: AuthCallback },
   { path: '/checkout', component: Checkout, meta: { requiresAuth: true } },
   { path: '/order-complete', component: OrderComplete },
   { path: '/contact', component: Contact },

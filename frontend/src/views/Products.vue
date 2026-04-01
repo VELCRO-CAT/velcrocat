@@ -81,10 +81,6 @@
             <p class="product-desc">{{ product.description }}</p>
             <div class="product-bottom">
               <span class="product-price">₩{{ Number(product.price).toLocaleString() }}</span>
-              <span class="product-rating">
-                <v-icon size="12" color="#f59e0b">mdi-star</v-icon>
-                {{ product.rating }}
-              </span>
             </div>
           </div>
         </router-link>

@@ -2,9 +2,22 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 
 export const useWishlistStore = defineStore('wishlist', () => {
-  const items = ref(JSON.parse(localStorage.getItem('osaka_wishlist') || '[]'));
+  const items = ref([]);
 
   const count = computed(() => items.value.length);
+
+  function getKey() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    return user ? `osaka_wishlist_${user.id}` : 'osaka_wishlist_guest';
+  }
+
+  function load() {
+    items.value = JSON.parse(localStorage.getItem(getKey()) || '[]');
+  }
+
+  function save() {
+    localStorage.setItem(getKey(), JSON.stringify(items.value));
+  }
 
   function isWished(productId) {
     return items.value.some(item => item.id === productId);
@@ -22,13 +35,16 @@ export const useWishlistStore = defineStore('wishlist', () => {
         image: product.image
       });
     }
-    localStorage.setItem('osaka_wishlist', JSON.stringify(items.value));
+    save();
   }
 
   function remove(productId) {
     items.value = items.value.filter(item => item.id !== productId);
-    localStorage.setItem('osaka_wishlist', JSON.stringify(items.value));
+    save();
   }
 
-  return { items, count, isWished, toggle, remove };
+  // 초기 로드
+  load();
+
+  return { items, count, isWished, toggle, remove, load };
 });

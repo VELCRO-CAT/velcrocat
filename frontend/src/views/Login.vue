@@ -33,7 +33,24 @@
         <v-btn type="submit" color="#111" block size="large" :loading="loading">로그인</v-btn>
       </v-form>
 
-      <div class="text-center mt-4 reveal reveal-3">
+      <!-- 소셜 로그인 -->
+      <div class="reveal reveal-3 mt-6">
+        <div class="social-divider">
+          <span>또는</span>
+        </div>
+        <v-btn
+          block
+          size="large"
+          class="mt-4 naver-btn"
+          @click="naverLogin"
+          :loading="naverLoading"
+        >
+          <img src="https://static.nid.naver.com/oauth/small_g_in.PNG" alt="네이버" style="height:20px;margin-right:8px" />
+          네이버로 로그인
+        </v-btn>
+      </div>
+
+      <div class="text-center mt-4 reveal reveal-4">
         <p class="text-body-2 mb-1">
           <router-link to="/forgot-password" style="color:#888;font-weight:500;text-decoration:none">비밀번호를 잊으셨나요?</router-link>
         </p>
@@ -50,6 +67,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import axios from 'axios';
 
 onMounted(() => {
   document.querySelectorAll('.login-card .reveal').forEach((el, i) => {
@@ -65,6 +83,18 @@ const password = ref('');
 const showPw = ref(false);
 const error = ref('');
 const loading = ref(false);
+const naverLoading = ref(false);
+
+async function naverLogin() {
+  naverLoading.value = true;
+  try {
+    const res = await axios.get('/api/auth/naver');
+    window.location.href = res.data.url;
+  } catch {
+    error.value = '네이버 로그인 연결에 실패했습니다';
+    naverLoading.value = false;
+  }
+}
 
 async function handleLogin() {
   error.value = '';
@@ -89,5 +119,25 @@ async function handleLogin() {
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+.social-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #999;
+  font-size: 13px;
+}
+.social-divider::before,
+.social-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
+.naver-btn {
+  background: #03C75A !important;
+  color: white !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 </style>

@@ -22,6 +22,7 @@ app.use('/api/admin',     require('./routes/admin'));
 app.use('/api/inquiries', require('./routes/inquiries'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/naver',  require('./routes/naver'));
+app.use('/api/auth',   require('./routes/auth'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
