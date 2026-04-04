@@ -374,7 +374,7 @@ function handleScroll() {
   const nav = document.querySelector('.brand-nav');
   const page = document.querySelector('.about-page');
   if (!nav || !page) return;
-  const scrollTop = page.scrollTop;
+  const scrollTop = page.scrollTop || window.scrollY || document.documentElement.scrollTop || 0;
   updateMusicVolume(scrollTop);
   const marquee = page.querySelector('.marquee-section');
   const parallax = page.querySelector('.parallax-wrap');
@@ -418,7 +418,6 @@ onMounted(() => {
   bgAudio.value.volume = 0;
   bgAudio.value.play().then(() => {
     musicStarted.value = true;
-    // 페이드인: 0 → 0.5
     let vol = 0;
     const fadeIn = setInterval(() => {
       vol = Math.min(vol + 0.01, 0.1);
@@ -426,9 +425,14 @@ onMounted(() => {
       if (vol >= 0.1) clearInterval(fadeIn);
     }, 100);
   }).catch(() => {
-    // 자동재생 차단 시 첫 클릭/터치에서 재생
+    // iOS: 자동재생 차단 시 첫 클릭/터치에서 새 Audio 생성 후 재생
     const tryStartMusic = () => {
-      startMusic();
+      bgAudio.value = new Audio(bgMusic);
+      bgAudio.value.loop = true;
+      bgAudio.value.volume = 0.1;
+      bgAudio.value.play().then(() => {
+        musicStarted.value = true;
+      }).catch(() => {});
       document.removeEventListener('click', tryStartMusic);
       document.removeEventListener('touchstart', tryStartMusic);
     };
