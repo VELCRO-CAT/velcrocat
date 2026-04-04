@@ -366,7 +366,17 @@ function updateMusicVolume(scrollTop) {
   if (!bgAudio.value || !musicStarted.value) return;
   const heroHeight = window.innerHeight;
   const ratio = Math.max(0, 1 - scrollTop / heroHeight);
-  bgAudio.value.volume = ratio * 0.1;
+  try { bgAudio.value.volume = Math.max(0, Math.min(1, ratio * 0.1)); } catch {}
+}
+
+// 스크롤 위치 가져오기 (iOS 호환)
+function getScrollTop() {
+  const page = document.querySelector('.about-page');
+  if (page && page.scrollTop > 0) return page.scrollTop;
+  if (window.scrollY > 0) return window.scrollY;
+  if (window.pageYOffset > 0) return window.pageYOffset;
+  if (document.documentElement.scrollTop > 0) return document.documentElement.scrollTop;
+  return 0;
 }
 
 // 스크롤 시 네비바 배경 + 글씨 색 전환
@@ -374,7 +384,7 @@ function handleScroll() {
   const nav = document.querySelector('.brand-nav');
   const page = document.querySelector('.about-page');
   if (!nav || !page) return;
-  const scrollTop = page.scrollTop || window.scrollY || document.documentElement.scrollTop || 0;
+  const scrollTop = getScrollTop();
   updateMusicVolume(scrollTop);
   const marquee = page.querySelector('.marquee-section');
   const parallax = page.querySelector('.parallax-wrap');
@@ -403,8 +413,11 @@ function handleScroll() {
 
 onMounted(() => {
   const page = document.querySelector('.about-page');
-  if (page) page.addEventListener('scroll', handleScroll);
-  window.addEventListener('scroll', handleScroll);
+  if (page) page.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  // iOS: touchmove로도 스크롤 감지
+  if (page) page.addEventListener('touchmove', handleScroll, { passive: true });
+  window.addEventListener('touchmove', handleScroll, { passive: true });
   loadPickup();
   // 히어로 텍스트 순차 등장
   setTimeout(() => {
@@ -459,7 +472,9 @@ onMounted(() => {
 onUnmounted(() => {
   const page = document.querySelector('.about-page');
   if (page) page.removeEventListener('scroll', handleScroll);
+  if (page) page.removeEventListener('touchmove', handleScroll);
   window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('touchmove', handleScroll);
   if (bgAudio.value) {
     bgAudio.value.pause();
     bgAudio.value = null;
