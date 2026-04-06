@@ -295,6 +295,7 @@ const pickupItems = ref([]);
 const bgAudio = ref(null);
 const musicStarted = ref(false);
 const mobileMenuOpen = ref(false);
+let tryStartMusicHandler = null;
 
 async function loadPickup() {
   try {
@@ -439,18 +440,20 @@ onMounted(() => {
     }, 100);
   }).catch(() => {
     // iOS: 자동재생 차단 시 첫 클릭/터치에서 새 Audio 생성 후 재생
-    const tryStartMusic = () => {
+    tryStartMusicHandler = () => {
+      if (!bgAudio.value) return; // 이미 unmounted됨
       bgAudio.value = new Audio(bgMusic);
       bgAudio.value.loop = true;
       bgAudio.value.volume = 0.1;
       bgAudio.value.play().then(() => {
         musicStarted.value = true;
       }).catch(() => {});
-      document.removeEventListener('click', tryStartMusic);
-      document.removeEventListener('touchstart', tryStartMusic);
+      document.removeEventListener('click', tryStartMusicHandler);
+      document.removeEventListener('touchstart', tryStartMusicHandler);
+      tryStartMusicHandler = null;
     };
-    document.addEventListener('click', tryStartMusic);
-    document.addEventListener('touchstart', tryStartMusic);
+    document.addEventListener('click', tryStartMusicHandler);
+    document.addEventListener('touchstart', tryStartMusicHandler);
   });
 
   // 첫 영상 자동재생
@@ -475,9 +478,18 @@ onUnmounted(() => {
   if (page) page.removeEventListener('touchmove', handleScroll);
   window.removeEventListener('scroll', handleScroll);
   window.removeEventListener('touchmove', handleScroll);
+  // 음악 정리
   if (bgAudio.value) {
     bgAudio.value.pause();
+    bgAudio.value.src = '';
     bgAudio.value = null;
+  }
+  musicStarted.value = false;
+  // 미실행 이벤트 핸들러 제거
+  if (tryStartMusicHandler) {
+    document.removeEventListener('click', tryStartMusicHandler);
+    document.removeEventListener('touchstart', tryStartMusicHandler);
+    tryStartMusicHandler = null;
   }
 });
 </script>
