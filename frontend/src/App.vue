@@ -201,7 +201,7 @@
           <div class="footer-col">
             <h4>회사정보</h4>
             <p class="footer-info">상호 : 벨크로캣(velcrocat)</p>
-            <p class="footer-info">대표 : 김충성</p>
+            <p class="footer-info">공동 대표 : 김충성, 장윤호</p>
             <p class="footer-info">사업자등록번호 : 180-02-03888</p>
             <p class="footer-info">업태 : 도소매 / 종목 : 전자상거래 소매업</p>
             <p class="footer-info">주소 : 경기도 안양시 동안구 동편로183번길 86, 201호(관양동)</p>

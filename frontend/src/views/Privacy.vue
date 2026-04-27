@@ -81,7 +81,7 @@
           <h2>8. 개인정보 보호책임자</h2>
           <div class="privacy-info-box">
             <p><strong>개인정보 보호책임자</strong></p>
-            <p>성명 : 김충성</p>
+            <p>성명 : 김충성, 장윤호</p>
             <p>직책 : 대표</p>
             <p>연락처 : 010-6433-2889</p>
             <p>이메일 : velcrocat@velcrocat.com</p>
@@ -95,7 +95,7 @@
         </section>
 
         <div class="privacy-footer-info">
-          <p>상호 : 벨크로캣(velcrocat) | 대표 : 김충성</p>
+          <p>상호 : 벨크로캣(velcrocat) | 공동 대표 : 김충성, 장윤호</p>
           <p>사업자등록번호 : 180-02-03888</p>
           <p>주소 : 경기도 안양시 동안구 동편로183번길 86, 201호(관양동)</p>
         </div>

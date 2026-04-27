@@ -208,11 +208,11 @@
               <table class="guide-table"><tbody>
                 <tr>
                   <th>상호명</th>
-                  <td>김충성 (개인)</td>
+                  <td>김충성, 장윤호 (공동)</td>
                 </tr>
                 <tr>
                   <th>대표자</th>
-                  <td>김충성</td>
+                  <td>김충성, 장윤호</td>
                 </tr>
               </tbody></table>
             </div>
