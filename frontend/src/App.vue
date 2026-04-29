@@ -192,7 +192,7 @@
           <!-- 고객센터 -->
           <div class="footer-col">
             <h4>고객센터</h4>
-            <p class="footer-phone">010-6433-2889</p>
+            <p class="footer-phone">070-4571-4499</p>
             <p class="footer-info">운영시간 : 오전10시 ~ 오후5시</p>
             <p class="footer-info">점심시간 : 오전11시 ~ 오후12시</p>
             <p class="footer-info">주말, 공휴일 휴무</p>
