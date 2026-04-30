@@ -275,7 +275,7 @@
         <div class="footer-biz">
           <p>상호 : 벨크로캣(velcrocat) | 공동 대표 : 김충성, 장윤호</p>
           <p>사업자등록번호 : 180-02-03888 | 업태 : 도소매 | 종목 : 전자상거래 소매업</p>
-          <p>주소 : 경기도 안양시 동안구 동편로183번길 86, 201호(관양동)</p>
+          <p>주소 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)</p>
           <p>E-MAIL : velcrocat@velcrocat.com</p>
         </div>
         <p class="footer-copy">© 2026 벨크로캣(velcrocat). All rights reserved.</p>
