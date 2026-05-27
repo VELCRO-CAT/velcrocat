@@ -38,8 +38,8 @@ app.use(vuetify);
 import { useAuthStore } from './stores/auth';
 useAuthStore(pinia).initAuth();
 
-// 관리자 페이지 접근: 브라우저 콘솔에서 osakamarket() 입력
-window.osakamarket = function () {
+// 관리자 페이지 접근: 브라우저 콘솔에서 velcrocat() 입력
+window.velcrocat = function () {
   sessionStorage.setItem('__osaka_admin_access', '1');
   router.push('/admin-login');
 };

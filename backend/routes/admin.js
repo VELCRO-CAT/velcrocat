@@ -6,7 +6,7 @@ const { adminMiddleware } = require('../middleware/auth');
 
 // 관리자 전용 로그인 (아이디/비밀번호 방식)
 const ADMIN_ACCOUNTS = [
-  { username: 'osakamarket0316', password: 'osakamarket0316' },
+  { username: 'velcrocat7', password: 'kim@6521' },
   { username: 'wnwlgh0719', password: 'wnwlgh0719' }
 ];
 
