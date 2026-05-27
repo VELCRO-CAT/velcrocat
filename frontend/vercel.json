@@ -1,7 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://velcrocat-api.onrender.com/api/:path*" },
-    { "source": "/uploads/:path*", "destination": "https://velcrocat-api.onrender.com/uploads/:path*" },
+    { "source": "/api/:path*", "destination": "https://velcrocat.onrender.com/api/:path*" },
+    { "source": "/uploads/:path*", "destination": "https://velcrocat.onrender.com/uploads/:path*" },
     { "source": "/((?!api|uploads).*)", "destination": "/index.html" }
   ]
 }
