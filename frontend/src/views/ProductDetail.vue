@@ -407,7 +407,8 @@ function toggleWish() {
 }
 
 function buyNow() {
-  window.open('https://smartstore.naver.com/vcat/products/13301159340', '_blank');
+  for (let i = 0; i < qty.value; i++) cartStore.addItem(product.value);
+  router.push('/checkout');
 }
 </script>
 
