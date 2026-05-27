@@ -462,16 +462,32 @@ async function processPayment() {
   font-size: 14px;
 }
 :deep(.v-field__outline__start),
-:deep(.v-field__outline__end),
-:deep(.v-field__outline__notch::before),
-:deep(.v-field__outline__notch::after) {
+:deep(.v-field__outline__end) {
   border-color: #e0e0e0 !important;
 }
+/* notch(라벨 자리) 완전 숨김 - 라벨을 위에 별도로 두기 때문 */
+:deep(.v-field__outline__notch) {
+  display: none !important;
+}
+:deep(.v-field__outline__start) {
+  border-right: 0 !important;
+}
+:deep(.v-field__outline__end) {
+  border-left: 0 !important;
+}
+:deep(.v-field--variant-outlined .v-field__outline) {
+  --v-field-border-width: 1px;
+}
+:deep(.v-field--variant-outlined .v-field__outline__start),
+:deep(.v-field--variant-outlined .v-field__outline__end) {
+  border-top: 1px solid #e0e0e0 !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
 :deep(.v-field--focused .v-field__outline__start),
-:deep(.v-field--focused .v-field__outline__end),
-:deep(.v-field--focused .v-field__outline__notch::before),
-:deep(.v-field--focused .v-field__outline__notch::after) {
+:deep(.v-field--focused .v-field__outline__end) {
   border-color: #111 !important;
+  border-top-color: #111 !important;
+  border-bottom-color: #111 !important;
   border-width: 1.5px !important;
 }
 
