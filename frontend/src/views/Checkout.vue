@@ -176,7 +176,7 @@ function searchAddress() {
   }, 100);
 }
 
-// 포트원 결제 처리
+// MainPay (메인페이) 결제 처리
 async function processPayment() {
   error.value = '';
 
@@ -188,81 +188,58 @@ async function processPayment() {
 
   loading.value = true;
 
-  // PG사 매핑
-  const pgMap = {
-    card: 'html5_inicis',       // 이니시스 (카드)
-    kakaopay: 'kakaopay',       // 카카오페이
-    naverpay: 'naverpay',       // 네이버페이
-    tosspay: 'tosspay',         // 토스페이
-  };
-
-  const payMethodMap = {
-    card: 'card',
-    kakaopay: 'card',
-    naverpay: 'card',
-    tosspay: 'card',
-  };
-
-  const merchantUid = `order_${Date.now()}`;
-
   try {
-    // 1. 주문 데이터를 먼저 서버에 저장 (결제 전)
-    await axios.post('/api/orders', {
-      merchant_uid: merchantUid,
-      items: cartStore.items,
-      total: cartStore.total,
+    // 1. 결제 준비 (서버 → MainPay PG)
+    const { data } = await axios.post('/api/payment/mainpay/ready', {
+      items: cartStore.items.map(i => ({
+        id: i.id,
+        name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+        size: i.size,
+        image: i.image
+      })),
+      amount: cartStore.total,
       shippingAddress: form.value,
-      paymentMethod: selectedMethod.value,
-      status: 'pending'
+      paymethod: 'CARD'
     });
 
-    // 2. 포트원 결제 요청
-    const IMP = window.IMP;
-    if (!IMP) {
-      error.value = '결제 모듈을 불러올 수 없습니다. 페이지를 새로고침해주세요.';
+    if (!data?.nextPcUrl) {
+      error.value = '결제창을 호출할 수 없습니다';
       loading.value = false;
       return;
     }
 
-    // ★ 테스트용 가맹점 코드 (실제 운영 시 포트원에서 발급받은 코드로 교체)
-    IMP.init('imp00000000');
+    // 2. 결제창 호출
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile && data.nextMobileUrl) {
+      // 모바일: 현재 창에서 리다이렉트
+      cartStore.clearCart();
+      window.location.href = data.nextMobileUrl;
+      return;
+    }
 
-    IMP.request_pay({
-      pg: pgMap[selectedMethod.value],
-      pay_method: payMethodMap[selectedMethod.value],
-      merchant_uid: merchantUid,
-      name: cartStore.items.length === 1
-        ? cartStore.items[0].name
-        : `${cartStore.items[0].name} 외 ${cartStore.items.length - 1}건`,
-      amount: cartStore.total,
-      buyer_email: authStore.user?.email || '',
-      buyer_name: form.value.name,
-      buyer_tel: form.value.phone,
-      buyer_addr: form.value.address + ' ' + form.value.addressDetail,
-      buyer_postcode: form.value.zip,
-    }, async function (response) {
-      if (response.success) {
-        try {
-          // 3. 서버에서 결제 검증
-          await axios.post('/api/payment/verify', {
-            imp_uid: response.imp_uid,
-            merchant_uid: response.merchant_uid,
-            amount: cartStore.total
-          });
-          cartStore.clearCart();
-          router.push('/order-complete');
-        } catch (e) {
-          error.value = '결제 검증에 실패했습니다. 고객센터에 문의해주세요.';
-        }
-      } else {
-        error.value = response.error_msg || '결제가 취소되었습니다.';
-        // 주문 상태를 cancelled로 업데이트
-        await axios.post('/api/orders/cancel', { merchant_uid: merchantUid }).catch(() => {});
-      }
+    // PC: 팝업
+    const popup = window.open(data.nextPcUrl, 'mainpay_popup',
+      'width=600,height=750,scrollbars=yes,resizable=yes');
+
+    if (!popup) {
+      error.value = '팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요';
       loading.value = false;
-    });
+      return;
+    }
+
+    cartStore.clearCart();
+
+    // 팝업 닫힘 감지 (결제 완료/취소 시 부모창은 approval HTML로 리다이렉트 됨)
+    const checkClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkClosed);
+        loading.value = false;
+      }
+    }, 500);
   } catch (e) {
-    error.value = e.response?.data?.error || '주문 처리에 실패했습니다';
+    error.value = e.response?.data?.error || '결제 처리에 실패했습니다';
     loading.value = false;
   }
 }
