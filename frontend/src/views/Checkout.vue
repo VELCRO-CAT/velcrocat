@@ -125,12 +125,29 @@
                 v-for="method in payMethods"
                 :key="method.key"
                 class="pay-method-btn"
-                :class="{ active: selectedMethod === method.key }"
+                :class="{ active: selectedMethod === method.key, ['pay-' + method.key]: true }"
                 @click="selectedMethod = method.key"
               >
                 <div class="pay-method-inner">
-                  <img v-if="method.icon" :src="method.icon" :alt="method.label" class="pay-icon" />
-                  <v-icon v-else size="26" class="pay-method-icon">{{ method.mdi }}</v-icon>
+                  <!-- 카카오페이 로고 -->
+                  <svg v-if="method.key === 'kakaopay'" class="pay-logo kakaopay-logo" viewBox="0 0 100 38" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0" y="0" width="100" height="38" rx="19" fill="#FEE500"/>
+                    <path d="M22 11c-4.4 0-8 2.8-8 6.3 0 2.2 1.5 4.2 3.7 5.3l-.9 3.3c-.1.3.2.5.5.4l3.9-2.6c.3 0 .6.1.9.1 4.4 0 8-2.8 8-6.4S26.4 11 22 11z" fill="#000"/>
+                    <text x="58" y="25" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" font-size="16" fill="#000" text-anchor="middle">pay</text>
+                  </svg>
+                  <!-- 네이버페이 로고 -->
+                  <svg v-else-if="method.key === 'naverpay'" class="pay-logo naverpay-logo" viewBox="0 0 100 38" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="19" cy="19" r="14" fill="#03C75A"/>
+                    <path d="M14 12 H17.5 L21 17 V12 H24 V26 H20.5 L17 21 V26 H14 Z" fill="#000"/>
+                    <text x="58" y="25" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" font-size="16" fill="#000" text-anchor="middle">pay</text>
+                  </svg>
+                  <!-- 토스페이 로고 -->
+                  <svg v-else-if="method.key === 'tosspay'" class="pay-logo tosspay-logo" viewBox="0 0 100 38" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0" y="0" width="100" height="38" rx="8" fill="#0064FF"/>
+                    <text x="20" y="26" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" font-size="14" fill="#fff" text-anchor="middle">toss</text>
+                    <text x="58" y="26" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" font-size="14" fill="#fff" text-anchor="middle">pay</text>
+                  </svg>
+                  <v-icon v-else size="28" class="pay-method-icon">{{ method.mdi }}</v-icon>
                 </div>
                 <span class="pay-method-label">{{ method.label }}</span>
                 <span v-if="selectedMethod === method.key" class="pay-check">
@@ -260,9 +277,9 @@ function onPhoneInput() {
 // 결제 수단 목록
 const payMethods = [
   { key: 'card',      label: '신용/체크카드', mdi: 'mdi-credit-card-outline' },
-  { key: 'kakaopay',  label: '카카오페이',    icon: 'https://developers.kakao.com/static/images/pc/product/icon/kakao_pay.png' },
-  { key: 'naverpay',  label: '네이버페이',    icon: 'https://pay.naver.com/img/etc/naver_pay_logo.png' },
-  { key: 'tosspay',   label: '토스페이',      icon: 'https://static.toss.im/icons/png/4x/icon-toss-logo.png' },
+  { key: 'kakaopay',  label: '카카오페이' },
+  { key: 'naverpay',  label: '네이버페이' },
+  { key: 'tosspay',   label: '토스페이' },
 ];
 
 // 배송 메모 옵션
@@ -545,14 +562,15 @@ async function processPayment() {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .pay-method-inner {
-  height: 28px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.pay-icon {
-  height: 24px;
+.pay-logo {
+  height: 28px;
   width: auto;
+  max-width: 100%;
   object-fit: contain;
 }
 .pay-method-icon { color: #777; }
@@ -562,6 +580,7 @@ async function processPayment() {
   font-weight: 600;
   color: #666;
   letter-spacing: -0.2px;
+  margin-top: 2px;
 }
 .pay-method-btn.active .pay-method-label { color: #111; }
 .pay-check {
@@ -668,9 +687,12 @@ async function processPayment() {
   font-weight: 500;
   color: #222;
   margin: 0 0 2px;
-  white-space: nowrap;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: keep-all;
 }
 .summary-size {
   font-size: 11px;
