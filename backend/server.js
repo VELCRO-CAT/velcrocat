@@ -28,13 +28,29 @@ async function restoreFromJsonIfNeeded() {
   await db('categories').del();
   await db('users').del();
 
+  // 테이블 실제 컬럼만 골라서 넣기 (JSON에 잉여 필드가 있어도 안전)
+  async function insertFiltered(table, rows) {
+    if (!rows?.length) return 0;
+    const info = await db(table).columnInfo();
+    const cols = Object.keys(info);
+    const cleaned = rows.map(row => {
+      const r = {};
+      for (const c of cols) if (row[c] !== undefined) r[c] = row[c];
+      return r;
+    });
+    await db(table).insert(cleaned);
+    return cleaned.length;
+  }
+
   // 복원 (id 보존)
-  if (data.users?.length) await db('users').insert(data.users);
-  if (data.categories?.length) await db('categories').insert(data.categories);
-  if (data.products?.length) await db('products').insert(data.products);
-  if (data.orders?.length) await db('orders').insert(data.orders);
-  if (data.inquiries?.length) await db('inquiries').insert(data.inquiries);
-  if (data.notifications?.length) await db('notifications').insert(data.notifications);
+  const counts = {
+    users: await insertFiltered('users', data.users),
+    categories: await insertFiltered('categories', data.categories),
+    products: await insertFiltered('products', data.products),
+    orders: await insertFiltered('orders', data.orders),
+    inquiries: await insertFiltered('inquiries', data.inquiries),
+    notifications: await insertFiltered('notifications', data.notifications)
+  };
 
   // PostgreSQL 시퀀스를 max(id)+1로 재설정
   for (const table of ['users', 'categories', 'products', 'orders', 'inquiries', 'notifications']) {
@@ -43,7 +59,7 @@ async function restoreFromJsonIfNeeded() {
     } catch (e) { /* table may be empty */ }
   }
 
-  console.log(`✅ 복원 완료: users=${data.users?.length||0}, categories=${data.categories?.length||0}, products=${data.products?.length||0}, notifications=${data.notifications?.length||0}`);
+  console.log(`✅ 복원 완료: users=${counts.users}, categories=${counts.categories}, products=${counts.products}, orders=${counts.orders}, inquiries=${counts.inquiries}, notifications=${counts.notifications}`);
 }
 const app = express();
 const PORT = process.env.PORT || 5000;
