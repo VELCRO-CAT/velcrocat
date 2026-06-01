@@ -103,8 +103,13 @@ async function startServer() {
     }
 
     // 시드 더미 데이터(placehold.co)가 들어있고 dev-db.json에 실데이터가 있으면 1회 복원
+    // 복원이 실패해도 서버 가동은 진행 (502 무한 크래시 루프 방지)
     if (process.env.DATABASE_URL) {
-      await restoreFromJsonIfNeeded();
+      try {
+        await restoreFromJsonIfNeeded();
+      } catch (e) {
+        console.error('⚠️ 복원 실패 (서버는 계속 가동):', e.message);
+      }
     }
 
     app.listen(PORT, () => {

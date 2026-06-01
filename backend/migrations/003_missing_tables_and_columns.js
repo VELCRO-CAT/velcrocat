@@ -27,25 +27,26 @@ exports.up = async function(knex) {
     });
   }
 
-  // products: 추가 이미지 / 상세 블록
-  await knex.schema.alterTable('products', (t) => {
-    t.text('images');
-    t.text('detail_blocks');
-  });
+  // products: 추가 이미지 / 상세 블록 (idempotent)
+  if (!(await knex.schema.hasColumn('products', 'images'))) {
+    await knex.schema.alterTable('products', (t) => t.text('images'));
+  }
+  if (!(await knex.schema.hasColumn('products', 'detail_blocks'))) {
+    await knex.schema.alterTable('products', (t) => t.text('detail_blocks'));
+  }
 
   // categories: 성별 컬럼
-  const hasGender = await knex.schema.hasColumn('categories', 'gender');
-  if (!hasGender) {
-    await knex.schema.alterTable('categories', (t) => {
-      t.string('gender');
-    });
+  if (!(await knex.schema.hasColumn('categories', 'gender'))) {
+    await knex.schema.alterTable('categories', (t) => t.string('gender'));
   }
 
   // orders: 결제 참조 정보
-  await knex.schema.alterTable('orders', (t) => {
-    t.string('pay_ref_no');
-    t.string('pay_tran_date');
-  });
+  if (!(await knex.schema.hasColumn('orders', 'pay_ref_no'))) {
+    await knex.schema.alterTable('orders', (t) => t.string('pay_ref_no'));
+  }
+  if (!(await knex.schema.hasColumn('orders', 'pay_tran_date'))) {
+    await knex.schema.alterTable('orders', (t) => t.string('pay_tran_date'));
+  }
 };
 
 exports.down = async function(knex) {
