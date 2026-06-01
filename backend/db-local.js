@@ -139,7 +139,12 @@ class QB {
     }
     data[this._table] = table;
     saveData(data);
-    return Promise.resolve(ids);
+
+    // .insert(rows): 기본은 [id1, id2] 반환 (legacy)
+    // .insert(rows).returning('id'): [{id: 1}, {id: 2}] 반환 (PostgreSQL 호환)
+    const promise = Promise.resolve(ids);
+    promise.returning = () => Promise.resolve(ids.map(id => ({ id })));
+    return promise;
   }
 
   update(updateData) {

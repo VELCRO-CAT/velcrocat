@@ -54,13 +54,13 @@ router.post('/naver/callback', async (req, res) => {
       }
     } else {
       // 신규 유저 - 자동 회원가입
-      const [id] = await db('users').insert({
+      const [{ id }] = await db('users').insert({
         name: name || '네이버 사용자',
         email,
         password: '',
         role: 'user',
         naver_id: naverId
-      });
+      }).returning('id');
       user = { id, name: name || '네이버 사용자', email, role: 'user' };
 
       // 관리자 알림

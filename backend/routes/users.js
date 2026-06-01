@@ -124,7 +124,7 @@ router.post('/register', async (req, res) => {
   if (exists) return res.status(409).json({ error: '이미 사용 중인 이메일입니다' });
 
   const hashed = await bcrypt.hash(password, 10);
-  const [id] = await db('users').insert({ name, email, password: hashed, role: 'user' });
+  const [{ id }] = await db('users').insert({ name, email, password: hashed, role: 'user' }).returning('id');
   const user = { id, name, email, role: 'user' };
 
   // 관리자 알림 생성

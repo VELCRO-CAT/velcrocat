@@ -116,7 +116,7 @@ router.get('/products', adminMiddleware, async (req, res) => {
 });
 
 router.post('/products', adminMiddleware, async (req, res) => {
-  const [id] = await db('products').insert(req.body);
+  const [{ id }] = await db('products').insert(req.body).returning('id');
   const product = await db('products').where('id', id).first();
   res.status(201).json(product);
 });

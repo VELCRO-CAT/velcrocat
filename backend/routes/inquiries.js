@@ -8,13 +8,13 @@ router.post('/', async (req, res) => {
   if (!name || !phone || !email || !message) {
     return res.status(400).json({ error: '이름, 전화번호, 이메일, 문의 내용을 모두 입력해주세요' });
   }
-  const [id] = await db('inquiries').insert({
+  const [{ id }] = await db('inquiries').insert({
     name, phone, email,
     order_number: orderNumber || null,
     inquiry_type: inquiryType || '기타',
     message,
     status: 'unread'
-  });
+  }).returning('id');
   // 관리자 알림 생성
   await db('notifications').insert({
     type: 'inquiry',
