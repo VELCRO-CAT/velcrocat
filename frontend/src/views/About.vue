@@ -23,20 +23,6 @@
       </div>
       <div class="brand-nav-btns">
         <router-link to="/products" class="nav-btn nav-btn-gray">ONLINE SHOP</router-link>
-        <button
-          class="sound-toggle-btn"
-          :class="{ muted: isMuted }"
-          @click="toggleMute"
-          :title="isMuted ? '소리 켜기' : '소리 끄기'"
-          :aria-label="isMuted ? '소리 켜기' : '소리 끄기'"
-        >
-          <svg v-if="!isMuted" width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-          </svg>
-          <svg v-else width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-          </svg>
-        </button>
       </div>
       <!-- 모바일 햄버거 -->
       <button class="hamburger-btn" @click="mobileMenuOpen = !mobileMenuOpen" :class="{ open: mobileMenuOpen }">
@@ -52,19 +38,6 @@
       <router-link to="/products" @click="mobileMenuOpen = false">SHOP</router-link>
       <router-link to="/contact" @click="mobileMenuOpen = false">CONTACT</router-link>
       <router-link to="/products" class="mobile-menu-shop" @click="mobileMenuOpen = false">ONLINE SHOP</router-link>
-      <button
-        class="mobile-menu-sound"
-        :class="{ muted: isMuted }"
-        @click="toggleMute"
-      >
-        <svg v-if="!isMuted" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-        </svg>
-        <svg v-else width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-        </svg>
-        <span>{{ isMuted ? '소리 켜기' : '소리 끄기' }}</span>
-      </button>
     </nav>
 
     <!-- 히어로 (배경 영상 슬라이드쇼) -->
@@ -97,6 +70,23 @@
           <router-link to="/contact" class="second-hero-btn btn-outline">문의하기</router-link>
         </div>
       </div>
+      <!-- 사운드 토글 (좌측 하단, 히어로 위에 떠 있음) -->
+      <button
+        class="hero-sound-btn"
+        :class="{ muted: isMuted }"
+        @click="toggleMute"
+        :title="isMuted ? '소리 켜기' : '소리 끄기'"
+        :aria-label="isMuted ? '소리 켜기' : '소리 끄기'"
+      >
+        <svg v-if="!isMuted" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <svg v-else width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+        <span class="hero-sound-label">{{ isMuted ? '소리 켜기' : '소리 끄기' }}</span>
+      </button>
+
       <!-- 스크롤 인디케이터 (우측 하단, 원형 회전 텍스트) -->
       <div class="scroll-indicator">
         <svg class="scroll-circle-svg" viewBox="0 0 200 200">
@@ -326,9 +316,15 @@ const isMuted = ref(false);
 
 function toggleMute() {
   isMuted.value = !isMuted.value;
+  // 자동재생 차단 우회용 document 핸들러가 남아있으면 제거 (이 클릭으로 새 Audio 생성 차단)
+  if (tryStartMusicHandler) {
+    document.removeEventListener('click', tryStartMusicHandler);
+    document.removeEventListener('touchstart', tryStartMusicHandler);
+    tryStartMusicHandler = null;
+  }
   if (!bgAudio.value) return;
   bgAudio.value.muted = isMuted.value;
-  // 음소거 해제 시 아직 재생 안 됐다면 이 클릭을 이용해 재생 시도 (자동재생 차단 우회)
+  // 음소거 해제 시 아직 재생 안 됐다면 이 클릭을 이용해 재생 시도
   if (!isMuted.value && !musicStarted.value) {
     bgAudio.value.play().then(() => { musicStarted.value = true; }).catch(() => {});
   }
@@ -483,6 +479,7 @@ onMounted(() => {
       bgAudio.value = new Audio(bgMusic);
       bgAudio.value.loop = true;
       bgAudio.value.volume = 0.1;
+      bgAudio.value.muted = isMuted.value; // 사용자가 이미 음소거 눌렀으면 존중
       bgAudio.value.play().then(() => {
         musicStarted.value = true;
       }).catch(() => {});
@@ -629,52 +626,56 @@ onUnmounted(() => {
 .brand-nav-btns {
   margin-left: 16px;
   flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
 }
-/* 소리 토글 버튼 (ONLINE SHOP 밑) */
-.sound-toggle-btn {
-  width: 100%;
-  height: 56px;
-  border-radius: 28px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.3);
-  color: #fff;
+
+/* 히어로 영상 위에 떠 있는 사운드 토글 */
+.hero-sound-btn {
+  position: absolute;
+  bottom: 36px;
+  left: 36px;
+  z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  padding: 0;
-}
-.sound-toggle-btn:hover {
-  background: #fff;
-  color: #111;
-  transform: translateY(-1px);
-}
-.sound-toggle-btn.muted {
-  background: rgba(0,0,0,0.4);
-  color: #aaa;
-  border-color: rgba(255,255,255,0.2);
-}
-.sound-toggle-btn.muted:hover {
-  background: #fff;
-  color: #111;
-}
-.brand-nav.nav-light .sound-toggle-btn {
-  border-color: #111;
-  color: #111;
-  background: rgba(0,0,0,0.04);
-}
-.brand-nav.nav-light .sound-toggle-btn:hover {
-  background: #111;
+  gap: 12px;
+  padding: 14px 22px 14px 18px;
+  background: rgba(0,0,0,0.45);
+  border: 1.5px solid rgba(255,255,255,0.5);
+  border-radius: 999px;
   color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
-.brand-nav.nav-light .sound-toggle-btn.muted {
-  color: #999;
-  border-color: #ccc;
+.hero-sound-btn:hover {
+  background: #fff;
+  color: #111;
+  border-color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.hero-sound-btn.muted {
+  background: rgba(0,0,0,0.6);
+  color: rgba(255,255,255,0.7);
+}
+.hero-sound-btn.muted:hover {
+  background: #fff;
+  color: #111;
+}
+.hero-sound-label { line-height: 1; }
+@media (max-width: 600px) {
+  .hero-sound-btn {
+    bottom: 24px;
+    left: 20px;
+    padding: 12px 18px 12px 14px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .hero-sound-btn svg { width: 24px; height: 24px; }
 }
 
 .nav-btn {
@@ -1587,27 +1588,6 @@ onUnmounted(() => {
   border-radius: 4px;
   font-size: 13px !important;
   letter-spacing: 3px !important;
-}
-.mobile-menu-sound {
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: #f4f4f4;
-  color: #111;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 14px 0;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  cursor: pointer;
-  width: 100%;
-}
-.mobile-menu-sound.muted {
-  background: #fff;
-  color: #888;
 }
 
 @media (max-width: 768px) {
