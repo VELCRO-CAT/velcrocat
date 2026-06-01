@@ -115,17 +115,41 @@ router.get('/products', adminMiddleware, async (req, res) => {
   res.json(await db('products').orderBy('id'));
 });
 
+// products 테이블의 실제 컬럼만 골라 반환 (잉여 필드/id/timestamps 제거)
+async function pickProductColumns(body) {
+  const info = await db('products').columnInfo();
+  const cols = Object.keys(info);
+  const out = {};
+  for (const c of cols) {
+    if (c === 'id' || c === 'created_at' || c === 'updated_at') continue;
+    if (body[c] !== undefined) out[c] = body[c];
+  }
+  return out;
+}
+
 router.post('/products', adminMiddleware, async (req, res) => {
-  const [{ id }] = await db('products').insert(req.body).returning('id');
-  const product = await db('products').where('id', id).first();
-  res.status(201).json(product);
+  try {
+    const data = await pickProductColumns(req.body);
+    const [{ id }] = await db('products').insert(data).returning('id');
+    const product = await db('products').where('id', id).first();
+    res.status(201).json(product);
+  } catch (e) {
+    console.error('[admin POST /products]', e.message);
+    res.status(500).json({ error: '상품 추가에 실패했습니다: ' + e.message });
+  }
 });
 
 router.put('/products/:id', adminMiddleware, async (req, res) => {
-  await db('products').where('id', req.params.id).update(req.body);
-  const product = await db('products').where('id', req.params.id).first();
-  if (!product) return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
-  res.json(product);
+  try {
+    const data = await pickProductColumns(req.body);
+    await db('products').where('id', req.params.id).update(data);
+    const product = await db('products').where('id', req.params.id).first();
+    if (!product) return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    res.json(product);
+  } catch (e) {
+    console.error('[admin PUT /products]', e.message);
+    res.status(500).json({ error: '상품 수정에 실패했습니다: ' + e.message });
+  }
 });
 
 router.delete('/products/:id', adminMiddleware, async (req, res) => {
