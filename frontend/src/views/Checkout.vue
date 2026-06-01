@@ -78,7 +78,7 @@
               </v-col>
 
               <v-col cols="12" class="mt-3">
-                <label class="field-label">주소</label>
+                <label class="field-label">주소 <span class="required">*</span></label>
                 <v-text-field
                   v-model="form.address"
                   variant="outlined"
@@ -89,7 +89,7 @@
                 />
               </v-col>
               <v-col cols="12" class="mt-3">
-                <label class="field-label">상세주소</label>
+                <label class="field-label">상세주소 <span class="required">*</span></label>
                 <v-text-field
                   v-model="form.addressDetail"
                   variant="outlined"
@@ -322,6 +322,7 @@ async function processPayment() {
   if (!form.value.name) { error.value = '이름을 입력해주세요'; return; }
   if (!form.value.phone || form.value.phone.replace(/\D/g, '').length < 10) { error.value = '올바른 전화번호를 입력해주세요'; return; }
   if (!form.value.address) { error.value = '주소를 검색해주세요'; return; }
+  if (!form.value.addressDetail?.trim()) { error.value = '상세주소를 입력해주세요'; return; }
   if (cartStore.items.length === 0) { error.value = '장바구니가 비어있습니다'; return; }
 
   loading.value = true;
