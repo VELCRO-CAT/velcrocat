@@ -11,26 +11,31 @@
     <v-row v-else>
       <!-- 장바구니 아이템 -->
       <v-col cols="12" md="8">
-        <v-card variant="outlined" v-for="item in cartStore.items" :key="item.id" class="mb-3">
+        <v-card variant="outlined" v-for="item in cartStore.items" :key="vk(item)" class="mb-3">
           <div class="d-flex align-center pa-4 gap-4">
             <v-img :src="item.image" width="80" height="80" rounded="lg" style="flex-shrink:0; background:#f5f5f5" />
             <div class="flex-grow-1">
               <p class="text-caption text-grey">{{ item.seller }}</p>
               <p class="font-weight-medium">{{ item.name }}</p>
+              <p v-if="item.color || item.size" class="text-caption text-grey">
+                <span v-if="item.color">컬러: {{ item.color }}</span>
+                <span v-if="item.color && item.size"> / </span>
+                <span v-if="item.size">사이즈: {{ item.size }}</span>
+              </p>
               <p class="text-body-2 text-red-darken-4 font-weight-bold">₩{{ Number(item.price).toLocaleString() }}</p>
             </div>
             <div class="d-flex align-center">
-              <v-btn icon variant="text" size="small" @click="cartStore.updateQty(item.id, item.qty - 1)">
+              <v-btn icon variant="text" size="small" @click="cartStore.updateQty(vk(item), item.qty - 1)">
                 <v-icon>mdi-minus</v-icon>
               </v-btn>
               <span class="mx-3 font-weight-bold">{{ item.qty }}</span>
-              <v-btn icon variant="text" size="small" @click="cartStore.updateQty(item.id, item.qty + 1)">
+              <v-btn icon variant="text" size="small" @click="cartStore.updateQty(vk(item), item.qty + 1)">
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </div>
             <div class="text-right" style="min-width:80px">
               <p class="font-weight-bold">₩{{ (item.price * item.qty).toLocaleString() }}</p>
-              <v-btn icon variant="text" size="x-small" color="grey" @click="cartStore.removeItem(item.id)">
+              <v-btn icon variant="text" size="x-small" color="grey" @click="cartStore.removeItem(vk(item))">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </div>
@@ -66,11 +71,12 @@
 </template>
 
 <script setup>
-import { useCartStore } from '../stores/cart';
+import { useCartStore, variantKey } from '../stores/cart';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
 
 const cartStore = useCartStore();
+const vk = variantKey;
 const authStore = useAuthStore();
 const router = useRouter();
 

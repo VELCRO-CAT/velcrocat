@@ -40,6 +40,38 @@
 
           <!-- 수량 (재고 있을 때만) -->
           <template v-if="product.stock > 0">
+            <!-- 컬러 선택 -->
+            <div v-if="availableColors.length > 0" class="option-row">
+              <p class="option-label">컬러 <span class="option-required">*</span></p>
+              <div class="color-grid">
+                <button
+                  v-for="c in availableColors"
+                  :key="c.name"
+                  class="color-chip"
+                  :class="{ selected: selectedColor === c.name }"
+                  :title="c.name"
+                  @click="selectedColor = c.name"
+                >
+                  <span class="color-swatch" :style="{ background: c.hex, border: c.border ? '1px solid #ccc' : 'none' }"></span>
+                  <span class="color-name">{{ c.name }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 사이즈 선택 -->
+            <div v-if="availableSizes.length > 0" class="option-row">
+              <p class="option-label">사이즈 <span class="option-required">*</span></p>
+              <div class="size-grid">
+                <button
+                  v-for="s in availableSizes"
+                  :key="s"
+                  class="size-chip"
+                  :class="{ selected: selectedSize === s }"
+                  @click="selectedSize = s"
+                >{{ s }}</button>
+              </div>
+            </div>
+
             <div class="qty-row">
               <button class="qty-btn" @click="qty = Math.max(1, qty - 1)">−</button>
               <span class="qty-num">{{ qty }}</span>
@@ -311,6 +343,28 @@ const detailBlocks = ref([]);
 const recentProducts = ref([]);
 const detailExpanded = ref(false);
 const currentImgIndex = ref(0);
+const selectedColor = ref('');
+const selectedSize = ref('');
+
+// 컬러 마스터 (이름 + hex). 흰색 계열은 테두리로 시인성 확보.
+const COLOR_PALETTE = {
+  '블랙':     { hex: '#1a1a1a' },
+  '아이보리': { hex: '#f5f0e1', border: true },
+  '네이비':   { hex: '#1b2845' },
+  '그레이':   { hex: '#a8a8a8' },
+  '차콜그레이': { hex: '#36454f' },
+  '베이지':   { hex: '#d2b48c' }
+};
+
+const availableColors = computed(() => {
+  try {
+    const arr = JSON.parse(product.value?.colors || '[]');
+    return arr.map(name => ({ name, ...(COLOR_PALETTE[name] || { hex: '#ccc', border: true }) }));
+  } catch { return []; }
+});
+const availableSizes = computed(() => {
+  try { return JSON.parse(product.value?.sizes || '[]'); } catch { return []; }
+});
 
 const allImages = computed(() => {
   if (product.value?.images) {
@@ -362,6 +416,8 @@ async function loadProduct(id) {
   loading.value = true;
   qty.value = 1;
   currentImgIndex.value = 0;
+  selectedColor.value = '';
+  selectedSize.value = '';
   try {
     const res = await axios.get(`/api/products/${id}`);
     product.value = res.data;
@@ -394,8 +450,24 @@ watch(() => route.params.id, (id) => {
   if (id) loadProduct(id);
 });
 
+function validateOptions() {
+  if (availableColors.value.length > 0 && !selectedColor.value) {
+    snackMsg.value = '컬러를 선택해주세요';
+    snackbar.value = true;
+    return false;
+  }
+  if (availableSizes.value.length > 0 && !selectedSize.value) {
+    snackMsg.value = '사이즈를 선택해주세요';
+    snackbar.value = true;
+    return false;
+  }
+  return true;
+}
+
 function addToCart() {
-  for (let i = 0; i < qty.value; i++) cartStore.addItem(product.value);
+  if (!validateOptions()) return;
+  const opts = { color: selectedColor.value || null, size: selectedSize.value || null };
+  for (let i = 0; i < qty.value; i++) cartStore.addItem(product.value, opts);
   snackMsg.value = '장바구니에 담았습니다';
   snackbar.value = true;
 }
@@ -407,7 +479,9 @@ function toggleWish() {
 }
 
 function buyNow() {
-  for (let i = 0; i < qty.value; i++) cartStore.addItem(product.value);
+  if (!validateOptions()) return;
+  const opts = { color: selectedColor.value || null, size: selectedSize.value || null };
+  for (let i = 0; i < qty.value; i++) cartStore.addItem(product.value, opts);
   router.push('/checkout');
 }
 </script>
@@ -527,6 +601,75 @@ function buyNow() {
   align-items: center;
   gap: 4px;
   margin-bottom: 24px;
+}
+
+/* 옵션 선택 (컬러/사이즈) */
+.option-row { margin-bottom: 20px; }
+.option-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 10px;
+  letter-spacing: -0.2px;
+}
+.option-required { color: #e53e3e; margin-left: 2px; }
+
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.color-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 12.5px;
+  color: #555;
+}
+.color-chip:hover { border-color: #999; }
+.color-chip.selected {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+}
+.color-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.color-name { line-height: 1; }
+
+.size-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.size-chip {
+  min-width: 50px;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+}
+.size-chip:hover { border-color: #999; }
+.size-chip.selected {
+  border-color: #111;
+  background: #111;
+  color: #fff;
 }
 
 .qty-row {

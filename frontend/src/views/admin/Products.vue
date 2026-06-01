@@ -136,6 +136,34 @@
             </v-col>
           </v-row>
 
+          <!-- 컬러 / 사이즈 선택 -->
+          <p class="text-caption font-weight-bold text-grey mb-2 mt-2" style="letter-spacing:1px">선택 가능 컬러</p>
+          <div class="opt-grid mb-3">
+            <button
+              v-for="c in COLOR_OPTIONS"
+              :key="c.name"
+              type="button"
+              class="opt-chip opt-color"
+              :class="{ selected: selectedColors.includes(c.name) }"
+              @click="toggleColor(c.name)"
+            >
+              <span class="opt-swatch" :style="{ background: c.hex, border: c.border ? '1px solid #ccc' : 'none' }"></span>
+              {{ c.name }}
+            </button>
+          </div>
+
+          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">선택 가능 사이즈</p>
+          <div class="opt-grid mb-3">
+            <button
+              v-for="s in SIZE_OPTIONS"
+              :key="s"
+              type="button"
+              class="opt-chip opt-size"
+              :class="{ selected: selectedSizes.includes(s) }"
+              @click="toggleSize(s)"
+            >{{ s }}</button>
+          </div>
+
           <v-divider class="mb-4" />
 
           <!-- 블로그식 상세 설명 에디터 -->
@@ -232,6 +260,29 @@ const formError = ref('');
 const imageList = ref([]);
 const urlInput = ref('');
 const detailBlocks = ref([]);
+const selectedColors = ref([]);
+const selectedSizes = ref([]);
+
+const COLOR_OPTIONS = [
+  { name: '블랙',     hex: '#1a1a1a' },
+  { name: '아이보리', hex: '#f5f0e1', border: true },
+  { name: '네이비',   hex: '#1b2845' },
+  { name: '그레이',   hex: '#a8a8a8' },
+  { name: '차콜그레이', hex: '#36454f' },
+  { name: '베이지',   hex: '#d2b48c' }
+];
+const SIZE_OPTIONS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+function toggleColor(name) {
+  const i = selectedColors.value.indexOf(name);
+  if (i >= 0) selectedColors.value.splice(i, 1);
+  else selectedColors.value.push(name);
+}
+function toggleSize(s) {
+  const i = selectedSizes.value.indexOf(s);
+  if (i >= 0) selectedSizes.value.splice(i, 1);
+  else selectedSizes.value.push(s);
+}
 
 const categoryItems = ref([]);
 
@@ -285,11 +336,18 @@ function parseDetailBlocks(p) {
   return [];
 }
 
+function parseJsonArray(s) {
+  try { const a = JSON.parse(s || '[]'); return Array.isArray(a) ? a : []; }
+  catch { return []; }
+}
+
 function openAdd() {
   editingProduct.value = null;
   form.value = defaultForm();
   imageList.value = [];
   detailBlocks.value = [];
+  selectedColors.value = [];
+  selectedSizes.value = [];
   urlInput.value = '';
   formError.value = '';
   showDialog.value = true;
@@ -300,6 +358,8 @@ function openEdit(p) {
   form.value = { ...p };
   imageList.value = [...parseImages(p)];
   detailBlocks.value = [...parseDetailBlocks(p)];
+  selectedColors.value = parseJsonArray(p.colors);
+  selectedSizes.value = parseJsonArray(p.sizes);
   urlInput.value = '';
   formError.value = '';
   showDialog.value = true;
@@ -309,6 +369,8 @@ function closeDialog() {
   showDialog.value = false;
   imageList.value = [];
   detailBlocks.value = [];
+  selectedColors.value = [];
+  selectedSizes.value = [];
 }
 
 function addBlock(type) {
@@ -376,6 +438,8 @@ async function saveProduct() {
     data.image = imageList.value[0] || '';
     data.images = JSON.stringify(imageList.value);
     data.detail_blocks = JSON.stringify(detailBlocks.value.filter(b => b.content.trim()));
+    data.colors = JSON.stringify(selectedColors.value);
+    data.sizes = JSON.stringify(selectedSizes.value);
     if (editingProduct.value) {
       await axios.put(`/api/admin/products/${editingProduct.value.id}`, data);
     } else {
@@ -693,4 +757,38 @@ async function confirmDelete(p) {
   .image-section { flex-direction: column; }
   .image-preview { width: 100%; height: 160px; }
 }
+
+/* 컬러/사이즈 옵션 칩 */
+.opt-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.opt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.opt-chip:hover { border-color: #999; }
+.opt-chip.selected {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+.opt-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.opt-size { min-width: 44px; justify-content: center; }
 </style>

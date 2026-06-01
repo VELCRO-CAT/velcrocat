@@ -168,14 +168,18 @@
             </div>
 
             <div class="summary-items">
-              <div v-for="item in cartStore.items" :key="item.id + (item.size || '')" class="summary-item">
+              <div v-for="item in cartStore.items" :key="item.id + '_' + (item.color || '') + '_' + (item.size || '')" class="summary-item">
                 <div class="summary-img-wrap">
                   <img :src="item.image" :alt="item.name" class="summary-img" />
                   <span class="summary-qty">{{ item.quantity || item.qty }}</span>
                 </div>
                 <div class="summary-info">
                   <p class="summary-name">{{ item.name }}</p>
-                  <p v-if="item.size" class="summary-size">사이즈: {{ item.size }}</p>
+                  <p v-if="item.color || item.size" class="summary-size">
+                    <span v-if="item.color">컬러: {{ item.color }}</span>
+                    <span v-if="item.color && item.size"> · </span>
+                    <span v-if="item.size">사이즈: {{ item.size }}</span>
+                  </p>
                 </div>
                 <p class="summary-price">₩{{ (item.price * (item.quantity || item.qty || 1)).toLocaleString() }}</p>
               </div>
@@ -319,6 +323,7 @@ async function processPayment() {
         name: i.name,
         price: i.price,
         quantity: i.quantity || i.qty,
+        color: i.color,
         size: i.size,
         image: i.image
       })),
