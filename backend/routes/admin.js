@@ -112,7 +112,7 @@ router.get('/users', adminMiddleware, async (req, res) => {
 });
 
 router.get('/products', adminMiddleware, async (req, res) => {
-  res.json(await db('products').orderBy('id'));
+  res.json(await db('products').orderBy('id', 'desc'));
 });
 
 // products 테이블의 실제 컬럼만 골라 반환 (잉여 필드/id/timestamps 제거)
