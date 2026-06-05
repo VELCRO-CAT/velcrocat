@@ -85,6 +85,19 @@
         <v-btn type="submit" color="#111" block size="large" :loading="loading" :disabled="!emailVerified">회원가입</v-btn>
       </v-form>
 
+      <!-- 소셜 회원가입 (네이버) -->
+      <div class="reveal mt-6">
+        <div class="social-divider">
+          <span>또는</span>
+        </div>
+        <div class="mt-4">
+          <NaverLoginButton />
+        </div>
+        <p class="text-caption text-grey text-center mt-2">
+          네이버 계정으로 간편하게 가입할 수 있습니다
+        </p>
+      </div>
+
       <p class="text-center text-body-2 mt-4 reveal">
         이미 계정이 있으신가요?
         <router-link to="/login" style="color:#111;font-weight:600">로그인</router-link>
@@ -98,6 +111,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
+import NaverLoginButton from '../components/NaverLoginButton.vue';
 
 onMounted(() => {
   document.querySelectorAll('.reg-card .reveal').forEach((el, i) => {
@@ -234,4 +248,18 @@ async function handleSubmit() {
   transform: translateY(0);
 }
 .gap-2 { gap: 8px; }
+.social-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #999;
+  font-size: 13px;
+}
+.social-divider::before,
+.social-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
 </style>
