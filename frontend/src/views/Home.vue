@@ -13,7 +13,7 @@
         class="product-item reveal"
         :style="{ transitionDelay: (idx % 6) * 0.08 + 's' }"
       >
-        <div class="product-img-wrap" @mouseenter="startSlide(product)" @mouseleave="stopSlide(product)">
+        <div class="product-img-wrap">
           <img
             v-for="(img, si) in getImages(product)"
             :key="si"
@@ -76,21 +76,24 @@ function getImages(product) {
   return product.image ? [product.image] : [];
 }
 
-function startSlide(product) {
+function startAutoSlide(product) {
   const imgs = getImages(product);
   if (imgs.length < 2) return;
-  slideTimers[product.id] = setInterval(() => {
-    const current = slideIndex[product.id] || 0;
-    slideIndex[product.id] = (current + 1) % imgs.length;
-  }, 1700);
+  const startDelay = Math.random() * 1500;
+  setTimeout(() => {
+    if (!slideTimers[product.id]) {
+      slideTimers[product.id] = setInterval(() => {
+        const current = slideIndex[product.id] || 0;
+        slideIndex[product.id] = (current + 1) % imgs.length;
+      }, 2200);
+    }
+  }, startDelay);
 }
 
-function stopSlide(product) {
-  if (slideTimers[product.id]) {
-    clearInterval(slideTimers[product.id]);
-    delete slideTimers[product.id];
-  }
-  slideIndex[product.id] = 0;
+function startAllSlides() {
+  Object.values(slideTimers).forEach(t => clearInterval(t));
+  Object.keys(slideTimers).forEach(k => delete slideTimers[k]);
+  products.value.forEach(p => startAutoSlide(p));
 }
 
 onUnmounted(() => {
@@ -116,7 +119,7 @@ onMounted(async () => {
     products.value = res.data.products;
   } finally {
     loading.value = false;
-    nextTick(() => initReveal());
+    nextTick(() => { initReveal(); startAllSlides(); });
   }
 });
 

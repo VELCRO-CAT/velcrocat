@@ -58,7 +58,7 @@
           class="product-item reveal"
           :style="{ transitionDelay: (idx % 6) * 0.08 + 's' }"
         >
-          <div class="product-img-wrap" @mouseenter="startSlide(product)" @mouseleave="stopSlide(product)">
+          <div class="product-img-wrap">
             <img
               v-for="(img, si) in getImages(product)"
               :key="si"
@@ -136,25 +136,33 @@ function getImages(product) {
   return product.image ? [product.image] : [];
 }
 
-function startSlide(product) {
+function startAutoSlide(product) {
   const imgs = getImages(product);
   if (imgs.length < 2) return;
-  slideTimers[product.id] = setInterval(() => {
-    const current = slideIndex[product.id] || 0;
-    slideIndex[product.id] = (current + 1) % imgs.length;
-  }, 1700);
+  // 상품마다 시작 오프셋을 랜덤하게 줘서 동시에 넘어가지 않도록
+  const startDelay = Math.random() * 1500;
+  setTimeout(() => {
+    if (!slideTimers[product.id]) {
+      slideTimers[product.id] = setInterval(() => {
+        const current = slideIndex[product.id] || 0;
+        slideIndex[product.id] = (current + 1) % imgs.length;
+      }, 2200);
+    }
+  }, startDelay);
 }
 
-function stopSlide(product) {
-  if (slideTimers[product.id]) {
-    clearInterval(slideTimers[product.id]);
-    delete slideTimers[product.id];
-  }
-  slideIndex[product.id] = 0;
+function stopAllSlides() {
+  Object.values(slideTimers).forEach(t => clearInterval(t));
+  Object.keys(slideTimers).forEach(k => delete slideTimers[k]);
+}
+
+function startAllSlides() {
+  stopAllSlides();
+  products.value.forEach(p => startAutoSlide(p));
 }
 
 onUnmounted(() => {
-  Object.values(slideTimers).forEach(t => clearInterval(t));
+  stopAllSlides();
 });
 const selectedCategory = ref(route.query.category || null);
 const selectedGender = ref(route.query.gender || null);
@@ -189,7 +197,10 @@ async function fetchProducts() {
   products.value = res.data.products;
   total.value = res.data.total;
   loading.value = false;
-  nextTick(() => initReveal());
+  nextTick(() => {
+    initReveal();
+    startAllSlides();
+  });
 }
 
 function initReveal() {
