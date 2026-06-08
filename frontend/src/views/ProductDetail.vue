@@ -134,10 +134,14 @@
             <!-- 브랜드 헤더 -->
             <div class="brand-header">
               <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" class="brand-header-logo" />
-              <div>
+              <div class="brand-header-text">
                 <p class="brand-header-name">VELCRO CAT</p>
                 <p class="brand-header-sub">Comfortable & Minimal</p>
               </div>
+              <p class="brand-header-tag">
+                일상에 스며드는 감각적인 스타일,<br/>
+                과하지 않은 심플함의 가치
+              </p>
             </div>
 
             <!-- 상품 설명 -->
@@ -998,7 +1002,7 @@ function buyNow() {
 .brand-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
   padding: 24px 32px;
   background: #fafafa;
   border: 1px solid #eee;
@@ -1008,7 +1012,9 @@ function buyNow() {
   height: 48px;
   width: auto;
   object-fit: contain;
+  flex-shrink: 0;
 }
+.brand-header-text { flex-shrink: 0; }
 .brand-header-name {
   font-size: 16px;
   font-weight: 800;
@@ -1022,6 +1028,27 @@ function buyNow() {
   color: #999;
   letter-spacing: 2px;
   margin-top: 0;
+}
+.brand-header-tag {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  letter-spacing: -0.2px;
+  margin: 0;
+  padding: 0 16px;
+  border-left: 1px solid #e0e0e0;
+}
+@media (max-width: 600px) {
+  .brand-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px 20px; }
+  .brand-header-tag {
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+    padding: 12px 0 0;
+    width: 100%;
+    text-align: left;
+  }
 }
 
 /* 상품 설명 블록 */
