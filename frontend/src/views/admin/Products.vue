@@ -265,6 +265,7 @@ const selectedSizes = ref([]);
 
 const COLOR_OPTIONS = [
   { name: '블랙',     hex: '#1a1a1a' },
+  { name: '화이트',   hex: '#ffffff', border: true },
   { name: '아이보리', hex: '#f5f0e1', border: true },
   { name: '네이비',   hex: '#1b2845' },
   { name: '그레이',   hex: '#a8a8a8' },

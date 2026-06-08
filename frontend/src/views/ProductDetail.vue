@@ -353,6 +353,7 @@ const selectedSize = ref('');
 // 컬러 마스터 (이름 + hex). 흰색 계열은 테두리로 시인성 확보.
 const COLOR_PALETTE = {
   '블랙':     { hex: '#1a1a1a' },
+  '화이트':   { hex: '#ffffff', border: true },
   '아이보리': { hex: '#f5f0e1', border: true },
   '네이비':   { hex: '#1b2845' },
   '그레이':   { hex: '#a8a8a8' },
