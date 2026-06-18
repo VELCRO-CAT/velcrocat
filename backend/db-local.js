@@ -165,6 +165,23 @@ class QB {
     return Promise.resolve(toDelete.size);
   }
 
+  // knex .columnInfo() 호환 — 관리자 상품 추가/수정(pickProductColumns)에서 사용.
+  // 기존 행들의 키 합집합 + (products는 마이그레이션 스키마)로 컬럼 목록을 만든다.
+  columnInfo() {
+    const data = loadData();
+    const rows = data[this._table] || [];
+    const keys = new Set();
+    rows.forEach(r => Object.keys(r).forEach(k => keys.add(k)));
+    if (this._table === 'products') {
+      ['id', 'name', 'name_en', 'description', 'price', 'category', 'image', 'seller',
+       'rating', 'stock', 'images', 'detail_blocks', 'colors', 'sizes', 'created_at', 'updated_at']
+        .forEach(k => keys.add(k));
+    }
+    const info = {};
+    keys.forEach(k => { info[k] = { type: 'text', nullable: true }; });
+    return Promise.resolve(info);
+  }
+
   // await db('table')... 형태로 사용할 수 있게
   then(resolve, reject) {
     try { resolve(this._resolve(loadData())); }
