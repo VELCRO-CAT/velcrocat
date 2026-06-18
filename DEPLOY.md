@@ -19,6 +19,18 @@
 
 ---
 
+## ⚠️ Vercel·Render 삭제 전 필수 체크리스트 (코드 감사로 검증됨)
+이 순서를 다 끝내고 **새 VPS에서 동작을 확인한 다음에만** Vercel·Render를 삭제할 것.
+1. **[되돌릴 수 없음] 라이브 uploads 전체 백업** — Render 디스크는 ephemeral. git에 없는 최신 업로드는 Render 삭제 시 영구 소실 (0번).
+2. **[되돌릴 수 없음] 라이브 DB pg_dump 백업** — `dev-db.json` 자동복원은 git 시점 stale 데이터라 의존 금지 (0번).
+3. **VPS에서 `npm run build` 필수** — `frontend/dist`는 .gitignore라 clone에 없음. 안 하면 화면이 통째로 안 뜸 (8번).
+4. **Nginx 3규칙** — SPA fallback(`try_files`) + `/api` 프록시 + `/uploads` 프록시 (10번).
+5. **`.env` 필수값** — `JWT_SECRET`(없으면 네이버/회원 토큰발급이 500으로 죽음), `DATABASE_URL`(localhost), `NAVER_CALLBACK_URL=https://vcat.kr/auth/naver/callback`(/api 아님!) (5번).
+6. **외부 콘솔 갱신** — 네이버 개발자센터 콜백 URL, 메인페이(MPC) 서버 notify URL을 vcat.kr 기준으로 등록 (12번).
+7. **DNS는 마지막** — 위가 다 준비된 뒤 A레코드를 VPS IP로, 그다음 certbot HTTPS (11번).
+
+---
+
 ## 0. (이전 전) Render에서 데이터 백업  ⚠️ 가장 중요
 Render를 내리기 **전에** 반드시 데이터부터 빼두세요. (Render 무료 DB는 방치 시 삭제될 수 있음)
 
@@ -89,13 +101,15 @@ psql "postgres://velcrocat:강한_비밀번호@localhost:5432/velcrocat" < velcr
 > 백업이 없다면(새로 시작): 서버 첫 기동 시 `db.migrate.latest()`가 테이블을 만들고 시드가 들어갑니다(6번 건너뛰고 9번으로).
 
 ## 7. 업로드 이미지 복원
-상품 이미지(`backend/uploads`)는 **git에 포함돼 있어 4번 `git clone` 시 자동으로 따라옵니다.**
-단, Render 운영 중 관리자가 새로 올린 이미지가 git에 없을 수 있으니, 0번에서 확보한
-최신 uploads가 있으면 덮어쓰기만 하면 됩니다.
+상품 이미지(`backend/uploads`)는 **대부분 git에 포함돼 clone 시 따라오지만, 전부는 아닙니다.**
+Render 운영 중 관리자가 올린 최신 이미지는 git에 없고 Render 디스크(ephemeral)에만 있어,
+**Render를 끄기 전에 0번에서 받아둔 라이브 uploads로 보강**해야 합니다. (안 받아두면 영구 소실)
 ```bash
-# (선택) git에 없는 최신 업로드만 보강
+# 0번에서 scp/rsync로 받아둔 라이브 uploads를 덮어쓰기(없는 것만 보강)
 cp -rn ~/uploads/* /var/www/velcrocat/backend/uploads/
 ```
+> 참고: 현재 dev-db.json 기준 이미지 2장(상품 #31 '남여 반팔티셔츠', #32 'ㅇㅇㅇ'(테스트))은
+> 이미 git·Render 양쪽에 없어 복구 불가. #32는 테스트 상품이라 dev-db.json에서 지워도 됨.
 
 ## 8. 프론트 빌드
 ```bash
