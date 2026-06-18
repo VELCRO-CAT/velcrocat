@@ -12,7 +12,8 @@ router.get('/', async (req, res) => {
     }));
     res.json(withCount);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('카테고리 조회 실패:', e);
+    res.status(500).json({ error: '카테고리를 불러오지 못했습니다' });
   }
 });
 

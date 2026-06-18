@@ -116,7 +116,10 @@ function initReveal() {
 onMounted(async () => {
   try {
     const res = await axios.get('/api/products');
-    products.value = res.data.products;
+    products.value = res.data.products || [];
+  } catch (e) {
+    console.error('상품 목록을 불러오지 못했습니다', e);
+    products.value = [];
   } finally {
     loading.value = false;
     nextTick(() => { initReveal(); startAllSlides(); });

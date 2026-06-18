@@ -87,8 +87,20 @@ app.get('/', (req, res) => {
   res.json({ message: '오사카마켓 API v2.0', db: process.env.DATABASE_URL ? 'PostgreSQL' : 'JSON 파일' });
 });
 
+// 전역 에러 핸들러 — 상세 오류는 서버 로그에만 남기고 클라이언트엔 일반 메시지만 반환
+app.use((err, req, res, next) => {
+  console.error('처리되지 않은 오류:', err);
+  if (res.headersSent) return next(err);
+  res.status(err.status || 500).json({ error: '서버 오류가 발생했습니다' });
+});
+
 async function startServer() {
   try {
+    // 프로덕션에서 JWT_SECRET 미설정 시 경고 (폴백 시크릿은 토큰 위조에 취약)
+    if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+      console.warn('⚠️  JWT_SECRET가 설정되지 않았습니다. 프로덕션에서는 반드시 환경변수로 설정하세요.');
+    }
+
     // 마이그레이션 (배포 환경만 실행, 로컬은 스킵)
     await db.migrate.latest();
 
@@ -115,7 +127,6 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`🚀 서버 실행: http://localhost:${PORT}`);
       console.log(`📦 DB: ${process.env.DATABASE_URL ? 'PostgreSQL (Render)' : 'JSON 파일 (dev-db.json)'}`);
-      console.log(`👤 관리자: velcrocat7 / kim@6521`);
     });
   } catch (err) {
     console.error('❌ 서버 시작 오류:', err);

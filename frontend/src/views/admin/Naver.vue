@@ -2,7 +2,7 @@
   <AdminSidebar />
 
   <v-main class="bg-grey-lighten-4 admin-page">
-    <v-container class="admin-container" style="max-width:900px">
+    <v-container class="admin-container" style="max-width:var(--container-sm)">
       <h1 class="page-title">네이버 스마트스토어</h1>
       <p class="page-sub mb-5">네이버 스마트스토어 연동 및 상품 내보내기</p>
 

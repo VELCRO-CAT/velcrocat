@@ -29,9 +29,12 @@
 
           <p class="product-desc">{{ product.description }}</p>
 
-          <p v-if="product.stock > 0" class="product-stock">
-            <v-icon size="15" color="#2a9d5c">mdi-check-circle</v-icon>
-            재고 있음 ({{ product.stock }}개)
+          <p v-if="product.stock > 0" class="product-stock" :class="{ 'low-stock': product.stock <= 5 }">
+            <v-icon size="15" :color="product.stock <= 5 ? '#e07b00' : '#2a9d5c'">
+              {{ product.stock <= 5 ? 'mdi-alert-circle' : 'mdi-check-circle' }}
+            </v-icon>
+            <template v-if="product.stock <= 5">품절 임박 · {{ product.stock }}개 남음</template>
+            <template v-else>재고 있음 ({{ product.stock }}개)</template>
           </p>
           <p v-else class="product-stock sold-out">
             <v-icon size="15" color="#e53e3e">mdi-close-circle</v-icon>
@@ -438,9 +441,17 @@ async function loadProduct(id) {
     } catch { productImages.value = []; }
     saveRecent(res.data);
 
-    // 같은 카테고리 상품 (자신 제외, 최대 6개)
-    const catRes = await axios.get(`/api/products?category=${res.data.category}`);
-    similarProducts.value = catRes.data.products.filter(p => p.id !== res.data.id).slice(0, 6);
+    // 같은 카테고리 상품 (자신 제외, 최대 6개) — 실패해도 상품 페이지는 정상 표시
+    try {
+      const catRes = await axios.get(`/api/products?category=${res.data.category}`);
+      similarProducts.value = (catRes.data.products || []).filter(p => p.id !== res.data.id).slice(0, 6);
+    } catch (e) {
+      console.error('관련 상품을 불러오지 못했습니다', e);
+      similarProducts.value = [];
+    }
+  } catch (e) {
+    console.error('상품을 불러오지 못했습니다', e);
+    product.value = null;
   } finally {
     loading.value = false;
   }
@@ -606,6 +617,10 @@ function buyNow() {
   align-items: center;
   gap: 4px;
   margin-bottom: 24px;
+}
+.product-stock.low-stock {
+  color: #e07b00;
+  font-weight: 600;
 }
 
 /* 옵션 선택 (컬러/사이즈) */

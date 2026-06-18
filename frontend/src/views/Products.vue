@@ -193,14 +193,21 @@ async function fetchProducts() {
   if (selectedGender.value) params.gender = selectedGender.value;
   if (sortBy.value) params.sort = sortBy.value;
   if (searchQuery.value) params.search = searchQuery.value;
-  const res = await axios.get('/api/products', { params });
-  products.value = res.data.products;
-  total.value = res.data.total;
-  loading.value = false;
-  nextTick(() => {
-    initReveal();
-    startAllSlides();
-  });
+  try {
+    const res = await axios.get('/api/products', { params });
+    products.value = res.data.products || [];
+    total.value = res.data.total || 0;
+  } catch (e) {
+    console.error('상품을 불러오지 못했습니다', e);
+    products.value = [];
+    total.value = 0;
+  } finally {
+    loading.value = false;
+    nextTick(() => {
+      initReveal();
+      startAllSlides();
+    });
+  }
 }
 
 function initReveal() {
@@ -226,8 +233,13 @@ watch(() => route.query, (q) => {
 });
 
 onMounted(async () => {
-  const catRes = await axios.get('/api/categories');
-  allCategories.value = catRes.data;
+  try {
+    const catRes = await axios.get('/api/categories');
+    allCategories.value = catRes.data || [];
+  } catch (e) {
+    console.error('카테고리를 불러오지 못했습니다', e);
+    allCategories.value = [];
+  }
   await fetchProducts();
 });
 

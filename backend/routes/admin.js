@@ -135,7 +135,7 @@ router.post('/products', adminMiddleware, async (req, res) => {
     res.status(201).json(product);
   } catch (e) {
     console.error('[admin POST /products]', e.message);
-    res.status(500).json({ error: '상품 추가에 실패했습니다: ' + e.message });
+    res.status(500).json({ error: '상품 추가에 실패했습니다' });
   }
 });
 
@@ -148,7 +148,7 @@ router.put('/products/:id', adminMiddleware, async (req, res) => {
     res.json(product);
   } catch (e) {
     console.error('[admin PUT /products]', e.message);
-    res.status(500).json({ error: '상품 수정에 실패했습니다: ' + e.message });
+    res.status(500).json({ error: '상품 수정에 실패했습니다' });
   }
 });
 

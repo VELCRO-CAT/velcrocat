@@ -2,7 +2,7 @@
   <AdminSidebar />
 
   <v-main class="bg-grey-lighten-4 admin-page">
-    <v-container class="admin-container" style="max-width:1100px">
+    <v-container class="admin-container" style="max-width:var(--container-lg)">
       <div class="page-header">
         <div>
           <h1 class="page-title">상품 관리</h1>

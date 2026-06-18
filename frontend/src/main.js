@@ -6,6 +6,7 @@ import * as directives from 'vuetify/directives';
 import 'vuetify/styles';
 import '@mdi/font/css/materialdesignicons.css';
 
+import './assets/style.css'; /* 공통 디자인 토큰 (간격 스케일 · 컨테이너 폭) */
 import './assets/hover-light.css'; /* 필요한 6개 애니메이션만 (95KB → 3KB) */
 import App from './App.vue';
 import router from './router';
@@ -37,6 +38,10 @@ app.use(vuetify);
 
 import { useAuthStore } from './stores/auth';
 useAuthStore(pinia).initAuth();
+
+// 장바구니를 localStorage에서 복원 (새로고침 시 유지)
+import { useCartStore } from './stores/cart';
+useCartStore(pinia).loadCart();
 
 // 관리자 페이지 접근: 브라우저 콘솔에서 velcrocat() 입력
 window.velcrocat = function () {

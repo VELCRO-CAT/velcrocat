@@ -1,3 +1,20 @@
-html, body {
-  font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+/* ── 공통 디자인 토큰 ──────────────────────────────────────
+   간격은 8px 기반 스케일을 기준으로 한다. 새 스타일이나
+   값을 정리할 때는 흩어진 px 매직넘버 대신 이 토큰을 사용해
+   규격을 통일한다. (기존 의도된 레이아웃 수치는 보존)
+   ※ 전역 폰트는 index.html의 `* { font-family: 'Noto Sans KR' }`
+     에서 관리한다.                                            */
+:root {
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 40px;
+  --sp-6: 56px;
+  --sp-7: 80px;
+
+  /* 관리자 페이지 컨테이너 폭 (콘텐츠 밀도별 3단계) */
+  --container-sm: 900px;   /* 대시보드 · 사용자 · 문의 · 네이버 */
+  --container-md: 1000px;  /* 주문 테이블 */
+  --container-lg: 1100px;  /* 상품 이미지 그리드 */
 }
