@@ -45,6 +45,16 @@
       "naver_id": "DofbFYFxuTYFIwaDOjRi2sE04XfHiHFUuzrRfMXhcgU",
       "created_at": "2026-04-01T04:26:12.455Z",
       "updated_at": "2026-04-01T04:26:12.455Z"
+    },
+    {
+      "id": 6,
+      "name": "주지호",
+      "email": "roqkfwkwlgh@naver.com",
+      "password": "",
+      "role": "user",
+      "naver_id": "ITQH0uPGQ3W5dHsyV8rsiL7gjgwkCnT6FOGEUxK0DHo",
+      "created_at": "2026-06-19T02:29:21.335Z",
+      "updated_at": "2026-06-19T02:29:21.335Z"
     }
   ],
   "categories": [
@@ -315,14 +325,14 @@
       "description": "ㅇㅇㅇ",
       "price": 1222,
       "category": "tops",
-      "image": "/uploads/1780470735383.png",
+      "image": "",
       "seller": "오사카마켓",
       "rating": 0,
       "stock": 0,
       "created_at": "2026-06-03T07:12:23.834Z",
       "updated_at": "2026-06-03T07:12:23.834Z",
-      "images": "[\"/uploads/1780470735383.png\"]",
-      "detail_blocks": "[{\"type\":\"image\",\"content\":\"/uploads/tshirt_size_guide_2.png\"}]",
+      "images": "[]",
+      "detail_blocks": "[]",
       "colors": "[\"차콜그레이\"]",
       "sizes": "[\"XL\",\"L\",\"M\",\"XXL\"]"
     },
@@ -333,14 +343,14 @@
       "description": "면100% 고급 실크원단",
       "price": 39000,
       "category": "tops",
-      "image": "/uploads/1780380313036.jpg",
+      "image": "",
       "seller": "오사카마켓",
       "rating": 0,
       "stock": 20,
       "created_at": "2026-06-02T06:08:10.298Z",
       "updated_at": "2026-06-02T06:08:10.298Z",
-      "images": "[\"/uploads/1780380313036.jpg\",\"/uploads/1780380321003.jpg\",\"/uploads/1780380335177.png\"]",
-      "detail_blocks": "[{\"type\":\"image\",\"content\":\"/uploads/tshirt_size_guide_2.png\"},{\"type\":\"image\",\"content\":\"/uploads/1780380667320.jpg\"},{\"type\":\"image\",\"content\":\"/uploads/1780380683502.jpg\"},{\"type\":\"image\",\"content\":\"/uploads/1780380710311.jpg\"},{\"type\":\"image\",\"content\":\"/uploads/1780380722634.png\"},{\"type\":\"text\",\"content\":\"남여 공용 반팔티셔츠  면100% 최고급 퀄리티 \"}]",
+      "images": "[]",
+      "detail_blocks": "[]",
       "colors": "[\"블랙\",\"아이보리\",\"차콜그레이\"]",
       "sizes": "[\"S\",\"M\",\"L\",\"XL\",\"XXL\"]"
     },
@@ -693,6 +703,16 @@
       "is_read": true,
       "created_at": "2026-04-01T04:26:12.460Z",
       "updated_at": "2026-04-03T03:47:39.042Z"
+    },
+    {
+      "id": 5,
+      "type": "user",
+      "title": "새 회원이 가입했습니다 (네이버)",
+      "message": "주지호님 (roqkfwkwlgh@naver.com)",
+      "reference_id": "6",
+      "is_read": false,
+      "created_at": "2026-06-19T02:29:21.338Z",
+      "updated_at": "2026-06-19T02:29:21.339Z"
     }
   ]
 }
