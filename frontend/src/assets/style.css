@@ -29,13 +29,13 @@
   --c-cream:      #F6F1E7;   /* alias of --c-bg */
   --c-cream-soft: #FBF8F1;   /* alias of --c-bg-soft */
   --c-cream-deep: #ECE3D0;   /* 푸터/대체 섹션 */
-  --c-paper:      #FFFDF8;   /* 상품 이미지 플레이트 (#fff 대체) */
+  --c-paper:      #FFFFFF;   /* 상품 이미지 플레이트 — 순백 (사진 흰 배경과 완전 일치) */
   --c-accent:     #6E1F2E;   /* 클라렛 액센트 (소량) */
 
   /* ── 폰트 패밀리 ── */
   --ff-serif: 'Cormorant Garamond', 'Times New Roman', serif;
-  --ff-sans:  'Noto Sans KR', 'Inter', sans-serif;
-  --ff-label: 'Inter', 'Noto Sans KR', sans-serif;
+  --ff-sans:  'Noto Sans KR', 'Manrope', sans-serif;
+  --ff-label: 'Manrope', 'Noto Sans KR', sans-serif;
 
   /* ── 타이포 (대문자 라벨용 letter-spacing) ── */
   --ls-display: 0.005em;   /* 세리프 디스플레이 */

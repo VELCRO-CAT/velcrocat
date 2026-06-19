@@ -23,6 +23,42 @@
           <span>이미지 준비 중</span>
         </div>
 
+        <!-- 이미지 2장 이상일 때만 좌/우 네비 화살표 -->
+        <template v-if="images.length > 1 && !noVisibleImage">
+          <button
+            type="button"
+            class="pcard-arrow pcard-arrow-left"
+            @click.prevent.stop="prevImage"
+            aria-label="이전 이미지"
+          >
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="pcard-arrow pcard-arrow-right"
+            @click.prevent.stop="nextImage"
+            aria-label="다음 이미지"
+          >
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <!-- 인덱스 닷 (현재 위치 표시) -->
+          <div class="pcard-dots" @click.prevent.stop>
+            <button
+              v-for="(_, i) in images"
+              :key="i"
+              type="button"
+              class="pcard-dot"
+              :class="{ active: idx === i }"
+              @click.prevent.stop="idx = i"
+              :aria-label="`이미지 ${i + 1}`"
+            />
+          </div>
+        </template>
+
         <span v-if="product.stock === 0" class="pcard-soldout">SOLD OUT</span>
         <span v-else-if="product.stock <= 5" class="pcard-low">LEFT {{ product.stock }}</span>
 
@@ -92,7 +128,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '../stores/cart';
 import { useWishlistStore } from '../stores/wishlist';
@@ -130,19 +166,16 @@ const noVisibleImage = computed(() =>
   images.value.length === 0 || brokenSet.size >= images.value.length
 );
 
-// 이미지 자동 슬라이드
+// 이미지 인덱스 (좌/우 화살표로 수동 네비게이션)
 const idx = ref(0);
-let timer = null;
-onMounted(() => {
-  if (images.value.length < 2) return;
-  const startDelay = Math.random() * 1500;
-  setTimeout(() => {
-    timer = setInterval(() => {
-      idx.value = (idx.value + 1) % images.value.length;
-    }, 2200);
-  }, startDelay);
-});
-onUnmounted(() => { if (timer) clearInterval(timer); });
+function prevImage() {
+  if (!images.value.length) return;
+  idx.value = (idx.value - 1 + images.value.length) % images.value.length;
+}
+function nextImage() {
+  if (!images.value.length) return;
+  idx.value = (idx.value + 1) % images.value.length;
+}
 
 const wished = computed(() => wishlistStore.isWished(props.product.id));
 
@@ -257,7 +290,7 @@ function toggleWish() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(246,241,231,0.7);
+  background: rgba(255,255,255,0.78);
   backdrop-filter: blur(2px);
   color: var(--c-ink);
   pointer-events: none;
@@ -267,6 +300,59 @@ function toggleWish() {
   color: var(--c-accent);
   border: 1px solid var(--c-accent);
 }
+
+/* 좌/우 네비 화살표 (호버 시 페이드인) */
+.pcard-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.78);   /* 순백 78% */
+  border: 1px solid var(--c-line);
+  cursor: pointer;
+  color: var(--c-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.15s;
+  padding: 0;
+  border-radius: 0;
+}
+.pcard:hover .pcard-arrow { opacity: 1; }
+.pcard-arrow:hover {
+  background: var(--c-ink);
+  color: var(--c-cream);
+  border-color: var(--c-ink);
+}
+.pcard-arrow-left  { left: 8px; }
+.pcard-arrow-right { right: 8px; }
+
+/* 인덱스 닷 (이미지 영역 상단 중앙) */
+.pcard-dots {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 3;
+  pointer-events: none;
+}
+.pcard-dot {
+  width: 16px;
+  height: 2px;
+  background: rgba(26, 23, 20, 0.25);
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  pointer-events: auto;
+  transition: background 0.18s ease;
+}
+.pcard-dot.active { background: var(--c-ink); }
+.pcard-dot:hover { background: var(--c-ink-soft); }
 
 /* 찜(하트) */
 .pcard-wish {
@@ -426,7 +512,7 @@ function toggleWish() {
 .qs-rise-enter-from, .qs-rise-leave-to { transform: translateY(100%); }
 .qs-rise-enter-active, .qs-rise-leave-active { transition: transform 0.28s ease; }
 
-/* 터치 기기 — 스와치 항상 표시, 라이즈 애니메이션 무효 */
+/* 터치 기기 — 스와치/화살표/찜 항상 표시 */
 @media (hover: none) {
   .pcard-swatch {
     opacity: 1;
@@ -437,5 +523,9 @@ function toggleWish() {
   }
   .pcard-swatch-more { opacity: 1; transform: none; transition: none; }
   .pcard-wish { opacity: 1; }
+  .pcard-arrow {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.9);
+  }
 }
 </style>
