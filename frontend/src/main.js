@@ -19,11 +19,11 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#111111',
-          secondary: '#555555',
-          accent: '#111111',
-          background: '#FFFFFF',
-          surface: '#FFFFFF'
+          primary: '#1A1714',
+          secondary: '#4A433C',
+          accent: '#6E1F2E',
+          background: '#F6F1E7',
+          surface: '#FBF8F1'
         }
       }
     }
@@ -42,6 +42,10 @@ useAuthStore(pinia).initAuth();
 // 장바구니를 localStorage에서 복원 (새로고침 시 유지)
 import { useCartStore } from './stores/cart';
 useCartStore(pinia).loadCart();
+
+// 사이트 설정(히어로/룩북/모자이크 텍스트·이미지) 로드 — 실패해도 DEFAULTS로 fallback
+import { useSettingsStore } from './stores/settings';
+useSettingsStore(pinia).load();
 
 // 관리자 페이지 접근: 브라우저 콘솔에서 velcrocat() 입력
 window.velcrocat = function () {

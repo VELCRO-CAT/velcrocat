@@ -206,7 +206,7 @@ function onWished(product) {
   font-size: 11px;
   letter-spacing: 0.04em;
   color: var(--c-ink-soft);
-  background: #fff;
+  background: var(--c-cream-soft);
   cursor: pointer;
   outline: none;
   font-family: inherit;

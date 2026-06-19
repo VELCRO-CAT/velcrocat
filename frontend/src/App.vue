@@ -1,5 +1,5 @@
 <template>
-  <v-app style="background:#fff" :class="{ 'about-active': isBrandPage }">
+  <v-app style="background:var(--c-cream)" :class="{ 'about-active': isBrandPage }">
     <!-- 관리자 버튼 (우측 상단 고정) -->
     <router-link v-if="authStore.isAdmin && !isAdminPage" to="/admin" class="admin-fab hvr-grow" @click="ensureAdminFlag">
       <v-icon size="16">mdi-shield-crown</v-icon>
@@ -56,30 +56,37 @@
           </nav>
         </div>
 
-        <!-- 중앙: 로고 -->
+        <!-- 중앙: 로고 (VELCROCAT 위, SEOUL 아래 스택형) -->
         <router-link to="/" class="mk-logo">
           <img src="./image/osakamarketLOGO2.png" alt="VELCROCAT" class="mk-logo-cat" />
-          <span class="mk-logo-word">VELCROCAT</span>
+          <span class="mk-logo-stack">
+            <span class="mk-logo-word">VELCROCAT</span>
+            <span class="mk-logo-sub">SEOUL</span>
+          </span>
         </router-link>
 
-        <!-- 우: 아이콘 -->
+        <!-- 우: 아이콘 (영문 라벨 함께 노출 — 데스크탑) -->
         <div class="mk-right">
-          <button class="mk-icon" @click="searchOpen = true" aria-label="검색">
-            <v-icon size="20" color="#111">mdi-magnify</v-icon>
+          <button class="mk-icon mk-icon-labeled" @click="searchOpen = true" aria-label="검색">
+            <v-icon size="20" color="#1A1714">mdi-magnify</v-icon>
+            <span class="mk-icon-label">SEARCH</span>
           </button>
-          <router-link v-if="authStore.isLoggedIn" to="/mypage" class="mk-icon" aria-label="마이페이지">
-            <v-icon size="20" color="#111">mdi-account-outline</v-icon>
+          <router-link v-if="authStore.isLoggedIn" to="/mypage" class="mk-icon mk-icon-labeled" aria-label="마이페이지">
+            <v-icon size="20" color="#1A1714">mdi-account-outline</v-icon>
+            <span class="mk-icon-label">ACCOUNT</span>
           </router-link>
-          <router-link v-else to="/login" class="mk-icon" aria-label="로그인">
-            <v-icon size="20" color="#111">mdi-account-outline</v-icon>
+          <router-link v-else to="/login" class="mk-icon mk-icon-labeled" aria-label="로그인">
+            <v-icon size="20" color="#1A1714">mdi-account-outline</v-icon>
+            <span class="mk-icon-label">SIGN IN</span>
           </router-link>
 
           <!-- 찜 -->
           <div class="mk-wish" @mouseenter="wishOpen = true" @mouseleave="wishOpen = false">
-            <button class="mk-icon" aria-label="찜 목록">
+            <button class="mk-icon mk-icon-labeled" aria-label="찜 목록">
               <v-badge :content="wishlistStore.count" :model-value="wishlistStore.count > 0" color="black">
-                <v-icon size="20" color="#111">mdi-heart-outline</v-icon>
+                <v-icon size="20" color="#1A1714">mdi-heart-outline</v-icon>
               </v-badge>
+              <span class="mk-icon-label">WISHLIST</span>
             </button>
             <div v-if="wishOpen" class="wish-dropdown">
               <div class="wish-header">
@@ -107,10 +114,11 @@
           </div>
 
           <!-- 카트 -->
-          <router-link to="/cart" class="mk-icon" aria-label="장바구니">
+          <router-link to="/cart" class="mk-icon mk-icon-labeled" aria-label="장바구니">
             <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
-              <v-icon size="20" color="#111">mdi-bag-personal-outline</v-icon>
+              <v-icon size="20" color="#1A1714">mdi-bag-personal-outline</v-icon>
             </v-badge>
+            <span class="mk-icon-label">CART</span>
           </router-link>
         </div>
       </div>
@@ -195,9 +203,12 @@
     </transition>
 
     <!-- 메인 콘텐츠 -->
-    <v-main style="background:#fff; padding-top:0 !important">
+    <v-main style="background:var(--c-cream); padding-top:0 !important">
       <router-view />
     </v-main>
+
+    <!-- 우하단 맨 위로 (관리자/브랜드 페이지 제외) -->
+    <ScrollTopButton v-if="!isBrandPage && !isAdminPage" />
 
     <!-- 푸터 -->
     <footer v-if="!isBrandPage && !isAdminPage" class="site-footer">
@@ -242,7 +253,10 @@
         <div class="footer-bottom">
           <div class="footer-bottom-brand">
             <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="footer-logo" />
-            <span class="footer-brand-name">VELCRO CAT</span>
+            <span class="footer-brand-stack">
+              <span class="footer-brand-name">VELCROCAT</span>
+              <span class="footer-brand-sub">SEOUL · EST 2026</span>
+            </span>
           </div>
           <p class="footer-copy">© 2026 벨크로캣(velcrocat). All rights reserved.</p>
           <div class="footer-social">
@@ -269,6 +283,7 @@ import { useAuthStore } from './stores/auth';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import AdminNotification from './components/AdminNotification.vue';
+import ScrollTopButton from './components/ScrollTopButton.vue';
 import { useWishlistStore } from './stores/wishlist';
 
 const route = useRoute();
@@ -335,15 +350,17 @@ function logout() {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--c-bg);
+  background: var(--c-cream);
   border-bottom: 1px solid var(--c-line);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 .mk-header-inner {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 16px;
-  height: 64px;
+  height: 72px;
   padding: 0 28px;
   max-width: 1600px;
   margin: 0 auto;
@@ -365,26 +382,44 @@ function logout() {
 .mk-nav-link.router-link-active { text-decoration: underline; text-underline-offset: 5px; }
 .mk-cat { display: inline-flex; align-items: center; }
 
-/* 중앙 로고 */
+/* 중앙 로고 (가로: [캣 마크] + [텍스트 스택]) */
 .mk-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 10px;
   text-decoration: none;
   color: var(--c-ink);
 }
-.mk-logo-cat { height: 26px; width: auto; object-fit: contain; }
+.mk-logo-cat { height: 30px; width: auto; object-fit: contain; }
+.mk-logo-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
 .mk-logo-word {
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: 0.16em;
+  font-family: var(--ff-sans);
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
   color: var(--c-ink);
   white-space: nowrap;
+  line-height: 1;
+}
+.mk-logo-sub {
+  margin-top: 4px;
+  font-family: var(--ff-label);
+  font-size: 8.5px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  color: var(--c-ink-soft);
+  text-transform: uppercase;
+  line-height: 1;
 }
 
-/* 우측 아이콘 */
-.mk-right { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+/* 우측 아이콘 (영문 라벨 함께) */
+.mk-right { display: flex; align-items: center; justify-content: flex-end; gap: 14px; }
 .mk-icon {
   display: flex;
   align-items: center;
@@ -399,6 +434,24 @@ function logout() {
   transition: opacity 0.2s;
 }
 .mk-icon:hover { opacity: 0.5; }
+.mk-icon-labeled {
+  width: auto;
+  height: auto;
+  min-width: 44px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 6px;
+}
+.mk-icon-label {
+  font-family: var(--ff-label);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--c-ink);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.mk-icon-labeled:hover .mk-icon-label { opacity: 0.55; }
 .mk-wish { position: relative; display: flex; }
 
 /* 햄버거 (모바일) */
@@ -418,7 +471,7 @@ function logout() {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(255,255,255,0.98);
+  background: rgba(246,241,231,0.98);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -446,16 +499,21 @@ function logout() {
 
 /* 반응형 헤더 */
 @media (max-width: 900px) {
-  .mk-header-inner { height: 56px; padding: 0 12px; gap: 8px; }
+  .mk-header-inner { height: 60px; padding: 0 12px; gap: 8px; }
   .mk-nav { display: none; }
   .mk-hamburger { display: flex; }
   .mk-logo-cat { height: 22px; }
-  .mk-logo-word { font-size: 18px; letter-spacing: 0.12em; }
+  .mk-logo-word { font-size: 15px; letter-spacing: 0.14em; }
+  .mk-logo-sub { font-size: 7px; letter-spacing: 0.28em; margin-top: 2px; }
   .mk-icon { width: 34px; height: 34px; }
+  .mk-icon-labeled { min-width: 34px; padding: 2px 4px; }
+  .mk-icon-label { display: none; }  /* 모바일은 아이콘만 */
+  .mk-right { gap: 4px; }
 }
 @media (max-width: 420px) {
   .mk-logo-cat { height: 20px; }
-  .mk-logo-word { font-size: 15px; }
+  .mk-logo-word { font-size: 13px; }
+  .mk-logo-sub { font-size: 6.5px; }
 }
 
 /* 로고 섹션 */
@@ -472,7 +530,7 @@ function logout() {
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  color: #111;
+  color: var(--c-ink);
 }
 .logo-cat {
   height: 100px;
@@ -487,7 +545,7 @@ function logout() {
   font-weight: 900;
   letter-spacing: 8px;
   line-height: 1;
-  color: #111;
+  color: var(--c-ink);
   margin-top: 0;
 }
 .logo-sub {
@@ -495,7 +553,7 @@ function logout() {
   font-size: 18px;
   font-weight: 400;
   letter-spacing: 14px;
-  color: #111;
+  color: var(--c-ink);
   margin-top: -4px;
   padding-left: 14px;
 }
@@ -523,7 +581,7 @@ function logout() {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: #111;
+  color: var(--c-ink);
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -533,7 +591,7 @@ function logout() {
   text-underline-offset: 4px;
 }
 .nav-link.hvr-underline-from-center::before {
-  background: #111 !important;
+  background: var(--c-ink) !important;
 }
 /* PC 네비 */
 .nav-desktop {
@@ -553,7 +611,7 @@ function logout() {
   background: none;
   border: none;
   cursor: pointer;
-  color: #111;
+  color: var(--c-ink);
   display: flex;
   align-items: center;
   transition: opacity 0.2s;
@@ -566,8 +624,8 @@ function logout() {
   top: 100%;
   right: -10px;
   width: 320px;
-  background: #fff;
-  border: 1.5px solid #111;
+  background: var(--c-cream-soft);
+  border: 1.5px solid var(--c-ink);
   z-index: 150;
   max-height: 420px;
   display: flex;
@@ -581,7 +639,7 @@ function logout() {
   border-bottom: 1px solid #e8e8e8;
   font-size: 13px;
   font-weight: 800;
-  color: #111;
+  color: var(--c-ink);
 }
 .wish-count {
   font-size: 11px;
@@ -613,7 +671,7 @@ function logout() {
   flex: 1;
   padding: 12px 16px;
   text-decoration: none;
-  color: #111;
+  color: var(--c-ink);
   min-width: 0;
 }
 .wish-item-img {
@@ -630,7 +688,7 @@ function logout() {
 .wish-item-name {
   font-size: 12px;
   font-weight: 600;
-  color: #111;
+  color: var(--c-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -639,7 +697,7 @@ function logout() {
 .wish-item-price {
   font-size: 12px;
   font-weight: 700;
-  color: #111;
+  color: var(--c-ink);
 }
 .wish-item-remove {
   background: none;
@@ -656,7 +714,7 @@ function logout() {
   right: 16px;
   display: flex;
   align-items: center;
-  color: #111;
+  color: var(--c-ink);
   text-decoration: none;
   padding: 9px 0;
 }
@@ -674,9 +732,9 @@ function logout() {
   left: 0;
   display: flex;
   flex-direction: row;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  background: var(--c-cream-soft);
+  border: 1px solid var(--c-line);
+  box-shadow: 0 8px 32px rgba(26,23,20,0.1);
   z-index: 150;
 }
 /* 왼쪽 성별 목록 (세로, 고정 너비) */
@@ -702,7 +760,7 @@ function logout() {
 }
 .cat-gender:hover,
 .cat-gender.active {
-  background: #111;
+  background: var(--c-ink);
   color: #fff;
 }
 .cat-gender-arrow {
@@ -736,7 +794,7 @@ function logout() {
 }
 .cat-sub-link:hover {
   background: #f5f5f5;
-  color: #111;
+  color: var(--c-ink);
   padding-left: 30px;
 }
 .cat-sub-all {
@@ -744,7 +802,7 @@ function logout() {
   border-top: 1px solid #eee;
   margin-top: 4px;
   padding-top: 12px;
-  color: #111;
+  color: var(--c-ink);
 }
 /* 서브카테고리 슬라이드 트랜지션 */
 .cat-slide-enter-active { transition: opacity 0.2s, transform 0.2s; }
@@ -769,7 +827,7 @@ function logout() {
   display: block;
   width: 22px;
   height: 2px;
-  background: #111;
+  background: var(--c-ink);
 }
 
 /* 드로어 오버레이 */
@@ -788,7 +846,7 @@ function logout() {
   width: 75vw;
   max-width: 300px;
   height: 100vh;
-  background: #fff;
+  background: var(--c-cream-soft);
   z-index: 201;
   display: flex;
   flex-direction: column;
@@ -825,11 +883,11 @@ function logout() {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 2.5px;
-  color: #111;
+  color: var(--c-ink);
   text-decoration: none;
   transition: background 0.15s;
 }
-.drawer-link:hover { background: #f5f5f5; }
+.drawer-link:hover { background: var(--c-cream-deep); }
 /* 모바일 카테고리 토글 */
 .drawer-cat-toggle {
   background: none;
@@ -866,7 +924,7 @@ function logout() {
   cursor: pointer;
   text-align: left;
 }
-.drawer-cat-gender:hover { background: #f5f5f5; }
+.drawer-cat-gender:hover { background: var(--c-cream-deep); }
 .drawer-cat-list {
   padding-left: 16px;
 }
@@ -878,7 +936,7 @@ function logout() {
   text-decoration: none;
   letter-spacing: 0.5px;
 }
-.drawer-cat-item:hover { background: #f5f5f5; color: #111; }
+.drawer-cat-item:hover { background: #f5f5f5; color: var(--c-ink); }
 .drawer-link.router-link-active { border-left: 3px solid #111; padding-left: 21px; }
 .drawer-divider {
   height: 1px;
@@ -938,7 +996,7 @@ function logout() {
   top: 60px;
   right: 20px;
   z-index: 999;
-  background: #111;
+  background: var(--c-ink);
   color: #fff;
   text-decoration: none;
   font-size: 11px;
@@ -953,9 +1011,9 @@ function logout() {
 
 /* 푸터 */
 .site-footer {
-  background: #fff;
+  background: var(--c-cream-deep);
   padding: 48px 24px 24px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--c-line);
 }
 .footer-inner {
   max-width: 1200px;
@@ -971,14 +1029,14 @@ function logout() {
 .footer-col h4 {
   font-size: 14px;
   font-weight: 800;
-  color: #111;
+  color: var(--c-ink);
   margin-bottom: 14px;
   letter-spacing: 0.5px;
 }
 .footer-phone {
   font-size: 22px;
   font-weight: 900;
-  color: #111;
+  color: var(--c-ink);
   margin-bottom: 8px;
   letter-spacing: -0.5px;
 }
@@ -996,7 +1054,7 @@ function logout() {
   line-height: 2.2;
   transition: color 0.15s;
 }
-.footer-menu-link:hover { color: #111; }
+.footer-menu-link:hover { color: var(--c-ink); }
 .footer-bottom {
   display: flex;
   align-items: center;
@@ -1006,19 +1064,36 @@ function logout() {
 .footer-bottom-brand {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 .footer-logo {
   height: 28px;
   width: auto;
   object-fit: contain;
 }
+.footer-brand-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
 .footer-brand-name {
+  font-family: var(--ff-sans);
   font-size: 13px;
   font-weight: 800;
-  color: #111;
-  letter-spacing: 3px;
-  line-height: 28px;
+  color: var(--c-ink);
+  letter-spacing: 0.18em;
+  line-height: 1;
+}
+.footer-brand-sub {
+  margin-top: 3px;
+  font-family: var(--ff-label);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--c-ink-soft);
+  line-height: 1;
 }
 .footer-copy {
   color: #999;
@@ -1034,7 +1109,7 @@ function logout() {
   color: #999;
   transition: color 0.2s;
 }
-.footer-social a:hover { color: #111; }
+.footer-social a:hover { color: var(--c-ink); }
 @media (max-width: 768px) {
   .footer-cols {
     grid-template-columns: 1fr 1fr;
@@ -1056,7 +1131,7 @@ function logout() {
 
 <style>
 .nav-link.hvr-underline-from-center::before {
-  background: #111 !important;
+  background: var(--c-ink) !important;
 }
 /* Brand 페이지: 외부 스크롤 숨김 (이중 스크롤 방지) */
 .about-active .v-application__wrap {

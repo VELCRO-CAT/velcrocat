@@ -503,7 +503,7 @@ function buyNow() {
 </script>
 
 <style scoped>
-.detail-page { background: #fff; min-height: 80vh; }
+.detail-page { background: var(--c-cream); min-height: 80vh; }
 
 .detail-wrap {
   max-width: 1100px;
@@ -523,7 +523,7 @@ function buyNow() {
 
 .product-img-area {
   position: relative;
-  background: #f5f5f5;
+  background: var(--c-paper);
   aspect-ratio: 1/1;
   overflow: hidden;
   display: flex;
@@ -587,18 +587,23 @@ function buyNow() {
   margin-bottom: 8px;
 }
 .product-name {
-  font-size: 22px;
-  font-weight: 800;
-  color: #111;
-  letter-spacing: -0.5px;
-  margin-bottom: 16px;
-  line-height: 1.3;
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--c-ink);
+  letter-spacing: 0.005em;
+  margin-bottom: 18px;
+  line-height: 1.15;
 }
 .product-price {
-  font-size: 26px;
-  font-weight: 900;
-  color: #111;
+  font-family: var(--ff-label);
+  font-variant-numeric: tabular-nums;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--c-ink);
   margin-bottom: 20px;
+  letter-spacing: 0.02em;
 }
 .divider {
   border-top: 1px solid #e8e8e8;

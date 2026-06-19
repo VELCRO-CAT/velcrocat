@@ -1,49 +1,94 @@
 <template>
-  <router-link :to="`/products/${product.id}`" class="pcard">
-    <div class="pcard-img">
-      <img
-        v-for="(img, i) in images"
-        :key="i"
-        :src="img"
-        :alt="product.name"
-        class="pcard-photo"
-        :class="{ active: idx === i }"
-        loading="lazy"
-      />
+  <div class="pcard-wrap">
+    <router-link :to="`/products/${product.id}`" class="pcard" @mouseleave="onMouseLeave">
+      <div class="pcard-img">
+        <img
+          v-for="(img, i) in images"
+          :key="i"
+          :src="img"
+          :alt="product.name"
+          class="pcard-photo"
+          :class="{ active: idx === i }"
+          loading="lazy"
+        />
 
-      <span v-if="product.stock === 0" class="pcard-soldout">SOLD OUT</span>
-      <span v-else-if="product.stock <= 5" class="pcard-low">LEFT {{ product.stock }}</span>
+        <span v-if="product.stock === 0" class="pcard-soldout">SOLD OUT</span>
+        <span v-else-if="product.stock <= 5" class="pcard-low">LEFT {{ product.stock }}</span>
 
-      <button
-        class="pcard-wish"
-        :class="{ active: wished }"
-        @click.prevent="toggleWish"
-        :aria-label="wished ? '찜 해제' : '찜하기'"
-      >
-        <v-icon size="18">{{ wished ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
-      </button>
+        <button
+          class="pcard-wish"
+          :class="{ active: wished }"
+          @click.prevent="toggleWish"
+          :aria-label="wished ? '찜 해제' : '찜하기'"
+        >
+          <v-icon size="18">{{ wished ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+        </button>
 
-      <button
-        v-if="product.stock !== 0"
-        class="pcard-add"
-        @click.prevent="addToCart"
-        aria-label="장바구니 담기"
-      >ADD TO CART</button>
-    </div>
+        <!-- 컬러 스와치 행 (재고 있고 컬러 등록된 경우만, 호버 시 페이드인) -->
+        <div
+          v-if="product.stock > 0 && colors.length"
+          class="pcard-swatches"
+          @click.prevent
+        >
+          <button
+            v-for="c in colors.slice(0, 5)"
+            :key="c.name"
+            type="button"
+            class="pcard-swatch"
+            :class="{ active: qsColor === c.name }"
+            :style="{ background: c.hex, borderColor: c.border ? '#bbb' : 'transparent' }"
+            :title="c.name"
+            @click.prevent.stop="openQuickShop(c.name)"
+          />
+          <span v-if="colors.length > 5" class="pcard-swatch-more">+{{ colors.length - 5 }}</span>
+        </div>
 
-    <div class="pcard-info">
-      <p v-if="showSeller && product.seller" class="pcard-seller">{{ product.seller }}</p>
-      <p class="pcard-name">{{ product.name }}</p>
-      <p v-if="showDesc && product.description" class="pcard-desc">{{ product.description }}</p>
-      <p class="pcard-price">₩{{ Number(product.price).toLocaleString() }}</p>
-    </div>
-  </router-link>
+        <!-- 품절 상품: 재입고 알림 버튼 -->
+        <button
+          v-else-if="product.stock === 0"
+          type="button"
+          class="pcard-notify"
+          @click.prevent.stop="notifyOpen = true"
+        >재입고 알림 받기 · NOTIFY ME</button>
+
+        <!-- 인-카드 퀵쇼핑 드로우어 -->
+        <transition name="qs-rise">
+          <QuickShop
+            v-if="quickShop"
+            :product="product"
+            :initial-color="qsColor"
+            @close="quickShop = false"
+            @added="handleAdded"
+            @buy="handleBuy"
+          />
+        </transition>
+      </div>
+
+      <div class="pcard-info">
+        <p v-if="showSeller && product.seller" class="pcard-seller">{{ product.seller }}</p>
+        <p class="pcard-name">{{ product.name }}</p>
+        <p v-if="showDesc && product.description" class="pcard-desc">{{ product.description }}</p>
+        <p class="pcard-price">₩{{ Number(product.price).toLocaleString() }}</p>
+      </div>
+    </router-link>
+
+    <!-- 재입고 알림 모달 (포털 위치는 카드 영역 밖이라 router-link 외부) -->
+    <NotifyMeModal :open="notifyOpen" :product="product" @close="notifyOpen = false" />
+
+    <!-- 인라인 토스트 ref — 페이지에서 mounted 후 호출 -->
+    <MiniCartToast ref="toastRef" />
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useCartStore } from '../stores/cart';
 import { useWishlistStore } from '../stores/wishlist';
+import { parseColors } from '../utils/colorPalette';
+import QuickShop from './QuickShop.vue';
+import NotifyMeModal from './NotifyMeModal.vue';
+import MiniCartToast from './MiniCartToast.vue';
 
 const props = defineProps({
   product: { type: Object, required: true },
@@ -52,6 +97,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['added', 'wished']);
 
+const router = useRouter();
 const cartStore = useCartStore();
 const wishlistStore = useWishlistStore();
 
@@ -64,12 +110,14 @@ const images = computed(() => {
   return p.image ? [p.image] : [];
 });
 
-// 이미지 자동 슬라이드 (hover 없이 — 기존 동작 유지). 카드마다 자체 타이머.
+const colors = computed(() => parseColors(props.product.colors));
+
+// 이미지 자동 슬라이드
 const idx = ref(0);
 let timer = null;
 onMounted(() => {
   if (images.value.length < 2) return;
-  const startDelay = Math.random() * 1500; // 동시에 안 넘어가게 시작 오프셋
+  const startDelay = Math.random() * 1500;
   setTimeout(() => {
     timer = setInterval(() => {
       idx.value = (idx.value + 1) % images.value.length;
@@ -80,10 +128,38 @@ onUnmounted(() => { if (timer) clearInterval(timer); });
 
 const wished = computed(() => wishlistStore.isWished(props.product.id));
 
-function addToCart() {
-  cartStore.addItem(props.product);
+// ── 퀵쇼핑 / 재입고 알림 / 토스트 상태 ──
+const quickShop = ref(false);
+const qsColor = ref('');
+const notifyOpen = ref(false);
+const toastRef = ref(null);
+
+function openQuickShop(colorName) {
+  qsColor.value = colorName;
+  quickShop.value = true;
+}
+
+function onMouseLeave() {
+  // 드로우어가 열려있으면 닫지 않고, 닫혀있을 때만 첫 이미지로 돌아가지 않도록 유지.
+  // (자동 슬라이드는 그대로 진행)
+}
+
+function handleAdded(payload) {
+  // QuickShop이 ADD TO BAG 누른 결과 — color/size/qty 페이로드를 카트에 반영
+  const opts = { color: payload.color, size: payload.size };
+  const n = Math.max(1, Number(payload.qty || 1));
+  for (let i = 0; i < n; i++) cartStore.addItem(props.product, opts);
+  toastRef.value?.show();
   emit('added', props.product);
 }
+
+function handleBuy(payload) {
+  const opts = { color: payload.color, size: payload.size };
+  const n = Math.max(1, Number(payload.qty || 1));
+  for (let i = 0; i < n; i++) cartStore.addItem(props.product, opts);
+  router.push('/checkout');
+}
+
 function toggleWish() {
   wishlistStore.toggle(props.product);
   emit('wished', props.product);
@@ -91,6 +167,7 @@ function toggleWish() {
 </script>
 
 <style scoped>
+.pcard-wrap { position: relative; }
 .pcard {
   display: block;
   text-decoration: none;
@@ -102,7 +179,7 @@ function toggleWish() {
 .pcard-img {
   position: relative;
   aspect-ratio: 4 / 5;
-  background: #fff;
+  background: var(--c-paper);
   overflow: hidden;
 }
 .pcard-photo {
@@ -110,7 +187,7 @@ function toggleWish() {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;   /* 옷 전체(소매 포함)가 잘리지 않게 */
+  object-fit: contain;
   padding: 7%;
   box-sizing: border-box;
   opacity: 0;
@@ -126,9 +203,11 @@ function toggleWish() {
   top: 10px;
   left: 10px;
   z-index: 3;
+  font-family: var(--ff-label);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: var(--ls-label);
+  text-transform: uppercase;
   padding: 4px 8px;
 }
 .pcard-soldout {
@@ -140,15 +219,15 @@ function toggleWish() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.7);
+  background: rgba(246,241,231,0.7);
   backdrop-filter: blur(2px);
   color: var(--c-ink);
   pointer-events: none;
 }
 .pcard-low {
-  background: #fff;
-  color: #c0392b;
-  border: 1px solid #c0392b;
+  background: var(--c-cream-soft);
+  color: var(--c-accent);
+  border: 1px solid var(--c-accent);
 }
 
 /* 찜(하트) */
@@ -170,51 +249,90 @@ function toggleWish() {
   transition: opacity 0.2s, color 0.15s;
 }
 .pcard:hover .pcard-wish { opacity: 1; }
-.pcard-wish.active { opacity: 1; color: #c0392b; }
-.pcard-wish:hover { color: #c0392b; }
+.pcard-wish.active { opacity: 1; color: var(--c-accent); }
+.pcard-wish:hover { color: var(--c-accent); }
 
-/* 장바구니 담기 — 하단 슬라이드 바 (메종키츠네 퀵애드 느낌) */
-.pcard-add {
+/* 컬러 스와치 행 (호버 시 페이드인) */
+.pcard-swatches {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.pcard:hover .pcard-swatches { opacity: 1; transform: translateY(0); }
+.pcard-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  outline: 1.5px solid transparent;
+  outline-offset: 2px;
+  cursor: pointer;
+  transition: outline-color 0.12s, transform 0.15s;
+  padding: 0;
+}
+.pcard-swatch:hover { transform: scale(1.15); outline-color: var(--c-ink); }
+.pcard-swatch.active { outline-color: var(--c-ink); }
+.pcard-swatch-more {
+  font-family: var(--ff-label);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: var(--ls-label);
+  color: var(--c-ink-soft);
+  margin-left: 2px;
+  text-transform: uppercase;
+}
+
+/* 재입고 알림 받기 (품절 시) */
+.pcard-notify {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 3;
-  border: none;
+  background: rgba(26,23,20,0.92);
+  color: var(--c-cream);
+  border: 0;
   cursor: pointer;
-  background: var(--c-ink);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--ff-label);
+  font-size: 10px;
+  font-weight: 600;
   letter-spacing: var(--ls-label);
+  text-transform: uppercase;
   padding: 12px 0;
-  transform: translateY(100%);
-  transition: transform 0.25s ease;
-  font-family: inherit;
 }
-.pcard:hover .pcard-add { transform: translateY(0); }
-.pcard-add:hover { background: #000; }
+.pcard-notify:hover { background: var(--c-ink); }
 
 /* 정보 */
 .pcard-info {
-  padding: 12px 2px 4px;
+  padding: 14px 2px 4px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
 }
 .pcard-seller {
+  font-family: var(--ff-label);
   font-size: 10px;
-  letter-spacing: var(--ls-label);
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--c-muted);
 }
 .pcard-name {
+  font-family: var(--ff-sans);
   font-size: 13px;
   font-weight: 500;
   color: var(--c-ink);
-  line-height: 1.4;
+  line-height: 1.45;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -228,15 +346,23 @@ function toggleWish() {
   overflow: hidden;
 }
 .pcard-price {
+  font-family: var(--ff-label);
+  font-variant-numeric: tabular-nums;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--c-ink);
-  margin-top: 1px;
+  margin-top: 2px;
+  letter-spacing: 0.02em;
 }
 
-/* 터치 기기: hover가 없으니 담기 버튼·찜 항상 노출 */
+/* QuickShop 드로우어 슬라이드업 */
+.qs-rise-enter-from, .qs-rise-leave-to { transform: translateY(100%); }
+.qs-rise-enter-active, .qs-rise-leave-active { transition: transform 0.28s ease; }
+
+/* 터치 기기 — 스와치 행 항상 표시, 찜 항상 표시 */
 @media (hover: none) {
-  .pcard-add { transform: translateY(0); }
+  .pcard-swatches { opacity: 1; transform: none; }
+  .pcard-swatch { width: 22px; height: 22px; }
   .pcard-wish { opacity: 1; }
 }
 </style>

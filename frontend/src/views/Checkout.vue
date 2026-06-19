@@ -371,7 +371,7 @@ async function processPayment() {
 
 <style scoped>
 .checkout-page {
-  background: #fafafa;
+  background: var(--c-cream);
   min-height: 100vh;
 }
 
@@ -432,7 +432,7 @@ async function processPayment() {
 
 /* 섹션 카드 */
 .section-card {
-  background: #fff;
+  background: var(--c-cream-soft);
   border-radius: 12px;
   padding: 28px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
@@ -535,18 +535,18 @@ async function processPayment() {
   gap: 8px;
   padding: 18px 8px;
   border: 1.5px solid #e8e8e8;
-  background: #fff;
+  background: var(--c-cream-soft);
   cursor: pointer;
   transition: all 0.2s;
   border-radius: 10px;
 }
 .pay-method-btn:hover {
   border-color: #ccc;
-  background: #fafafa;
+  background: var(--c-cream);
 }
 .pay-method-btn.active {
   border-color: #111;
-  background: #fff;
+  background: var(--c-cream-soft);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .pay-method-inner {
@@ -597,7 +597,7 @@ async function processPayment() {
 
 /* 주문 요약 */
 .summary-card {
-  background: #fff;
+  background: var(--c-cream-soft);
   border-radius: 12px;
   padding: 24px;
   position: sticky;
@@ -786,7 +786,7 @@ async function processPayment() {
   justify-content: center;
 }
 .postcode-modal {
-  background: #fff;
+  background: var(--c-cream-soft);
   width: 500px;
   max-width: 92vw;
   border-radius: 12px;

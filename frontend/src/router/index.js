@@ -20,6 +20,7 @@ import AdminOrders from '../views/admin/Orders.vue';
 import AdminInquiries from '../views/admin/Inquiries.vue';
 import AdminNaver from '../views/admin/Naver.vue';
 import AdminUsers from '../views/admin/Users.vue';
+import AdminSite from '../views/admin/SiteSettings.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -44,7 +45,8 @@ const routes = [
   { path: '/admin/orders', component: AdminOrders, meta: { requiresAdmin: true } },
   { path: '/admin/inquiries', component: AdminInquiries, meta: { requiresAdmin: true } },
   { path: '/admin/users', component: AdminUsers, meta: { requiresAdmin: true } },
-  { path: '/admin/naver', component: AdminNaver, meta: { requiresAdmin: true } }
+  { path: '/admin/naver', component: AdminNaver, meta: { requiresAdmin: true } },
+  { path: '/admin/site',  component: AdminSite,  meta: { requiresAdmin: true } }
 ];
 
 const router = createRouter({
