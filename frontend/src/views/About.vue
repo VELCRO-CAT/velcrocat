@@ -584,7 +584,7 @@ onUnmounted(() => {
 .brand-nav-stack {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   line-height: 1;
 }
 .brand-nav-name {

@@ -395,7 +395,7 @@ function logout() {
 .mk-logo-stack {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   line-height: 1;
 }
 .mk-logo-word {
@@ -1074,7 +1074,7 @@ function logout() {
 .footer-brand-stack {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   line-height: 1;
 }
 .footer-brand-name {
