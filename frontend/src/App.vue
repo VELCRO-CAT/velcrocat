@@ -1,125 +1,140 @@
 <template>
-  <v-app style="background:#fff" :class="{ 'about-active': isAboutPage }">
-    <!-- 로고 영역 (Brand 페이지에서는 숨김) -->
-    <div v-if="!isAboutPage && !isAdminPage" class="logo-section">
-      <router-link to="/" class="logo-link hvr-bob">
-        <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="logo-cat" />
-        <div class="logo-text">VELCROCAT</div>
-        <div class="logo-sub">SEOUL</div>
-      </router-link>
-    </div>
-
+  <v-app style="background:#fff" :class="{ 'about-active': isBrandPage }">
     <!-- 관리자 버튼 (우측 상단 고정) -->
     <router-link v-if="authStore.isAdmin && !isAdminPage" to="/admin" class="admin-fab hvr-grow" @click="ensureAdminFlag">
       <v-icon size="16">mdi-shield-crown</v-icon>
       관리자
     </router-link>
 
-    <!-- 네비게이션 바 (Brand 페이지에서는 숨김) -->
-    <nav v-if="!isAboutPage && !isAdminPage" class="sticky-nav">
-      <div class="nav-inner">
-        <!-- 모바일 햄버거 버튼 (좌측) -->
-        <button class="hamburger" @click="menuOpen = true" aria-label="메뉴">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <!-- PC 네비 -->
-        <div class="nav-desktop">
-          <router-link to="/home" class="nav-link hvr-underline-from-center">HOME</router-link>
-          <router-link to="/products" class="nav-link hvr-underline-from-center">SHOP</router-link>
-          <!-- CATEGORY 드롭다운 -->
-          <div class="nav-category" @mouseenter="catOpen = true" @mouseleave="catOpen = false; activeGender = null">
-            <span class="nav-link hvr-underline-from-center" style="cursor:pointer">CATEGORY</span>
-            <transition name="fade">
-              <div v-if="catOpen" class="cat-dropdown">
-                <!-- 왼쪽: MEN / WOMEN 세로 배치 -->
-                <div class="cat-gender-list">
-                  <div
-                    v-for="g in genders"
-                    :key="g.key"
-                    class="cat-gender"
-                    :class="{ active: activeGender === g.key }"
-                    @mouseenter="activeGender = g.key"
-                  >
-                    <span>{{ g.label }}</span>
-                    <span class="cat-gender-arrow">▸</span>
-                  </div>
-                </div>
-                <!-- 오른쪽: 서브카테고리 (hover 시에만) -->
-                <transition name="cat-slide">
-                  <div v-if="activeGender" class="cat-sub">
-                    <router-link
-                      v-for="cat in filteredCategories"
-                      :key="cat.slug"
-                      :to="`/products?gender=${activeGender}&category=${cat.slug}`"
-                      class="cat-sub-link"
-                      @click="catOpen = false"
-                    >{{ cat.name }}</router-link>
-                    <router-link
-                      :to="`/products?gender=${activeGender}`"
-                      class="cat-sub-link cat-sub-all"
-                      @click="catOpen = false"
-                    >전체보기</router-link>
-                  </div>
-                </transition>
-              </div>
-            </transition>
-          </div>
-          <router-link to="/contact" class="nav-link hvr-underline-from-center">CONTACT</router-link>
-          <router-link to="/" class="nav-link hvr-underline-from-center">BRAND</router-link>
-          <template v-if="authStore.isLoggedIn">
-            <router-link to="/mypage" class="nav-link hvr-underline-from-center">MY PAGE</router-link>
-            <a class="nav-link hvr-underline-from-center" @click="logout" style="cursor:pointer">SIGN OUT</a>
-          </template>
-          <template v-else>
-            <router-link to="/login" class="nav-link hvr-underline-from-center">SIGN IN</router-link>
-            <router-link to="/register" class="nav-link hvr-underline-from-center">SIGN UP</router-link>
-          </template>
-        </div>
-
-        <!-- 찜 목록 -->
-        <div class="nav-wish" @mouseenter="wishOpen = true" @mouseleave="wishOpen = false">
-          <button class="nav-wish-btn">
-            <v-badge :content="wishlistStore.count" :model-value="wishlistStore.count > 0" color="black">
-              <v-icon size="20" color="#111">mdi-star-outline</v-icon>
-            </v-badge>
+    <!-- 헤더 (Brand/관리자 페이지에서는 숨김) -->
+    <header v-if="!isBrandPage && !isAdminPage" class="mk-header">
+      <div class="mk-header-inner">
+        <!-- 좌: 햄버거(모바일) + 네비(PC) -->
+        <div class="mk-left">
+          <button class="mk-hamburger" @click="menuOpen = true" aria-label="메뉴">
+            <span></span><span></span><span></span>
           </button>
-          <!-- 찜 드롭다운 -->
-          <div v-if="wishOpen" class="wish-dropdown">
-            <div class="wish-header">
-              <span>찜 목록</span>
-              <span class="wish-count">{{ wishlistStore.count }}개</span>
-            </div>
-            <div v-if="wishlistStore.items.length === 0" class="wish-empty">
-              찜한 상품이 없습니다
-            </div>
-            <div v-else class="wish-list">
-              <div v-for="item in wishlistStore.items" :key="item.id" class="wish-item">
-                <router-link :to="`/products/${item.id}`" class="wish-item-link" @click="wishOpen = false">
-                  <img :src="item.image" :alt="item.name" class="wish-item-img" />
-                  <div class="wish-item-info">
-                    <p class="wish-item-name">{{ item.name }}</p>
-                    <p class="wish-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+          <nav class="mk-nav">
+            <router-link to="/products" class="mk-nav-link">SHOP</router-link>
+            <div class="mk-cat nav-category" @mouseenter="catOpen = true" @mouseleave="catOpen = false; activeGender = null">
+              <span class="mk-nav-link" style="cursor:pointer">CATEGORY</span>
+              <transition name="fade">
+                <div v-if="catOpen" class="cat-dropdown">
+                  <div class="cat-gender-list">
+                    <div
+                      v-for="g in genders"
+                      :key="g.key"
+                      class="cat-gender"
+                      :class="{ active: activeGender === g.key }"
+                      @mouseenter="activeGender = g.key"
+                    >
+                      <span>{{ g.label }}</span>
+                      <span class="cat-gender-arrow">▸</span>
+                    </div>
                   </div>
-                </router-link>
-                <button class="wish-item-remove" @click="wishlistStore.remove(item.id)">
-                  <v-icon size="14" color="#999">mdi-close</v-icon>
-                </button>
+                  <transition name="cat-slide">
+                    <div v-if="activeGender" class="cat-sub">
+                      <router-link
+                        v-for="cat in filteredCategories"
+                        :key="cat.slug"
+                        :to="`/products?gender=${activeGender}&category=${cat.slug}`"
+                        class="cat-sub-link"
+                        @click="catOpen = false"
+                      >{{ cat.name }}</router-link>
+                      <router-link
+                        :to="`/products?gender=${activeGender}`"
+                        class="cat-sub-link cat-sub-all"
+                        @click="catOpen = false"
+                      >전체보기</router-link>
+                    </div>
+                  </transition>
+                </div>
+              </transition>
+            </div>
+            <router-link to="/brand" class="mk-nav-link">BRAND</router-link>
+            <router-link to="/contact" class="mk-nav-link">CONTACT</router-link>
+          </nav>
+        </div>
+
+        <!-- 중앙: 로고 -->
+        <router-link to="/" class="mk-logo">
+          <img src="./image/osakamarketLOGO2.png" alt="VELCROCAT" class="mk-logo-cat" />
+          <span class="mk-logo-word">VELCROCAT</span>
+        </router-link>
+
+        <!-- 우: 아이콘 -->
+        <div class="mk-right">
+          <button class="mk-icon" @click="searchOpen = true" aria-label="검색">
+            <v-icon size="20" color="#111">mdi-magnify</v-icon>
+          </button>
+          <router-link v-if="authStore.isLoggedIn" to="/mypage" class="mk-icon" aria-label="마이페이지">
+            <v-icon size="20" color="#111">mdi-account-outline</v-icon>
+          </router-link>
+          <router-link v-else to="/login" class="mk-icon" aria-label="로그인">
+            <v-icon size="20" color="#111">mdi-account-outline</v-icon>
+          </router-link>
+
+          <!-- 찜 -->
+          <div class="mk-wish" @mouseenter="wishOpen = true" @mouseleave="wishOpen = false">
+            <button class="mk-icon" aria-label="찜 목록">
+              <v-badge :content="wishlistStore.count" :model-value="wishlistStore.count > 0" color="black">
+                <v-icon size="20" color="#111">mdi-heart-outline</v-icon>
+              </v-badge>
+            </button>
+            <div v-if="wishOpen" class="wish-dropdown">
+              <div class="wish-header">
+                <span>찜 목록</span>
+                <span class="wish-count">{{ wishlistStore.count }}개</span>
+              </div>
+              <div v-if="wishlistStore.items.length === 0" class="wish-empty">
+                찜한 상품이 없습니다
+              </div>
+              <div v-else class="wish-list">
+                <div v-for="item in wishlistStore.items" :key="item.id" class="wish-item">
+                  <router-link :to="`/products/${item.id}`" class="wish-item-link" @click="wishOpen = false">
+                    <img :src="item.image" :alt="item.name" class="wish-item-img" />
+                    <div class="wish-item-info">
+                      <p class="wish-item-name">{{ item.name }}</p>
+                      <p class="wish-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+                    </div>
+                  </router-link>
+                  <button class="wish-item-remove" @click="wishlistStore.remove(item.id)">
+                    <v-icon size="14" color="#999">mdi-close</v-icon>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- 카트 (항상 표시) -->
-        <router-link to="/cart" class="nav-cart hvr-buzz-out">
-          <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
-            <v-icon size="20" color="#111">mdi-cart-outline</v-icon>
-          </v-badge>
-        </router-link>
+          <!-- 카트 -->
+          <router-link to="/cart" class="mk-icon" aria-label="장바구니">
+            <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
+              <v-icon size="20" color="#111">mdi-bag-personal-outline</v-icon>
+            </v-badge>
+          </router-link>
+        </div>
       </div>
-    </nav>
+    </header>
+
+    <!-- 검색 오버레이 -->
+    <transition name="fade">
+      <div v-if="searchOpen" class="mk-search" @click.self="searchOpen = false">
+        <div class="mk-search-inner">
+          <v-icon size="22" color="#111">mdi-magnify</v-icon>
+          <input
+            ref="searchInput"
+            v-model="searchQuery"
+            type="text"
+            class="mk-search-input"
+            placeholder="상품 검색"
+            @keyup.enter="doSearch"
+          />
+          <button class="mk-search-close" @click="searchOpen = false" aria-label="닫기">
+            <v-icon size="22" color="#111">mdi-close</v-icon>
+          </button>
+        </div>
+      </div>
+    </transition>
 
     <!-- 모바일 사이드 드로어 오버레이 -->
     <transition name="fade">
@@ -134,7 +149,7 @@
           <button class="drawer-close" @click="menuOpen = false">✕</button>
         </div>
         <nav class="drawer-nav">
-          <router-link to="/home" class="drawer-link" @click="menuOpen = false">HOME</router-link>
+          <router-link to="/" class="drawer-link" @click="menuOpen = false">HOME</router-link>
           <router-link to="/products" class="drawer-link" @click="menuOpen = false">SHOP</router-link>
           <!-- 모바일 카테고리 -->
           <button class="drawer-link drawer-cat-toggle" @click="drawerCatOpen = !drawerCatOpen">
@@ -165,7 +180,7 @@
             </div>
           </div>
           <router-link to="/contact" class="drawer-link" @click="menuOpen = false">CONTACT</router-link>
-          <router-link to="/" class="drawer-link" @click="menuOpen = false">BRAND</router-link>
+          <router-link to="/brand" class="drawer-link" @click="menuOpen = false">BRAND</router-link>
           <div class="drawer-divider" />
           <template v-if="authStore.isLoggedIn">
             <router-link to="/mypage" class="drawer-link" @click="menuOpen = false">MY PAGE</router-link>
@@ -180,12 +195,12 @@
     </transition>
 
     <!-- 메인 콘텐츠 -->
-    <v-main class="mobile-body-offset" style="background:#fff; padding-top:0 !important">
+    <v-main style="background:#fff; padding-top:0 !important">
       <router-view />
     </v-main>
 
     <!-- 푸터 -->
-    <footer v-if="!isAboutPage && !isAdminPage" class="site-footer">
+    <footer v-if="!isBrandPage && !isAdminPage" class="site-footer">
       <div class="footer-inner">
         <!-- 상단: 4컬럼 -->
         <div class="footer-cols">
@@ -217,8 +232,8 @@
           <!-- 상점 메뉴 -->
           <div class="footer-col">
             <h4>상점 메뉴</h4>
-            <router-link to="/home" class="footer-menu-link">메인페이지</router-link>
-            <router-link to="/" class="footer-menu-link">회사소개</router-link>
+            <router-link to="/" class="footer-menu-link">메인페이지</router-link>
+            <router-link to="/brand" class="footer-menu-link">회사소개</router-link>
             <router-link to="/products" class="footer-menu-link">전체상품</router-link>
             <router-link to="/contact" class="footer-menu-link">고객문의</router-link>
           </div>
@@ -248,7 +263,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useCartStore } from './stores/cart';
 import { useAuthStore } from './stores/auth';
 import { useRouter, useRoute } from 'vue-router';
@@ -257,7 +272,7 @@ import AdminNotification from './components/AdminNotification.vue';
 import { useWishlistStore } from './stores/wishlist';
 
 const route = useRoute();
-const isAboutPage = computed(() => route.path === '/' || route.path === '/about');
+const isBrandPage = computed(() => route.path === '/brand' || route.path === '/about');
 const isAdminPage = computed(() => route.path.startsWith('/admin'));
 
 const cartStore = useCartStore();
@@ -266,6 +281,18 @@ const wishlistStore = useWishlistStore();
 const wishOpen = ref(false);
 const router = useRouter();
 const menuOpen = ref(false);
+
+// 검색 오버레이
+const searchOpen = ref(false);
+const searchQuery = ref('');
+const searchInput = ref(null);
+watch(searchOpen, (v) => { if (v) nextTick(() => searchInput.value?.focus()); });
+function doSearch() {
+  const q = searchQuery.value.trim();
+  searchOpen.value = false;
+  router.push(q ? `/products?search=${encodeURIComponent(q)}` : '/products');
+  searchQuery.value = '';
+}
 
 // 카테고리 드롭다운
 const catOpen = ref(false);
@@ -303,6 +330,134 @@ function logout() {
 </script>
 
 <style scoped>
+/* ── 메종키츠네풍 헤더 ── */
+.mk-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--c-bg);
+  border-bottom: 1px solid var(--c-line);
+}
+.mk-header-inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  height: 64px;
+  padding: 0 28px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.mk-left { display: flex; align-items: center; min-width: 0; }
+.mk-nav { display: flex; align-items: center; gap: 22px; }
+.mk-nav-link {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: var(--ls-nav);
+  color: var(--c-ink);
+  text-decoration: none;
+  text-transform: uppercase;
+  padding: 6px 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.mk-nav-link:hover { opacity: 0.5; }
+.mk-nav-link.router-link-active { text-decoration: underline; text-underline-offset: 5px; }
+.mk-cat { display: inline-flex; align-items: center; }
+
+/* 중앙 로고 */
+.mk-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--c-ink);
+}
+.mk-logo-cat { height: 26px; width: auto; object-fit: contain; }
+.mk-logo-word {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  color: var(--c-ink);
+  white-space: nowrap;
+}
+
+/* 우측 아이콘 */
+.mk-right { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.mk-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--c-ink);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.mk-icon:hover { opacity: 0.5; }
+.mk-wish { position: relative; display: flex; }
+
+/* 햄버거 (모바일) */
+.mk-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+.mk-hamburger span { display: block; height: 1.5px; width: 22px; background: var(--c-ink); }
+
+/* 검색 오버레이 */
+.mk-search {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(255,255,255,0.98);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 18vh;
+}
+.mk-search-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 90%;
+  max-width: 640px;
+  border-bottom: 2px solid var(--c-ink);
+  padding-bottom: 14px;
+}
+.mk-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 22px;
+  color: var(--c-ink);
+  font-family: inherit;
+}
+.mk-search-close { background: none; border: none; cursor: pointer; display: flex; }
+
+/* 반응형 헤더 */
+@media (max-width: 900px) {
+  .mk-header-inner { height: 56px; padding: 0 12px; gap: 8px; }
+  .mk-nav { display: none; }
+  .mk-hamburger { display: flex; }
+  .mk-logo-cat { height: 22px; }
+  .mk-logo-word { font-size: 18px; letter-spacing: 0.12em; }
+  .mk-icon { width: 34px; height: 34px; }
+}
+@media (max-width: 420px) {
+  .mk-logo-cat { height: 20px; }
+  .mk-logo-word { font-size: 15px; }
+}
+
 /* 로고 섹션 */
 .logo-section {
   background: #fff;

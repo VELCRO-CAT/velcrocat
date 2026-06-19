@@ -286,7 +286,7 @@
           <router-link to="/home">HOME</router-link>
           <router-link to="/products">SHOP</router-link>
           <router-link to="/contact">CONTACT</router-link>
-          <router-link to="/">BRAND</router-link>
+          <router-link to="/brand">BRAND</router-link>
           <a href="https://smartstore.naver.com/vcat" target="_blank">NAVER STORE</a>
         </div>
         <div class="footer-biz">
