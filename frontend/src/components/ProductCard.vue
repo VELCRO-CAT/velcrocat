@@ -290,43 +290,72 @@ function toggleWish() {
 .pcard-wish.active { opacity: 1; color: var(--c-accent); }
 .pcard-wish:hover { color: var(--c-accent); }
 
-/* 컬러 스와치 행 (호버 시 페이드인) */
+/* 컬러 스와치 행 (호버 시 각 swatch가 차례로 자연스럽게 올라옴) */
 .pcard-swatches {
   position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
   z-index: 3;
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.25s, transform 0.25s;
+  pointer-events: none;          /* 컨테이너 자체는 클릭 통과 */
 }
-.pcard:hover .pcard-swatches { opacity: 1; transform: translateY(0); }
 .pcard-swatch {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  border-radius: 0;              /* 각진 정사각형 */
   border: 1px solid transparent;
   outline: 1.5px solid transparent;
   outline-offset: 2px;
   cursor: pointer;
-  transition: outline-color 0.12s, transform 0.15s;
   padding: 0;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(14px);
+  /* 부드러운 ease-out (cubic-bezier로 자연스러운 감속) */
+  transition:
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    outline-color 0.15s ease;
 }
-.pcard-swatch:hover { transform: scale(1.15); outline-color: var(--c-ink); }
-.pcard-swatch.active { outline-color: var(--c-ink); }
+.pcard:hover .pcard-swatch {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* 60ms 간격 staggered 라이즈 (왼쪽부터 차례로) */
+.pcard:hover .pcard-swatch:nth-child(1) { transition-delay: 0ms;    }
+.pcard:hover .pcard-swatch:nth-child(2) { transition-delay: 60ms;   }
+.pcard:hover .pcard-swatch:nth-child(3) { transition-delay: 120ms;  }
+.pcard:hover .pcard-swatch:nth-child(4) { transition-delay: 180ms;  }
+.pcard:hover .pcard-swatch:nth-child(5) { transition-delay: 240ms;  }
+/* 호버 해제 시 딜레이 없이 즉시 페이드아웃 */
+.pcard:not(:hover) .pcard-swatch { transition-delay: 0ms; }
+
+.pcard-swatch.active,
+.pcard-swatch:hover { outline-color: var(--c-ink); }
+
 .pcard-swatch-more {
   font-family: var(--ff-label);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: var(--ls-label);
   color: var(--c-ink-soft);
-  margin-left: 2px;
+  margin-left: 4px;
   text-transform: uppercase;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1) 300ms,
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) 300ms;
 }
+.pcard:hover .pcard-swatch-more {
+  opacity: 1;
+  transform: translateY(0);
+}
+.pcard:not(:hover) .pcard-swatch-more { transition-delay: 0ms; }
 
 /* 재입고 알림 받기 (품절 시) */
 .pcard-notify {
@@ -397,10 +426,16 @@ function toggleWish() {
 .qs-rise-enter-from, .qs-rise-leave-to { transform: translateY(100%); }
 .qs-rise-enter-active, .qs-rise-leave-active { transition: transform 0.28s ease; }
 
-/* 터치 기기 — 스와치 행 항상 표시, 찜 항상 표시 */
+/* 터치 기기 — 스와치 항상 표시, 라이즈 애니메이션 무효 */
 @media (hover: none) {
-  .pcard-swatches { opacity: 1; transform: none; }
-  .pcard-swatch { width: 22px; height: 22px; }
+  .pcard-swatch {
+    opacity: 1;
+    transform: none;
+    transition: outline-color 0.15s ease;
+    width: 22px;
+    height: 22px;
+  }
+  .pcard-swatch-more { opacity: 1; transform: none; transition: none; }
   .pcard-wish { opacity: 1; }
 }
 </style>
