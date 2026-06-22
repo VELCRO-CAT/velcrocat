@@ -6,6 +6,9 @@
       관리자
     </router-link>
 
+    <!-- 공지 바 (헤더 위, non-sticky) -->
+    <AnnouncementBar v-if="!isBrandPage && !isAdminPage" />
+
     <!-- 헤더 (Brand/관리자 페이지에서는 숨김) -->
     <header v-if="!isBrandPage && !isAdminPage" class="mk-header">
       <div class="mk-header-inner">
@@ -113,13 +116,13 @@
             </div>
           </div>
 
-          <!-- 카트 -->
-          <router-link to="/cart" class="mk-icon mk-icon-labeled" aria-label="장바구니">
+          <!-- 카트 (클릭 시 우측 드로우어) -->
+          <button class="mk-icon mk-icon-labeled" @click="bagOpen = true" aria-label="장바구니">
             <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
               <v-icon size="20" color="#1A1714">mdi-bag-personal-outline</v-icon>
             </v-badge>
             <span class="mk-icon-label">CART</span>
-          </router-link>
+          </button>
         </div>
       </div>
     </header>
@@ -210,7 +213,16 @@
     <!-- 우하단 맨 위로 (관리자/브랜드 페이지 제외) -->
     <ScrollTopButton v-if="!isBrandPage && !isAdminPage" />
 
+    <!-- Bag Drawer (헤더 카트 아이콘 클릭 시 우측 슬라이드) -->
+    <BagDrawer :open="bagOpen" @close="bagOpen = false" />
+
     <!-- 푸터 -->
+    <!-- Trust/USP 스트립 (푸터 바로 위) -->
+    <TrustStrip v-if="!isBrandPage && !isAdminPage" />
+
+    <!-- Newsletter 구독 -->
+    <NewsletterBlock v-if="!isBrandPage && !isAdminPage" />
+
     <footer v-if="!isBrandPage && !isAdminPage" class="site-footer">
       <div class="footer-inner">
         <!-- 상단: 4컬럼 -->
@@ -284,6 +296,10 @@ import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import AdminNotification from './components/AdminNotification.vue';
 import ScrollTopButton from './components/ScrollTopButton.vue';
+import AnnouncementBar from './components/AnnouncementBar.vue';
+import BagDrawer from './components/BagDrawer.vue';
+import TrustStrip from './components/TrustStrip.vue';
+import NewsletterBlock from './components/NewsletterBlock.vue';
 import { useWishlistStore } from './stores/wishlist';
 
 const route = useRoute();
@@ -296,6 +312,9 @@ const wishlistStore = useWishlistStore();
 const wishOpen = ref(false);
 const router = useRouter();
 const menuOpen = ref(false);
+
+// Bag drawer (카트 아이콘 클릭 시 우측 슬라이드)
+const bagOpen = ref(false);
 
 // 검색 오버레이
 const searchOpen = ref(false);

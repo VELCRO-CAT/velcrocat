@@ -4,6 +4,10 @@ import axios from 'axios';
 // 사이트 전반에서 사용하는 편집 가능한 설정의 기본값.
 // 백엔드/네트워크 실패 또는 admin이 비워둔 키는 이 값으로 fallback 한다.
 export const SETTINGS_DEFAULTS = {
+  announcement_enabled: 'true',
+  announcement_text:    'FREE SHIPPING ON ORDERS ₩100,000+  ·  PREMIUM WOOL 100%',
+  announcement_link:    '',
+
   hero_kicker:        'VELCROCAT — SEOUL',
   hero_title_main:    '2026',
   hero_title_sub:     'SPRING COLLECTION',

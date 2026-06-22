@@ -6,6 +6,9 @@ const { adminMiddleware } = require('../middleware/auth');
 // /public 에서 노출해도 안전한 키 화이트리스트.
 // (네이버 API 키 같은 민감 정보가 새지 않도록 반드시 명시.)
 const PUBLIC_KEYS = [
+  'announcement_enabled',
+  'announcement_text',
+  'announcement_link',
   'hero_kicker',
   'hero_title_main',
   'hero_title_sub',

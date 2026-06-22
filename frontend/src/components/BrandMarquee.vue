@@ -20,36 +20,36 @@
 
 <style scoped>
 .brand-marquee {
-  background: var(--c-cream);
-  border-top: 1px solid var(--c-line);
-  border-bottom: 1px solid var(--c-line);
+  background: var(--c-ink);                       /* 검정 띠 */
+  border-top: none;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   overflow: hidden;
-  padding: 16px 0;
+  padding: 8px 0;                                  /* 슬림 */
   user-select: none;
 }
 .marquee-track {
   display: inline-flex;
   white-space: nowrap;
-  animation: marquee 40s linear infinite;
+  animation: marquee 60s linear infinite;          /* 더 차분히 */
 }
 .marquee-item {
   font-family: var(--ff-label);
-  font-size: 12px;
+  font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.36em;                          /* 명품 시그니처 트래킹 */
   text-transform: uppercase;
-  color: var(--c-ink);
+  color: var(--c-cream);                           /* 흰 글자 */
   display: inline-flex;
   align-items: center;
-  gap: 18px;
-  padding-right: 18px;
+  gap: 22px;
+  padding-right: 22px;
 }
 .dot {
   display: inline-block;
-  width: 5px;
-  height: 5px;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
-  background: var(--c-ink);
+  background: var(--c-cream);
   flex-shrink: 0;
 }
 @keyframes marquee {
@@ -57,6 +57,7 @@
   to   { transform: translateX(-50%); }
 }
 @media (max-width: 599px) {
-  .marquee-item { font-size: 10.5px; gap: 12px; padding-right: 12px; }
+  .brand-marquee { padding: 6px 0; }
+  .marquee-item { font-size: 9.5px; gap: 14px; padding-right: 14px; letter-spacing: 0.3em; }
 }
 </style>

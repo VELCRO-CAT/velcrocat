@@ -50,6 +50,23 @@
       </div>
     </section>
 
+    <!-- Recently Viewed (localStorage osaka_recent 기반) -->
+    <section v-if="recentProducts.length" class="recent-section">
+      <div class="section-head">
+        <h2 class="section-title">RECENTLY VIEWED</h2>
+        <span class="section-sub">최근 본 상품</span>
+      </div>
+      <div class="recent-rail">
+        <ProductCard
+          v-for="p in recentProducts"
+          :key="'recent-' + p.id"
+          :product="p"
+          @added="onAdded"
+          @wished="onWished"
+        />
+      </div>
+    </section>
+
     <!-- 룩북 스플릿 (좌측 카피 + 우측 풀-블리드 이미지) -->
     <section v-if="settings.get('lookbook_image_url')" class="lookbook">
       <div class="lookbook-text">
@@ -111,11 +128,13 @@ import ProductCard from '../components/ProductCard.vue';
 import BrandMarquee from '../components/BrandMarquee.vue';
 import { useWishlistStore } from '../stores/wishlist';
 import { useSettingsStore } from '../stores/settings';
+import { pickRecentFromList } from '../utils/recentlyViewed';
 
 const wishlistStore = useWishlistStore();
 const settings = useSettingsStore();
 
 const products = ref([]);
+const recentProducts = ref([]);
 const loading = ref(true);
 const snackbar = ref(false);
 const snackMsg = ref('');
@@ -138,6 +157,8 @@ onMounted(async () => {
   try {
     const res = await axios.get('/api/products');
     products.value = res.data.products || [];
+    // 같은 응답에서 최근 본 상품 매칭 (서버 추가 호출 없음)
+    recentProducts.value = pickRecentFromList(products.value, { limit: 8 });
   } catch (e) {
     console.error('상품 목록을 불러오지 못했습니다', e);
     products.value = [];
@@ -307,6 +328,52 @@ function onWished(product) {
 @media (max-width: 599px) {
   .pgrid { grid-template-columns: repeat(2, 1fr); column-gap: 10px; row-gap: 28px; }
   .grid-section { padding: 56px 16px 56px; }
+}
+
+/* ── Recently Viewed 레일 ── */
+.recent-section {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+  border-top: 1px solid var(--c-line);
+}
+.recent-section .section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.recent-section .section-sub {
+  font-family: var(--ff-label);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-ink-soft);
+}
+.recent-rail {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 16px;
+  row-gap: 24px;
+}
+@media (max-width: 1024px) { .recent-rail { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 599px) {
+  .recent-section { padding: 44px 16px 56px; }
+  .recent-rail {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    grid-template-columns: none;
+  }
+  .recent-rail > * {
+    flex: 0 0 60vw;
+    scroll-snap-align: start;
+  }
+  .recent-rail::-webkit-scrollbar { display: none; }
 }
 
 /* ── 룩북 스플릿 ── */

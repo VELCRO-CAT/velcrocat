@@ -14,6 +14,38 @@
         </div>
       </div>
 
+      <!-- ── 공지 바 (헤더 상단) ── -->
+      <section class="ss-section">
+        <h2 class="ss-section-title">공지 바 (헤더 상단)</h2>
+        <p class="ss-section-sub">헤더 위 슬림한 검정 띠 — 시즌 메시지·배송 안내 등. 비우면 자동 숨김.</p>
+
+        <div class="ss-grid">
+          <div class="ss-toggle-row">
+            <label class="ss-toggle-label">공지 바 표시</label>
+            <button
+              type="button"
+              class="ss-toggle"
+              :class="{ on: value('announcement_enabled') === 'true' }"
+              @click="save('announcement_enabled', value('announcement_enabled') === 'true' ? 'false' : 'true')"
+            >
+              <span class="ss-toggle-knob" />
+            </button>
+          </div>
+          <SettingField
+            label="문구 (영문 대문자 권장)"
+            placeholder="FREE SHIPPING ON ORDERS ₩100,000+"
+            :model-value="value('announcement_text')"
+            @update:model-value="(v) => save('announcement_text', v)"
+          />
+          <SettingField
+            label="클릭 시 이동 링크 (선택)"
+            placeholder="/products 또는 https://..."
+            :model-value="value('announcement_link')"
+            @update:model-value="(v) => save('announcement_link', v)"
+          />
+        </div>
+      </section>
+
       <!-- ── 히어로 ── -->
       <section class="ss-section">
         <h2 class="ss-section-title">메인 히어로</h2>
@@ -325,6 +357,44 @@ const ImageField = defineComponent({
 @media (max-width: 768px) {
   .ss-grid-3 { grid-template-columns: 1fr; }
 }
+
+/* 토글 row */
+.ss-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+.ss-toggle-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #666;
+}
+.ss-toggle {
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  background: #ddd;
+  border: 0;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.18s;
+  padding: 0;
+}
+.ss-toggle.on { background: var(--c-ink); }
+.ss-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.18s;
+}
+.ss-toggle.on .ss-toggle-knob { transform: translateX(18px); }
 
 /* SettingField / ImageField (deep) */
 :deep(.sf) { display: flex; flex-direction: column; }
