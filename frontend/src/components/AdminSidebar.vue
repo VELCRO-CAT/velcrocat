@@ -36,6 +36,10 @@
           <v-icon size="16">mdi-palette-swatch</v-icon>
           사이트 디자인
         </router-link>
+        <router-link to="/admin/restock" class="admin-nav-item" active-class="active">
+          <v-icon size="16">mdi-bell-ring-outline</v-icon>
+          재입고 알림
+        </router-link>
       </div>
 
       <!-- 우측: 스토어 이동 -->
@@ -81,6 +85,10 @@
         <router-link to="/admin/site" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
           <v-icon size="18">mdi-palette-swatch</v-icon>
           사이트 디자인
+        </router-link>
+        <router-link to="/admin/restock" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
+          <v-icon size="18">mdi-bell-ring-outline</v-icon>
+          재입고 알림
         </router-link>
       </div>
     </transition>

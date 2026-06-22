@@ -21,6 +21,7 @@ import AdminInquiries from '../views/admin/Inquiries.vue';
 import AdminNaver from '../views/admin/Naver.vue';
 import AdminUsers from '../views/admin/Users.vue';
 import AdminSite from '../views/admin/SiteSettings.vue';
+import AdminRestock from '../views/admin/Restock.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -46,7 +47,8 @@ const routes = [
   { path: '/admin/inquiries', component: AdminInquiries, meta: { requiresAdmin: true } },
   { path: '/admin/users', component: AdminUsers, meta: { requiresAdmin: true } },
   { path: '/admin/naver', component: AdminNaver, meta: { requiresAdmin: true } },
-  { path: '/admin/site',  component: AdminSite,  meta: { requiresAdmin: true } }
+  { path: '/admin/site',    component: AdminSite,    meta: { requiresAdmin: true } },
+  { path: '/admin/restock', component: AdminRestock, meta: { requiresAdmin: true } }
 ];
 
 const router = createRouter({
