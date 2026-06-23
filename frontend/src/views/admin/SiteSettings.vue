@@ -8,10 +8,32 @@
           <h1 class="page-title">사이트 디자인</h1>
           <p class="page-sub">메인 페이지 히어로 · 에디토리얼 · 룩북 · 모자이크</p>
         </div>
-        <div class="saved-pill" v-if="savedHint">
-          <v-icon size="14" color="#2F6B47">mdi-check-circle</v-icon>
-          저장됨
+        <div class="header-actions">
+          <div class="saved-pill" v-if="savedHint">
+            <v-icon size="14" color="#2F6B47">mdi-check-circle</v-icon>
+            저장됨
+          </div>
+          <button type="button" class="ss-reset-all" @click="resetAll">
+            <v-icon size="14">mdi-restore</v-icon>
+            전체 기본값으로 초기화
+          </button>
         </div>
+      </div>
+
+      <!-- 안내 박스 -->
+      <div class="ss-info">
+        <p>
+          <strong>수정</strong>: 입력란 / 토글 / 이미지 업로드 변경 시
+          <span class="ss-info-pill">800ms 후 자동 저장</span>
+        </p>
+        <p>
+          <strong>삭제</strong>: 각 필드의 <span class="ss-info-pill ss-info-pill-x">✕ 비우기</span> ·
+          각 섹션의 <span class="ss-info-pill ss-info-pill-r">⟲ 초기화</span> ·
+          상단 우측 <span class="ss-info-pill ss-info-pill-all">전체 초기화</span>
+        </p>
+        <p class="ss-info-note">
+          빈 값으로 저장되면 사이트는 자동으로 코드 기본값(또는 해당 섹션 숨김)으로 폴백합니다.
+        </p>
       </div>
 
       <!-- ── 공지 바 (헤더 상단) ── -->
@@ -228,6 +250,20 @@ function resetSection(keys) {
   for (const k of keys) save(k, '');
 }
 
+// 전체 초기화 — 모든 키를 빈값으로
+function resetAll() {
+  if (!confirm('정말로 사이트 디자인의 모든 설정을 초기화할까요?\n저장된 모든 텍스트·이미지가 비워지고 기본값으로 돌아갑니다.')) return;
+  const allKeys = [
+    'announcement_enabled', 'announcement_text', 'announcement_link',
+    'hero_kicker', 'hero_title_main', 'hero_title_sub', 'hero_cta_text', 'hero_cta_link',
+    'editorial_image_url', 'editorial_quote',
+    'lookbook_image_url', 'lookbook_title', 'lookbook_caption',
+    'mosaic_men_image', 'mosaic_women_image', 'mosaic_unisex_image',
+    'collection_label'
+  ];
+  for (const k of allKeys) save(k, '');
+}
+
 onMounted(async () => {
   // 관리자 페이지 진입 시 최신 값으로 한 번 더 로드
   await settings.load();
@@ -339,7 +375,74 @@ const ImageField = defineComponent({
 <style scoped>
 .page-header {
   display: flex; align-items: flex-end; justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* 전체 초기화 — 가장 눈에 띄게 */
+.ss-reset-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1.5px solid var(--c-accent);
+  color: var(--c-accent);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 9px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ss-reset-all:hover {
+  background: var(--c-accent);
+  color: #fff;
+}
+
+/* 상단 안내 박스 */
+.ss-info {
+  background: #fff;
+  border: 1px solid #eee;
+  border-left: 3px solid #2F6B47;
+  padding: 14px 20px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.9;
+}
+.ss-info p { margin: 0; }
+.ss-info p + p { margin-top: 2px; }
+.ss-info strong {
+  display: inline-block;
+  min-width: 44px;
+  color: #111;
+  font-weight: 700;
+}
+.ss-info-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f4f4f4;
+  color: #555;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin: 0 2px;
+}
+.ss-info-pill-x { background: rgba(192,57,43,0.08); color: #c0392b; }
+.ss-info-pill-r { background: rgba(110,31,46,0.08); color: var(--c-accent); }
+.ss-info-pill-all { background: var(--c-accent); color: #fff; }
+.ss-info-note {
+  margin-top: 8px !important;
+  font-size: 11.5px;
+  color: #888;
+  font-style: italic;
 }
 .page-title {
   font-family: var(--ff-serif);
@@ -389,13 +492,13 @@ const ImageField = defineComponent({
   margin: 0 0 4px;
 }
 .ss-reset {
-  background: none;
-  border: 1px solid #e0e0e0;
-  color: #888;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  padding: 6px 12px;
+  background: rgba(110,31,46,0.04);
+  border: 1px solid rgba(110,31,46,0.35);
+  color: var(--c-accent);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 7px 13px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.15s;
@@ -403,8 +506,9 @@ const ImageField = defineComponent({
   flex-shrink: 0;
 }
 .ss-reset:hover {
-  color: var(--c-accent);
+  background: var(--c-accent);
   border-color: var(--c-accent);
+  color: #fff;
 }
 .ss-section-sub {
   font-size: 12px;
