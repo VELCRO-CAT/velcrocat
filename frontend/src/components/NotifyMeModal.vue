@@ -2,7 +2,7 @@
   <transition name="notify-fade">
     <div v-if="open" class="notify-overlay" @click.self="close">
       <div class="notify-modal" @click.stop>
-        <button class="notify-close" @click="close" aria-label="닫기">
+        <button class="notify-close hvr-grow" @click="close" aria-label="닫기">
           <svg viewBox="0 0 24 24" width="14" height="14"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
         </button>
 
@@ -33,7 +33,7 @@
 
           <p v-if="error" class="notify-error">{{ error }}</p>
 
-          <button class="notify-submit" :disabled="loading" @click="submit">
+          <button class="notify-submit hvr-shadow" :disabled="loading" @click="submit">
             <span v-if="loading" class="notify-spinner" />
             <span v-else>알림 만들기</span>
           </button>
@@ -43,7 +43,7 @@
           <div class="notify-success">
             <p class="notify-title">Thank you.</p>
             <p class="notify-sub">재입고 시 이메일로 알려드릴게요.</p>
-            <button class="notify-submit" @click="close" style="margin-top:24px">닫기</button>
+            <button class="notify-submit hvr-shadow" @click="close" style="margin-top:24px">닫기</button>
           </div>
         </template>
       </div>

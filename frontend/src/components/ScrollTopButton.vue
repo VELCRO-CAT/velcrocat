@@ -1,6 +1,6 @@
 <template>
   <transition name="st-fade">
-    <button v-if="visible" class="scroll-top" @click="toTop" aria-label="맨 위로">
+    <button v-if="visible" class="scroll-top hvr-float-shadow" @click="toTop" aria-label="맨 위로">
       <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
         <path d="M12 5l-7 7 1.4 1.4L11 8.8V20h2V8.8l4.6 4.6L19 12z" fill="currentColor"/>
       </svg>
@@ -54,11 +54,10 @@ onUnmounted(() => {
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  transition: transform 0.25s, background 0.2s;
+  transition: background 0.2s;
   box-shadow: 0 6px 22px rgba(26,23,20,0.18);
 }
 .scroll-top:hover {
-  transform: translateY(-3px);
   background: #000;
 }
 .scroll-top-label { line-height: 1; }

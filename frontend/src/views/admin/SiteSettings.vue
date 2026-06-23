@@ -13,7 +13,7 @@
             <v-icon size="14" color="#2F6B47">mdi-check-circle</v-icon>
             저장됨
           </div>
-          <button type="button" class="ss-reset-all" @click="resetAll">
+          <button type="button" class="ss-reset-all hvr-icon-spin" @click="resetAll">
             <v-icon size="14">mdi-restore</v-icon>
             전체 기본값으로 초기화
           </button>
@@ -40,7 +40,7 @@
       <section class="ss-section">
         <div class="ss-section-head">
           <h2 class="ss-section-title">공지 바 (헤더 상단)</h2>
-          <button type="button" class="ss-reset" @click="resetSection(['announcement_enabled','announcement_text','announcement_link'])">⟲ 기본값으로 초기화</button>
+          <button type="button" class="ss-reset hvr-grow" @click="resetSection(['announcement_enabled','announcement_text','announcement_link'])">⟲ 기본값으로 초기화</button>
         </div>
         <p class="ss-section-sub">헤더 위 슬림한 검정 띠 — 시즌 메시지·배송 안내 등. 비우면 자동 숨김.</p>
 
@@ -75,7 +75,7 @@
       <section class="ss-section">
         <div class="ss-section-head">
           <h2 class="ss-section-title">메인 히어로</h2>
-          <button type="button" class="ss-reset" @click="resetSection(['hero_kicker','hero_title_main','hero_title_sub','hero_cta_text','hero_cta_link'])">⟲ 기본값으로 초기화</button>
+          <button type="button" class="ss-reset hvr-grow" @click="resetSection(['hero_kicker','hero_title_main','hero_title_sub','hero_cta_text','hero_cta_link'])">⟲ 기본값으로 초기화</button>
         </div>
         <p class="ss-section-sub">홈 페이지 상단의 큰 타이틀과 CTA 버튼을 편집합니다.</p>
 
@@ -126,7 +126,7 @@
       <section class="ss-section">
         <div class="ss-section-head">
           <h2 class="ss-section-title">에디토리얼 스트립</h2>
-          <button type="button" class="ss-reset" @click="resetSection(['editorial_image_url','editorial_quote'])">⟲ 기본값으로 초기화</button>
+          <button type="button" class="ss-reset hvr-grow" @click="resetSection(['editorial_image_url','editorial_quote'])">⟲ 기본값으로 초기화</button>
         </div>
         <p class="ss-section-sub">풀-블리드 이미지 위에 세리프 인용구가 올라갑니다.</p>
 
@@ -148,7 +148,7 @@
       <section class="ss-section">
         <div class="ss-section-head">
           <h2 class="ss-section-title">룩북 스플릿</h2>
-          <button type="button" class="ss-reset" @click="resetSection(['lookbook_image_url','lookbook_title','lookbook_caption'])">⟲ 기본값으로 초기화</button>
+          <button type="button" class="ss-reset hvr-grow" @click="resetSection(['lookbook_image_url','lookbook_title','lookbook_caption'])">⟲ 기본값으로 초기화</button>
         </div>
         <p class="ss-section-sub">좌측 텍스트 + 우측 풀-블리드 이미지의 2분할 섹션.</p>
 
@@ -175,7 +175,7 @@
       <section class="ss-section">
         <div class="ss-section-head">
           <h2 class="ss-section-title">카테고리 모자이크</h2>
-          <button type="button" class="ss-reset" @click="resetSection(['mosaic_men_image','mosaic_women_image','mosaic_unisex_image'])">⟲ 기본값으로 초기화</button>
+          <button type="button" class="ss-reset hvr-grow" @click="resetSection(['mosaic_men_image','mosaic_women_image','mosaic_unisex_image'])">⟲ 기본값으로 초기화</button>
         </div>
         <p class="ss-section-sub">MEN / WOMEN / UNISEX 3-col 모자이크. 이미지를 비우면 해당 타일이 숨겨집니다.</p>
 
@@ -190,7 +190,7 @@
       <section class="ss-section">
         <div class="ss-section-head">
           <h2 class="ss-section-title">컬렉션 라벨</h2>
-          <button type="button" class="ss-reset" @click="resetSection(['collection_label'])">⟲ 기본값으로 초기화</button>
+          <button type="button" class="ss-reset hvr-grow" @click="resetSection(['collection_label'])">⟲ 기본값으로 초기화</button>
         </div>
         <p class="ss-section-sub">룩북 키커 등에 사용되는 짧은 시즌 라벨.</p>
 
@@ -289,7 +289,7 @@ const SettingField = defineComponent({
           props.modelValue
             ? h('button', {
                 type: 'button',
-                class: 'sf-clear',
+                class: 'sf-clear hvr-sink',
                 title: '값 비우기 (기본값 노출)',
                 onClick: () => emit('update:modelValue', '')
               }, '✕ 비우기')
@@ -338,7 +338,7 @@ const ImageField = defineComponent({
           props.modelValue
             ? h('button', {
                 type: 'button',
-                class: 'sf-clear',
+                class: 'sf-clear hvr-sink',
                 title: '이미지 제거 (기본 숨김으로 돌아감)',
                 onClick: () => emit('update:modelValue', '')
               }, '✕ 이미지 제거')

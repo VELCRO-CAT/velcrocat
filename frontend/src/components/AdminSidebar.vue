@@ -2,7 +2,7 @@
   <nav class="admin-nav">
     <div class="admin-nav-inner">
       <!-- 좌측: 로고 -->
-      <router-link to="/admin" class="admin-nav-logo">
+      <router-link to="/admin" class="admin-nav-logo hvr-grow">
         {{ adminUsername }}
       </router-link>
 
@@ -44,7 +44,7 @@
 
       <!-- 우측: 스토어 이동 -->
       <div class="admin-nav-right">
-        <router-link to="/" class="admin-nav-back">
+        <router-link to="/" class="admin-nav-back hvr-icon-back">
           <v-icon size="16">mdi-arrow-left</v-icon>
           <span v-if="!isMobile">스토어</span>
         </router-link>

@@ -49,7 +49,7 @@
             </div>
             <button
               v-if="group.pending > 0"
-              class="btn btn-mark-all"
+              class="btn btn-mark-all hvr-sweep-to-right"
               @click="markAllProduct(group.productId)"
             >전체 통보 완료 처리</button>
           </div>
@@ -81,10 +81,10 @@
                   <span v-else class="status-pending">대기</span>
                 </td>
                 <td class="cell-actions">
-                  <button v-if="!r.notified" class="btn btn-mark" @click="markNotified(r.id)" title="통보 완료로 표시">
+                  <button v-if="!r.notified" class="btn btn-mark hvr-grow" @click="markNotified(r.id)" title="통보 완료로 표시">
                     <v-icon size="14">mdi-check</v-icon>
                   </button>
-                  <button class="btn btn-del" @click="del(r.id)" title="삭제">
+                  <button class="btn btn-del hvr-sink" @click="del(r.id)" title="삭제">
                     <v-icon size="14">mdi-trash-can-outline</v-icon>
                   </button>
                 </td>

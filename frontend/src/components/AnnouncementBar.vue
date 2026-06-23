@@ -2,10 +2,10 @@
   <transition name="ann-fade">
     <div v-if="visible" class="ann-bar">
       <div class="ann-bar-inner">
-        <router-link v-if="link" :to="link" class="ann-bar-text">{{ text }}</router-link>
+        <router-link v-if="link" :to="link" class="ann-bar-text hvr-underline-from-right">{{ text }}</router-link>
         <span v-else class="ann-bar-text">{{ text }}</span>
       </div>
-      <button class="ann-bar-close" @click="dismiss" aria-label="닫기">
+      <button class="ann-bar-close hvr-grow" @click="dismiss" aria-label="닫기">
         <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
           <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
         </svg>
@@ -81,7 +81,6 @@ watch(text, () => { /* computed 평가만 트리거되면 충분 */ });
   max-width: 100%;
   line-height: 1;
 }
-a.ann-bar-text:hover { opacity: 0.7; }
 .ann-bar-close {
   position: absolute;
   right: 14px;

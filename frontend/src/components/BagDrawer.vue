@@ -10,7 +10,7 @@
             SHOPPING BAG
             <span class="bag-count" v-if="cartStore.items.length">({{ cartStore.itemCount }})</span>
           </h2>
-          <button class="bag-close" @click="$emit('close')" aria-label="닫기">
+          <button class="bag-close hvr-grow" @click="$emit('close')" aria-label="닫기">
             <svg viewBox="0 0 24 24" width="14" height="14"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
           </button>
         </header>
@@ -18,7 +18,7 @@
         <div v-if="!cartStore.items.length" class="bag-empty">
           <p class="bag-empty-title">Your bag is empty.</p>
           <p class="bag-empty-sub">담긴 상품이 없습니다</p>
-          <router-link to="/products" class="bag-btn bag-btn-ghost" @click="$emit('close')">
+          <router-link to="/products" class="bag-btn bag-btn-ghost hvr-sweep-to-right" @click="$emit('close')">
             CONTINUE SHOPPING
           </router-link>
         </div>
@@ -39,7 +39,7 @@
                 <p class="bag-row-price">₩{{ Number(item.price * item.qty).toLocaleString() }}</p>
               </div>
               <button
-                class="bag-row-x"
+                class="bag-row-x hvr-sink"
                 @click="cartStore.removeItem(vk(item))"
                 aria-label="제거"
               >
@@ -58,10 +58,10 @@
             <span class="bag-sub-amount">₩{{ Number(cartStore.total).toLocaleString() }}</span>
           </div>
           <p class="bag-ship">배송비는 결제 단계에서 계산됩니다</p>
-          <router-link to="/cart" class="bag-btn bag-btn-ghost" @click="$emit('close')">
+          <router-link to="/cart" class="bag-btn bag-btn-ghost hvr-sweep-to-right" @click="$emit('close')">
             VIEW BAG
           </router-link>
-          <router-link to="/checkout" class="bag-btn bag-btn-solid" @click="$emit('close')">
+          <router-link to="/checkout" class="bag-btn bag-btn-solid hvr-shadow" @click="$emit('close')">
             CHECKOUT
           </router-link>
         </footer>

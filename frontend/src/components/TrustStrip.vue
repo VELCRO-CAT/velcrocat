@@ -1,7 +1,7 @@
 <template>
   <section class="trust-strip">
     <div class="trust-inner">
-      <div v-for="(item, i) in items" :key="i" class="trust-item">
+      <div v-for="(item, i) in items" :key="i" class="trust-item hvr-bob">
         <v-icon size="24" color="#1A1714">{{ item.icon }}</v-icon>
         <p class="trust-label">{{ item.label }}</p>
         <p class="trust-sub">{{ item.sub }}</p>
@@ -39,6 +39,8 @@ const items = [
   padding: 8px 16px;
   border-right: 1px solid var(--c-line);
 }
+/* hvr-bob 의 inline-block 오버라이드 — grid 셀이므로 block 유지 */
+.trust-item.hvr-bob { display: block; }
 .trust-item:last-child { border-right: none; }
 .trust-label {
   font-family: var(--ff-label);

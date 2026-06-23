@@ -13,7 +13,7 @@
           class="nl-input"
           :disabled="loading"
         />
-        <button type="submit" class="nl-btn" :disabled="loading">
+        <button type="submit" class="nl-btn hvr-sweep-to-right" :disabled="loading">
           {{ loading ? '...' : 'SUBSCRIBE' }}
         </button>
       </form>
@@ -116,9 +116,7 @@ async function submit() {
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--c-ink);
-  transition: opacity 0.2s;
 }
-.nl-btn:hover:not(:disabled) { opacity: 0.55; }
 .nl-btn:disabled { opacity: 0.4; cursor: default; }
 
 .nl-msg {

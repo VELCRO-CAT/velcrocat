@@ -41,12 +41,12 @@
                         v-for="cat in filteredCategories"
                         :key="cat.slug"
                         :to="`/products?gender=${activeGender}&category=${cat.slug}`"
-                        class="cat-sub-link"
+                        class="cat-sub-link hvr-fade"
                         @click="catOpen = false"
                       >{{ cat.name }}</router-link>
                       <router-link
                         :to="`/products?gender=${activeGender}`"
-                        class="cat-sub-link cat-sub-all"
+                        class="cat-sub-link cat-sub-all hvr-fade"
                         @click="catOpen = false"
                       >전체보기</router-link>
                     </div>
@@ -60,7 +60,7 @@
         </div>
 
         <!-- 중앙: 로고 (VELCROCAT 위, SEOUL 아래 스택형) -->
-        <router-link to="/" class="mk-logo">
+        <router-link to="/" class="mk-logo hvr-grow">
           <img src="./image/osakamarketLOGO2.png" alt="VELCROCAT" class="mk-logo-cat" />
           <span class="mk-logo-stack">
             <span class="mk-logo-word">VELCROCAT</span>
@@ -70,22 +70,22 @@
 
         <!-- 우: 아이콘 (영문 라벨 함께 노출 — 데스크탑) -->
         <div class="mk-right">
-          <button class="mk-icon mk-icon-labeled" @click="searchOpen = true" aria-label="검색">
+          <button class="mk-icon mk-icon-labeled hvr-icon-pulse-grow" @click="searchOpen = true" aria-label="검색">
             <v-icon size="20" color="#1A1714">mdi-magnify</v-icon>
             <span class="mk-icon-label">SEARCH</span>
           </button>
-          <router-link v-if="authStore.isLoggedIn" to="/mypage" class="mk-icon mk-icon-labeled" aria-label="마이페이지">
+          <router-link v-if="authStore.isLoggedIn" to="/mypage" class="mk-icon mk-icon-labeled hvr-icon-pulse-grow" aria-label="마이페이지">
             <v-icon size="20" color="#1A1714">mdi-account-outline</v-icon>
             <span class="mk-icon-label">ACCOUNT</span>
           </router-link>
-          <router-link v-else to="/login" class="mk-icon mk-icon-labeled" aria-label="로그인">
+          <router-link v-else to="/login" class="mk-icon mk-icon-labeled hvr-icon-pulse-grow" aria-label="로그인">
             <v-icon size="20" color="#1A1714">mdi-account-outline</v-icon>
             <span class="mk-icon-label">SIGN IN</span>
           </router-link>
 
           <!-- 찜 -->
           <div class="mk-wish" @mouseenter="wishOpen = true" @mouseleave="wishOpen = false">
-            <button class="mk-icon mk-icon-labeled" aria-label="찜 목록">
+            <button class="mk-icon mk-icon-labeled hvr-icon-pulse-grow" aria-label="찜 목록">
               <v-badge :content="wishlistStore.count" :model-value="wishlistStore.count > 0" color="black">
                 <v-icon size="20" color="#1A1714">mdi-heart-outline</v-icon>
               </v-badge>
@@ -108,7 +108,7 @@
                       <p class="wish-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
                     </div>
                   </router-link>
-                  <button class="wish-item-remove" @click="wishlistStore.remove(item.id)">
+                  <button class="wish-item-remove hvr-grow" @click="wishlistStore.remove(item.id)">
                     <v-icon size="14" color="#999">mdi-close</v-icon>
                   </button>
                 </div>
@@ -117,7 +117,7 @@
           </div>
 
           <!-- 카트 (클릭 시 우측 드로우어) -->
-          <button class="mk-icon mk-icon-labeled" @click="bagOpen = true" aria-label="장바구니">
+          <button class="mk-icon mk-icon-labeled hvr-icon-pulse-grow" @click="bagOpen = true" aria-label="장바구니">
             <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
               <v-icon size="20" color="#1A1714">mdi-bag-personal-outline</v-icon>
             </v-badge>
@@ -255,10 +255,10 @@
           <!-- 상점 메뉴 -->
           <div class="footer-col">
             <h4>상점 메뉴</h4>
-            <router-link to="/" class="footer-menu-link">메인페이지</router-link>
-            <router-link to="/brand" class="footer-menu-link">회사소개</router-link>
-            <router-link to="/products" class="footer-menu-link">전체상품</router-link>
-            <router-link to="/contact" class="footer-menu-link">고객문의</router-link>
+            <router-link to="/" class="footer-menu-link hvr-underline-from-left">메인페이지</router-link>
+            <router-link to="/brand" class="footer-menu-link hvr-underline-from-left">회사소개</router-link>
+            <router-link to="/products" class="footer-menu-link hvr-underline-from-left">전체상품</router-link>
+            <router-link to="/contact" class="footer-menu-link hvr-underline-from-left">고객문의</router-link>
           </div>
         </div>
         <!-- 하단 -->
@@ -450,9 +450,7 @@ function logout() {
   cursor: pointer;
   color: var(--c-ink);
   text-decoration: none;
-  transition: opacity 0.2s;
 }
-.mk-icon:hover { opacity: 0.5; }
 .mk-icon-labeled {
   width: auto;
   height: auto;
@@ -808,13 +806,7 @@ function logout() {
   color: #444;
   text-decoration: none;
   white-space: nowrap;
-  transition: background 0.12s, color 0.12s, padding-left 0.15s;
   letter-spacing: 0.5px;
-}
-.cat-sub-link:hover {
-  background: #f5f5f5;
-  color: var(--c-ink);
-  padding-left: 30px;
 }
 .cat-sub-all {
   font-weight: 700;

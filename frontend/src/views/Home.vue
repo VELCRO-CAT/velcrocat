@@ -27,7 +27,7 @@
     <section class="grid-section">
       <div class="section-head">
         <h2 class="section-title">NEW IN</h2>
-        <router-link to="/products" class="section-more">전체 보기 →</router-link>
+        <router-link to="/products" class="section-more hvr-icon-forward">전체 보기 →</router-link>
       </div>
 
       <div v-if="loading" class="state">
@@ -73,7 +73,7 @@
         <p class="lookbook-kicker">{{ settings.get('collection_label') }}</p>
         <h3 class="lookbook-title">{{ settings.get('lookbook_title') }}</h3>
         <p class="lookbook-caption">{{ settings.get('lookbook_caption') }}</p>
-        <router-link to="/products" class="lookbook-cta">VIEW LOOKBOOK →</router-link>
+        <router-link to="/products" class="lookbook-cta hvr-icon-forward">VIEW LOOKBOOK →</router-link>
       </div>
       <div class="lookbook-img-wrap">
         <img :src="settings.get('lookbook_image_url')" alt="Lookbook" class="lookbook-img" />

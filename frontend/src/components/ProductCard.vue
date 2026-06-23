@@ -27,7 +27,7 @@
         <template v-if="images.length > 1 && !noVisibleImage">
           <button
             type="button"
-            class="pcard-arrow pcard-arrow-left"
+            class="pcard-arrow pcard-arrow-left hvr-grow"
             @click.prevent.stop="prevImage"
             aria-label="이전 이미지"
           >
@@ -37,7 +37,7 @@
           </button>
           <button
             type="button"
-            class="pcard-arrow pcard-arrow-right"
+            class="pcard-arrow pcard-arrow-right hvr-grow"
             @click.prevent.stop="nextImage"
             aria-label="다음 이미지"
           >
@@ -63,7 +63,7 @@
         <span v-else-if="product.stock <= 5" class="pcard-low">LEFT {{ product.stock }}</span>
 
         <button
-          class="pcard-wish"
+          class="pcard-wish hvr-icon-pulse-grow"
           :class="{ active: wished }"
           @click.prevent="toggleWish"
           :aria-label="wished ? '찜 해제' : '찜하기'"
@@ -94,7 +94,7 @@
         <button
           v-else-if="product.stock === 0"
           type="button"
-          class="pcard-notify"
+          class="pcard-notify hvr-sweep-to-right"
           @click.prevent.stop="notifyOpen = true"
         >재입고 알림 받기 · NOTIFY ME</button>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="qs-panel" @click.stop.prevent>
-    <button class="qs-close" @click.stop.prevent="$emit('close')" aria-label="닫기">
+    <button class="qs-close hvr-grow" @click.stop.prevent="$emit('close')" aria-label="닫기">
       <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
       </svg>
@@ -50,7 +50,7 @@
     <div class="qs-actions">
       <button
         type="button"
-        class="qs-btn qs-btn-outline"
+        class="qs-btn qs-btn-outline hvr-sweep-to-right"
         :disabled="adding"
         @click.stop.prevent="onAdd"
       >
@@ -59,7 +59,7 @@
       </button>
       <button
         type="button"
-        class="qs-btn qs-btn-fill"
+        class="qs-btn qs-btn-fill hvr-icon-forward"
         @click.stop.prevent="onBuy"
       >BUY NOW →</button>
     </div>
