@@ -18,7 +18,7 @@ import AdminDashboard from '../views/admin/Dashboard.vue';
 import AdminProducts from '../views/admin/Products.vue';
 import AdminOrders from '../views/admin/Orders.vue';
 import AdminInquiries from '../views/admin/Inquiries.vue';
-import AdminNaver from '../views/admin/Naver.vue';
+import AdminNewsletter from '../views/admin/Newsletter.vue';
 import AdminUsers from '../views/admin/Users.vue';
 import AdminSite from '../views/admin/SiteSettings.vue';
 import AdminRestock from '../views/admin/Restock.vue';
@@ -46,7 +46,7 @@ const routes = [
   { path: '/admin/orders', component: AdminOrders, meta: { requiresAdmin: true } },
   { path: '/admin/inquiries', component: AdminInquiries, meta: { requiresAdmin: true } },
   { path: '/admin/users', component: AdminUsers, meta: { requiresAdmin: true } },
-  { path: '/admin/naver', component: AdminNaver, meta: { requiresAdmin: true } },
+  { path: '/admin/newsletter', component: AdminNewsletter, meta: { requiresAdmin: true } },
   { path: '/admin/site',    component: AdminSite,    meta: { requiresAdmin: true } },
   { path: '/admin/restock', component: AdminRestock, meta: { requiresAdmin: true } }
 ];
