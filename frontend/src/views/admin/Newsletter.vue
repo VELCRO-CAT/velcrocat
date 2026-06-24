@@ -185,6 +185,10 @@ async function send(isTest) {
     lastResult.value = { error: '시험 발송 이메일을 입력하세요' };
     return;
   }
+  if (!isTest && rows.value.length === 0) {
+    lastResult.value = { error: '구독자가 0명이라 전체 발송할 수 없습니다. 먼저 시험 발송으로 본인 이메일에 테스트해 주세요.' };
+    return;
+  }
   sending.value = true;
   testMode.value = isTest;
   try {
@@ -194,10 +198,21 @@ async function send(isTest) {
     };
     if (isTest) payload.testTo = testTo.value.trim();
 
-    const res = await axios.post('/api/newsletter/send', payload, { headers: authHeader() });
+    console.log('[newsletter] POST /api/newsletter/send', { ...payload, isTest });
+    const res = await axios.post('/api/newsletter/send', payload, {
+      headers: authHeader(),
+      timeout: 120000  // 네이버 SMTP는 수신자당 1~2초씩 걸려 다수 발송 시 길어짐
+    });
+    console.log('[newsletter] 응답', res.status, res.data);
     lastResult.value = res.data;
   } catch (e) {
-    lastResult.value = { error: e.response?.data?.error || '발송 실패' };
+    console.error('[newsletter] 실패', e);
+    let msg;
+    if (e.code === 'ECONNABORTED') msg = '시간 초과 (SMTP 응답 없음) — 백엔드 콘솔 로그 확인 필요';
+    else if (e.response?.status === 401) msg = '관리자 인증 만료 — 다시 로그인해 주세요';
+    else if (e.response?.status === 503) msg = e.response?.data?.error || 'MAIL_USER / MAIL_PASS 설정 누락';
+    else msg = e.response?.data?.error || e.message || '발송 실패';
+    lastResult.value = { error: msg };
   } finally {
     sending.value = false;
     testMode.value = false;

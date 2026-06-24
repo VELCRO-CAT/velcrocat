@@ -105,10 +105,13 @@ router.post('/send', adminMiddleware, async (req, res) => {
     const testTo = String(req.body?.testTo || '').trim().toLowerCase();
     const recipientsInput = req.body?.recipients;
 
+    console.log(`[newsletter /send] 진입 · subject="${subject.slice(0, 40)}" · testTo="${testTo}" · bodyLen=${body.length}`);
+
     if (!subject) return res.status(400).json({ error: '제목을 입력해주세요' });
     if (!body) return res.status(400).json({ error: '본문을 입력해주세요' });
 
     if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
+      console.log('[newsletter /send] 차단: MAIL_USER/MAIL_PASS 미설정');
       return res.status(503).json({
         error: 'MAIL_USER / MAIL_PASS 환경변수가 설정되지 않아 발송할 수 없습니다 (.env 확인)'
       });
@@ -129,8 +132,10 @@ router.post('/send', adminMiddleware, async (req, res) => {
     }
 
     if (targets.length === 0) {
-      return res.status(400).json({ error: '발송 대상이 없습니다' });
+      console.log('[newsletter /send] 대상 0명 — 발송 안 함 (구독자 없음 또는 시험 주소 비어있음)');
+      return res.status(400).json({ error: '발송 대상이 없습니다 (구독자 0명 또는 시험 발송 주소가 비어 있음)' });
     }
+    console.log(`[newsletter /send] 대상 ${targets.length}명 발송 시작 → SMTP smtp.naver.com`);
 
     // 본문이 HTML 태그를 포함하지 않으면 줄바꿈을 <br>로 변환
     const hasHtml = /<[a-z][\s\S]*>/i.test(body);
@@ -150,14 +155,16 @@ router.post('/send', adminMiddleware, async (req, res) => {
     const failures = [];
     for (const to of targets) {
       try {
-        await transporter.sendMail({ from, to, subject, html });
+        const info = await transporter.sendMail({ from, to, subject, html });
         sent++;
+        console.log(`[newsletter /send] ✓ ${to} · messageId=${info.messageId}`);
       } catch (err) {
         failures.push({ to, error: err.message });
-        console.error('[newsletter /send] fail', to, err.message);
+        console.error(`[newsletter /send] ✗ ${to} :: ${err.message}`);
       }
     }
 
+    console.log(`[newsletter /send] 완료 · 성공 ${sent}/${targets.length} · 실패 ${failures.length}`);
     res.json({
       ok: true,
       total: targets.length,
