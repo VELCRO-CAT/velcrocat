@@ -53,7 +53,7 @@ router.post('/subscribe', async (req, res) => {
       return res.status(400).json({ error: '올바른 이메일을 입력해주세요' });
     }
 
-    const existing = await db('newsletter_subscribers').where({ email }).first();
+    const existing = await db('newsletter_subscribers').where('email', email).first();
     if (existing) {
       return res.json({ ok: true, alreadySubscribed: true });
     }
@@ -73,9 +73,8 @@ router.post('/subscribe', async (req, res) => {
 router.get('/', adminMiddleware, async (req, res) => {
   try {
     const rows = await db('newsletter_subscribers')
-      .orderBy('created_at', 'desc')
-      .limit(500);
-    res.json(rows);
+      .orderBy('created_at', 'desc');
+    res.json((rows || []).slice(0, 500));
   } catch (e) {
     console.error('[newsletter GET]', e.message);
     res.status(500).json({ error: '목록 조회에 실패했습니다' });
@@ -87,7 +86,7 @@ router.delete('/:id', adminMiddleware, async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) return res.status(400).json({ error: '잘못된 ID' });
-    const n = await db('newsletter_subscribers').where({ id }).del();
+    const n = await db('newsletter_subscribers').where('id', id).del();
     if (!n) return res.status(404).json({ error: '구독자를 찾을 수 없습니다' });
     res.json({ ok: true });
   } catch (e) {

@@ -6,7 +6,7 @@ const DB_FILE = path.join(__dirname, 'dev-db.json');
 
 function loadData() {
   if (!fs.existsSync(DB_FILE)) {
-    return { users: [], categories: [], products: [], orders: [], inquiries: [], settings: [], notifications: [] };
+    return { users: [], categories: [], products: [], orders: [], inquiries: [], settings: [], notifications: [], newsletter_subscribers: [], restock_notifications: [] };
   }
   return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
 }
