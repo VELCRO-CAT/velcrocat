@@ -64,9 +64,9 @@
             <span>문의 관리</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>
           </router-link>
-          <router-link to="/admin/newsletter" class="quick-card">
-            <v-icon size="20" color="#111">mdi-email-newsletter</v-icon>
-            <span>뉴스레터</span>
+          <router-link to="/admin/naver" class="quick-card">
+            <v-icon size="20" color="#111">mdi-store-outline</v-icon>
+            <span>네이버 스마트스토어</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>
           </router-link>
         </div>
@@ -93,7 +93,7 @@ onMounted(async () => {
 <style scoped>
 .admin-container {
   padding: 24px;
-  max-width: var(--container-sm);
+  max-width: 900px;
 }
 .dash-title {
   font-size: 22px;

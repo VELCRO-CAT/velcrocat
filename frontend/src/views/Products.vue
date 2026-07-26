@@ -1,5 +1,6 @@
 <template>
   <div class="products-page">
+
     <!-- 페이지 헤더 -->
     <div class="page-header">
       <span class="page-label">SHOP</span>
@@ -11,7 +12,7 @@
       <div class="filter-inner">
         <div class="filter-group">
           <select v-model="selectedGender" class="filter-select" @change="selectedCategory = null; fetchProducts()">
-            <option :value="null">ALL</option>
+            <option :value="null">전체 성별</option>
             <option value="men">MEN</option>
             <option value="women">WOMEN</option>
           </select>
@@ -29,43 +30,81 @@
           </select>
         </div>
         <div class="search-wrap">
-          <v-icon size="15" color="#999">mdi-magnify</v-icon>
+          <v-icon size="16" color="#999">mdi-magnify</v-icon>
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="SEARCH"
+            placeholder="상품 검색"
             class="search-input"
             @input="fetchProducts"
           />
         </div>
       </div>
-      <p class="result-count">{{ total }} ITEMS</p>
+      <p class="result-count">총 {{ total }}개의 상품</p>
     </div>
 
     <!-- 로딩 -->
-    <div v-if="loading" class="state">
-      <v-progress-circular indeterminate color="#111" size="32" />
+    <div v-if="loading" class="loading-wrap">
+      <v-progress-circular indeterminate color="#111" size="36" />
     </div>
 
     <!-- 상품 그리드 -->
-    <div v-else-if="sortedProducts.length" class="pgrid">
-      <ProductCard
-        v-for="p in sortedProducts"
-        :key="p.id"
-        :product="p"
-        :show-seller="true"
-        @added="onAdded"
-        @wished="onWished"
-      />
+    <div v-else-if="products.length" class="product-grid-wrap">
+      <div class="product-grid">
+        <router-link
+          v-for="(product, idx) in sortedProducts"
+          :key="product.id"
+          :to="`/products/${product.id}`"
+          class="product-item reveal"
+          :style="{ transitionDelay: (idx % 6) * 0.08 + 's' }"
+        >
+          <div class="product-img-wrap">
+            <img
+              v-for="(img, si) in getImages(product)"
+              :key="si"
+              :src="img"
+              :alt="product.name"
+              class="product-img"
+              :class="{ active: (slideIndex[product.id] || 0) === si }"
+            />
+            <button class="product-wish-btn" :class="{ active: wishlistStore.isWished(product.id) }" @click.prevent="toggleWish(product)">
+              <v-icon size="18">{{ wishlistStore.isWished(product.id) ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
+            </button>
+            <span v-if="product.stock === 0" class="sold-out-badge">SOLD OUT</span>
+            <button v-else class="product-cart-btn hvr-grow" @click.prevent="addToCart(product)">
+              <v-icon size="18">mdi-cart-plus</v-icon>
+            </button>
+            <!-- 색상 스와치 (hover 시 아래에서 위로 등장) -->
+            <div v-if="getColors(product).length" class="swatch-row">
+              <span
+                v-for="(c, ci) in getColors(product)"
+                :key="c.name"
+                class="swatch"
+                :style="{ background: c.hex, boxShadow: c.border ? 'inset 0 0 0 1px #ddd' : 'none', transitionDelay: (ci * 0.05) + 's' }"
+                :title="c.name"
+              ></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-seller">{{ product.seller }}</p>
+            <p class="product-name">{{ product.name }}</p>
+            <p class="product-desc">{{ product.description }}</p>
+            <div class="product-bottom">
+              <span class="product-price">₩{{ Number(product.price).toLocaleString() }}</span>
+            </div>
+          </div>
+        </router-link>
+      </div>
     </div>
 
     <!-- 결과 없음 -->
-    <div v-else class="state state-empty">
-      <v-icon size="44" color="#ccc">mdi-hanger</v-icon>
+    <div v-else class="empty-wrap">
+      <v-icon size="48" color="#ccc">mdi-package-variant</v-icon>
       <p>상품을 찾을 수 없습니다</p>
     </div>
 
-    <v-snackbar v-model="snackbar" color="#111" timeout="2000" location="bottom right">
+    <!-- 스낵바 -->
+    <v-snackbar v-model="snackbar" color="#222" timeout="2000" location="bottom right">
       <v-icon start color="white">mdi-check-circle</v-icon>
       <span style="color:#fff">{{ snackMsg }}</span>
     </v-snackbar>
@@ -73,45 +112,105 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
-import ProductCard from '../components/ProductCard.vue';
+import { useCartStore } from '../stores/cart';
 import { useWishlistStore } from '../stores/wishlist';
 
 const route = useRoute();
+const cartStore = useCartStore();
 const wishlistStore = useWishlistStore();
-
 const products = ref([]);
 const total = ref(0);
 const loading = ref(true);
 const snackbar = ref(false);
 const snackMsg = ref('');
 
-const selectedCategory = ref(route.query.category || null);
-const selectedGender = ref(route.query.gender || null);
-const sortBy = ref(null);
-const searchQuery = ref('');
-const allCategories = ref([]);
-
-// 찜한 상품을 앞으로
 const sortedProducts = computed(() => {
   const wished = products.value.filter(p => wishlistStore.isWished(p.id));
   const rest = products.value.filter(p => !wishlistStore.isWished(p.id));
   return [...wished, ...rest];
 });
 
-// 현재 성별에 맞는 카테고리만
+const slideIndex = reactive({});
+const slideTimers = {};
+
+function getImages(product) {
+  if (product.images) {
+    try {
+      const arr = JSON.parse(product.images);
+      if (arr.length) return arr;
+    } catch { /* ignore */ }
+  }
+  return product.image ? [product.image] : [];
+}
+
+// 색상 스와치 (상품카드 hover 시 등장)
+const COLOR_PALETTE = {
+  '블랙': { hex: '#1a1a1a' },
+  '화이트': { hex: '#ffffff', border: true },
+  '아이보리': { hex: '#f5f0e1', border: true },
+  '네이비': { hex: '#1b2845' },
+  '그레이': { hex: '#a8a8a8' },
+  '차콜그레이': { hex: '#36454f' },
+  '베이지': { hex: '#d2b48c' }
+};
+function getColors(product) {
+  try {
+    const arr = JSON.parse(product.colors || '[]');
+    return arr.map(name => ({ name, ...(COLOR_PALETTE[name] || { hex: '#ccc', border: true }) }));
+  } catch { return []; }
+}
+
+function startAutoSlide(product) {
+  const imgs = getImages(product);
+  if (imgs.length < 2) return;
+  // 상품마다 시작 오프셋을 랜덤하게 줘서 동시에 넘어가지 않도록
+  const startDelay = Math.random() * 1500;
+  setTimeout(() => {
+    if (!slideTimers[product.id]) {
+      slideTimers[product.id] = setInterval(() => {
+        const current = slideIndex[product.id] || 0;
+        slideIndex[product.id] = (current + 1) % imgs.length;
+      }, 2200);
+    }
+  }, startDelay);
+}
+
+function stopAllSlides() {
+  Object.values(slideTimers).forEach(t => clearInterval(t));
+  Object.keys(slideTimers).forEach(k => delete slideTimers[k]);
+}
+
+function startAllSlides() {
+  stopAllSlides();
+  products.value.forEach(p => startAutoSlide(p));
+}
+
+onUnmounted(() => {
+  stopAllSlides();
+});
+const selectedCategory = ref(route.query.category || null);
+const selectedGender = ref(route.query.gender || null);
+const sortBy = ref(null);
+const searchQuery = ref('');
+const allCategories = ref([]);
+
+// 현재 성별에 맞는 카테고리만 표시
 const categoryItems = computed(() => {
   let cats = allCategories.value;
-  if (selectedGender.value) cats = cats.filter(c => c.gender === selectedGender.value);
+  if (selectedGender.value) {
+    cats = cats.filter(c => c.gender === selectedGender.value);
+  }
   return cats.map(c => ({ title: c.name, value: c.slug }));
 });
 
+// 페이지 타이틀
 const pageTitle = computed(() => {
   if (selectedGender.value === 'men') return 'MEN';
   if (selectedGender.value === 'women') return 'WOMEN';
-  return 'ALL';
+  return '전체 상품';
 });
 
 async function fetchProducts() {
@@ -121,20 +220,32 @@ async function fetchProducts() {
   if (selectedGender.value) params.gender = selectedGender.value;
   if (sortBy.value) params.sort = sortBy.value;
   if (searchQuery.value) params.search = searchQuery.value;
-  try {
-    const res = await axios.get('/api/products', { params });
-    products.value = res.data.products || [];
-    total.value = res.data.total || 0;
-  } catch (e) {
-    console.error('상품을 불러오지 못했습니다', e);
-    products.value = [];
-    total.value = 0;
-  } finally {
-    loading.value = false;
-  }
+  const res = await axios.get('/api/products', { params });
+  products.value = res.data.products;
+  total.value = res.data.total;
+  loading.value = false;
+  nextTick(() => {
+    initReveal();
+    startAllSlides();
+  });
 }
 
-// URL 쿼리 변경 시 자동 반영
+function initReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.products-page .reveal').forEach(el => {
+    el.classList.remove('visible');
+    observer.observe(el);
+  });
+}
+
+// URL 쿼리 파라미터 변경 시 자동 반영
 watch(() => route.query, (q) => {
   selectedGender.value = q.gender || null;
   selectedCategory.value = q.category || null;
@@ -142,56 +253,54 @@ watch(() => route.query, (q) => {
 });
 
 onMounted(async () => {
-  try {
-    const catRes = await axios.get('/api/categories');
-    allCategories.value = catRes.data || [];
-  } catch (e) {
-    console.error('카테고리를 불러오지 못했습니다', e);
-    allCategories.value = [];
-  }
+  const catRes = await axios.get('/api/categories');
+  allCategories.value = catRes.data;
   await fetchProducts();
 });
 
-function onAdded() {
+function addToCart(product) {
+  cartStore.addItem(product);
   snackMsg.value = '장바구니에 담았습니다';
   snackbar.value = true;
 }
-function onWished(product) {
+
+function toggleWish(product) {
+  wishlistStore.toggle(product);
   snackMsg.value = wishlistStore.isWished(product.id) ? '찜 목록에 추가했습니다' : '찜 목록에서 제거했습니다';
   snackbar.value = true;
 }
 </script>
 
 <style scoped>
-.products-page { background: var(--c-bg); min-height: 80vh; }
+.products-page { background: #fff; min-height: 80vh; }
 
 /* 페이지 헤더 */
 .page-header {
   text-align: center;
-  padding: 56px 24px 36px;
-  border-bottom: 1px solid var(--c-line);
+  padding: 56px 24px 40px;
+  border-bottom: 1px solid #e0e0e0;
 }
 .page-label {
-  display: block;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: var(--ls-label);
-  color: var(--c-muted);
-  margin-bottom: 10px;
+  letter-spacing: 4px;
+  color: #999;
+  display: block;
+  margin-bottom: 8px;
 }
 .page-title {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
-  color: var(--c-ink);
-  letter-spacing: -0.01em;
+  color: #111;
+  letter-spacing: -0.5px;
 }
 
 /* 필터 바 */
 .filter-bar {
-  max-width: 1600px;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 18px 24px;
-  border-bottom: 1px solid var(--c-line);
 }
 .filter-inner {
   display: flex;
@@ -199,67 +308,227 @@ function onWished(product) {
   gap: 12px;
   flex-wrap: wrap;
 }
-.filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-group { display: flex; gap: 8px; }
 .filter-select {
-  border: 1px solid var(--c-line);
+  border: 1px solid #ddd;
   padding: 8px 12px;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: var(--c-ink-soft);
-  background: var(--c-cream-soft);
+  font-size: 12px;
+  color: #333;
+  background: #fff;
   cursor: pointer;
   outline: none;
-  font-family: inherit;
+  letter-spacing: 0.5px;
 }
-.filter-select:focus { border-color: var(--c-ink); }
+.filter-select:focus { border-color: #111; }
 .search-wrap {
   display: flex;
   align-items: center;
-  border: 1px solid var(--c-line);
+  border: 1px solid #ddd;
   padding: 0 10px;
   gap: 6px;
   flex: 1;
-  max-width: 260px;
+  max-width: 280px;
 }
 .search-input {
   border: none;
   outline: none;
-  font-size: 11px;
-  letter-spacing: var(--ls-label);
-  color: var(--c-ink);
-  padding: 9px 0;
+  font-size: 12px;
+  color: #333;
+  padding: 8px 0;
   width: 100%;
   background: transparent;
-  font-family: inherit;
 }
 .result-count {
   font-size: 11px;
-  letter-spacing: var(--ls-label);
-  color: var(--c-muted);
-  margin-top: 12px;
+  color: #999;
+  margin-top: 10px;
+  letter-spacing: 0.5px;
 }
+
+/* 로딩 / 빈 상태 */
+.loading-wrap, .empty-wrap {
+  text-align: center;
+  padding: 80px 24px;
+  color: #999;
+}
+.empty-wrap p { margin-top: 16px; font-size: 14px; }
 
 /* 상품 그리드 */
-.pgrid {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 40px 24px 80px;
+.product-grid-wrap { max-width: 1200px; margin: 0 auto; padding: 0; }
+.product-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  column-gap: 16px;
-  row-gap: 48px;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid #e0e0e0;
+  border-left: 1px solid #e0e0e0;
 }
-@media (max-width: 1024px) { .pgrid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 599px) {
-  .pgrid { grid-template-columns: repeat(2, 1fr); column-gap: 10px; row-gap: 32px; padding: 28px 16px 56px; }
-  .page-title { font-size: 22px; }
+@media (max-width: 599px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* 스크롤 등장 애니메이션 */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.25s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* 상태 */
-.state {
-  text-align: center;
-  padding: 100px 24px;
-  color: var(--c-muted);
+.product-item {
+  text-decoration: none;
+  color: #111;
+  display: block;
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+  z-index: 0;
 }
-.state-empty p { margin-top: 14px; font-size: 14px; }
+.product-item:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  z-index: 2;
+}
+.product-img-wrap {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12%;
+}
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s;
+}
+.product-item:hover .product-img { transform: scale(1.04); }
+/* 찜 버튼 (별) */
+.product-wish-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 4;
+  color: #999;
+  opacity: 0;
+  transition: opacity 0.2s, color 0.15s;
+}
+.product-item:hover .product-wish-btn { opacity: 1; }
+.product-wish-btn.active {
+  opacity: 1;
+  color: #f59e0b;
+}
+.product-wish-btn:hover {
+  color: #f59e0b;
+}
+.product-cart-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(255,255,255,0.92);
+  border: none;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #111;
+}
+.product-item:hover .product-cart-btn { opacity: 1; }
+.sold-out-badge {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #111;
+  z-index: 3;
+  pointer-events: none;
+}
+/* 이미지 슬라이드 (페이드 전환) */
+.product-img {
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 76%;
+  height: 76%;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.product-img.active {
+  opacity: 1;
+}
+.product-img:first-child {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  height: 100%;
+}
+
+/* 색상 스와치 (hover 시 아래에서 위로 rise-up, staggered) */
+.swatch-row {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 5px;
+  z-index: 4;
+  pointer-events: none;
+}
+.swatch {
+  width: 13px;
+  height: 13px;
+  display: block;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.product-item:hover .swatch {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.product-info { padding: 14px 14px 16px; }
+.product-seller { font-size: 10px; color: #999; margin-bottom: 4px; letter-spacing: 0.5px; }
+.product-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 6px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 36px;
+}
+.product-desc {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 10px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.product-bottom { display: flex; align-items: center; justify-content: space-between; }
+.product-price { font-size: 13px; font-weight: 700; color: #111; }
+.product-rating { font-size: 11px; color: #999; display: flex; align-items: center; gap: 2px; }
 </style>

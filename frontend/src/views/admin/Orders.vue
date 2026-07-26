@@ -2,7 +2,7 @@
   <AdminSidebar />
 
   <v-main class="bg-grey-lighten-4 admin-page">
-    <v-container class="admin-container" style="max-width:var(--container-md)">
+    <v-container class="admin-container" style="max-width:1000px">
       <h1 class="page-title">주문 관리</h1>
       <p class="page-sub mb-5">총 {{ orders.length }}건의 주문</p>
 

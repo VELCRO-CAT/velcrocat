@@ -5,10 +5,7 @@
     <nav class="brand-nav">
       <router-link to="/home" class="brand-nav-logo">
         <img src="../image/osakamarketLOGO2.png" alt="Velcro Cat" />
-        <span class="brand-nav-stack">
-          <span class="brand-nav-name">VELCROCAT</span>
-          <span class="brand-nav-sub">SEOUL</span>
-        </span>
+        <span class="brand-nav-name">VELCROCAT</span>
       </router-link>
       <div class="brand-nav-main">
         <router-link to="/home">HOME</router-link>
@@ -571,41 +568,22 @@ onUnmounted(() => {
 .brand-nav-logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   text-decoration: none;
   flex-shrink: 0;
   margin-left: 60px;
 }
 .brand-nav-logo img {
-  height: 28px;
+  height: 26px;
   width: auto;
   object-fit: contain;
 }
-.brand-nav-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1;
-}
 .brand-nav-name {
-  font-family: 'Inter', 'Noto Sans KR', sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 1px;
   color: #fff;
-  line-height: 1;
 }
-.brand-nav-sub {
-  margin-top: 3px;
-  font-family: 'Inter', 'Noto Sans KR', sans-serif;
-  font-size: 7.5px;
-  font-weight: 500;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.75);
-  line-height: 1;
-}
-.brand-nav.nav-light .brand-nav-sub { color: rgba(17,17,17,0.55); }
 .brand-nav-main {
   display: flex;
   gap: 20px;

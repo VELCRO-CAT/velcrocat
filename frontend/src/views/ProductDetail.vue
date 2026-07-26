@@ -29,12 +29,9 @@
 
           <p class="product-desc">{{ product.description }}</p>
 
-          <p v-if="product.stock > 0" class="product-stock" :class="{ 'low-stock': product.stock <= 5 }">
-            <v-icon size="15" :color="product.stock <= 5 ? '#e07b00' : '#2a9d5c'">
-              {{ product.stock <= 5 ? 'mdi-alert-circle' : 'mdi-check-circle' }}
-            </v-icon>
-            <template v-if="product.stock <= 5">품절 임박 · {{ product.stock }}개 남음</template>
-            <template v-else>재고 있음 ({{ product.stock }}개)</template>
+          <p v-if="product.stock > 0" class="product-stock">
+            <v-icon size="15" color="#2a9d5c">mdi-check-circle</v-icon>
+            재고 있음 ({{ product.stock }}개)
           </p>
           <p v-else class="product-stock sold-out">
             <v-icon size="15" color="#e53e3e">mdi-close-circle</v-icon>
@@ -441,17 +438,9 @@ async function loadProduct(id) {
     } catch { productImages.value = []; }
     saveRecent(res.data);
 
-    // 같은 카테고리 상품 (자신 제외, 최대 6개) — 실패해도 상품 페이지는 정상 표시
-    try {
-      const catRes = await axios.get(`/api/products?category=${res.data.category}`);
-      similarProducts.value = (catRes.data.products || []).filter(p => p.id !== res.data.id).slice(0, 6);
-    } catch (e) {
-      console.error('관련 상품을 불러오지 못했습니다', e);
-      similarProducts.value = [];
-    }
-  } catch (e) {
-    console.error('상품을 불러오지 못했습니다', e);
-    product.value = null;
+    // 같은 카테고리 상품 (자신 제외, 최대 6개)
+    const catRes = await axios.get(`/api/products?category=${res.data.category}`);
+    similarProducts.value = catRes.data.products.filter(p => p.id !== res.data.id).slice(0, 6);
   } finally {
     loading.value = false;
   }
@@ -503,7 +492,7 @@ function buyNow() {
 </script>
 
 <style scoped>
-.detail-page { background: var(--c-cream); min-height: 80vh; }
+.detail-page { background: #fff; min-height: 80vh; }
 
 .detail-wrap {
   max-width: 1100px;
@@ -523,7 +512,7 @@ function buyNow() {
 
 .product-img-area {
   position: relative;
-  background: var(--c-paper);
+  background: #f5f5f5;
   aspect-ratio: 1/1;
   overflow: hidden;
   display: flex;
@@ -587,23 +576,18 @@ function buyNow() {
   margin-bottom: 8px;
 }
 .product-name {
-  font-family: var(--ff-serif);
-  font-style: italic;
-  font-size: 36px;
-  font-weight: 500;
-  color: var(--c-ink);
-  letter-spacing: 0.005em;
-  margin-bottom: 18px;
-  line-height: 1.15;
+  font-size: 22px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+  line-height: 1.3;
 }
 .product-price {
-  font-family: var(--ff-label);
-  font-variant-numeric: tabular-nums;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--c-ink);
+  font-size: 26px;
+  font-weight: 900;
+  color: #111;
   margin-bottom: 20px;
-  letter-spacing: 0.02em;
 }
 .divider {
   border-top: 1px solid #e8e8e8;
@@ -622,10 +606,6 @@ function buyNow() {
   align-items: center;
   gap: 4px;
   margin-bottom: 24px;
-}
-.product-stock.low-stock {
-  color: #e07b00;
-  font-weight: 600;
 }
 
 /* 옵션 선택 (컬러/사이즈) */

@@ -25,7 +25,6 @@ async function onClick() {
   loading.value = true;
   try {
     const res = await axios.get('/api/auth/naver');
-    if (!res.data?.url) throw new Error('No auth URL');
     window.location.href = res.data.url;
   } catch {
     loading.value = false;

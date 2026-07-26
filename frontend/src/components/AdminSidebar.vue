@@ -2,7 +2,7 @@
   <nav class="admin-nav">
     <div class="admin-nav-inner">
       <!-- 좌측: 로고 -->
-      <router-link to="/admin" class="admin-nav-logo hvr-grow">
+      <router-link to="/admin" class="admin-nav-logo">
         {{ adminUsername }}
       </router-link>
 
@@ -28,23 +28,15 @@
           <v-icon size="16">mdi-email-outline</v-icon>
           문의 관리
         </router-link>
-        <router-link to="/admin/newsletter" class="admin-nav-item" active-class="active">
-          <v-icon size="16">mdi-email-newsletter</v-icon>
-          뉴스레터
-        </router-link>
-        <router-link to="/admin/site" class="admin-nav-item" active-class="active">
-          <v-icon size="16">mdi-palette-swatch</v-icon>
-          사이트 디자인
-        </router-link>
-        <router-link to="/admin/restock" class="admin-nav-item" active-class="active">
-          <v-icon size="16">mdi-bell-ring-outline</v-icon>
-          재입고 알림
+        <router-link to="/admin/naver" class="admin-nav-item" active-class="active">
+          <v-icon size="16">mdi-store-outline</v-icon>
+          스마트스토어
         </router-link>
       </div>
 
       <!-- 우측: 스토어 이동 -->
       <div class="admin-nav-right">
-        <router-link to="/" class="admin-nav-back hvr-icon-back">
+        <router-link to="/" class="admin-nav-back">
           <v-icon size="16">mdi-arrow-left</v-icon>
           <span v-if="!isMobile">스토어</span>
         </router-link>
@@ -78,17 +70,9 @@
           <v-icon size="18">mdi-email-outline</v-icon>
           문의 관리
         </router-link>
-        <router-link to="/admin/newsletter" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
-          <v-icon size="18">mdi-email-newsletter</v-icon>
-          뉴스레터
-        </router-link>
-        <router-link to="/admin/site" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
-          <v-icon size="18">mdi-palette-swatch</v-icon>
-          사이트 디자인
-        </router-link>
-        <router-link to="/admin/restock" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
-          <v-icon size="18">mdi-bell-ring-outline</v-icon>
-          재입고 알림
+        <router-link to="/admin/naver" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
+          <v-icon size="18">mdi-store-outline</v-icon>
+          스마트스토어
         </router-link>
       </div>
     </transition>

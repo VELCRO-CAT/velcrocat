@@ -2,7 +2,7 @@
   <AdminSidebar />
 
   <v-main class="bg-grey-lighten-4 admin-page">
-    <v-container class="admin-container" style="max-width:var(--container-sm)">
+    <v-container class="admin-container">
       <h1 class="page-title">문의 관리</h1>
       <p class="page-sub mb-5">고객 문의 목록</p>
 
