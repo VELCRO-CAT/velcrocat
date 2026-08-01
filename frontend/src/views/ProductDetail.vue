@@ -127,8 +127,7 @@
           <button class="detail-tab" :class="{ active: activeTab === 'guide' }" @click="activeTab = 'guide'">배송/교환/반품</button>
         </div>
 
-        <!-- 접히는 래퍼 -->
-        <div class="detail-collapse" :class="{ expanded: detailExpanded }">
+        <div class="detail-collapse">
           <!-- 상세정보 탭 -->
           <div v-if="activeTab === 'info'" class="detail-content">
             <!-- 브랜드 헤더 -->
@@ -263,15 +262,7 @@
             </div>
           </div>
 
-          <!-- 그라데이션 오버레이 (접혀있을 때만) -->
-          <div v-if="!detailExpanded" class="detail-fade-overlay"></div>
         </div>
-
-        <!-- 더보기 / 접기 버튼 -->
-        <button class="detail-toggle-btn" @click="detailExpanded = !detailExpanded">
-          <span>{{ detailExpanded ? '상세정보 접기' : '상품 상세정보 더보기' }}</span>
-          <v-icon size="18">{{ detailExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-        </button>
       </div>
     </section>
 
@@ -345,7 +336,6 @@ const similarProducts = ref([]);
 const productImages = ref([]);
 const detailBlocks = ref([]);
 const recentProducts = ref([]);
-const detailExpanded = ref(false);
 const currentImgIndex = ref(0);
 const selectedColor = ref('');
 const selectedSize = ref('');
@@ -427,7 +417,6 @@ async function loadProduct(id) {
     const res = await axios.get(`/api/products/${id}`);
     product.value = res.data;
     activeTab.value = 'info';
-    detailExpanded.value = false;
     // 블로그 블록 파싱
     try {
       detailBlocks.value = JSON.parse(res.data.detail_blocks || '[]');
@@ -922,51 +911,9 @@ function buyNow() {
   padding: 0 24px;
 }
 
-/* 접히는 래퍼 */
 .detail-collapse {
   position: relative;
-  max-height: 400px;
-  overflow: hidden;
-  transition: max-height 0.5s ease;
-}
-.detail-collapse.expanded {
-  max-height: none;
-}
-
-/* 그라데이션 오버레이 */
-.detail-fade-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,1) 100%);
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* 더보기 / 접기 버튼 */
-.detail-toggle-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 18px 0;
-  background: none;
-  border: 1px solid #ddd;
-  border-top: none;
-  font-size: 14px;
-  font-weight: 700;
-  color: #333;
-  cursor: pointer;
-  letter-spacing: 0.5px;
-  transition: background 0.2s, color 0.2s;
   margin-bottom: 48px;
-}
-.detail-toggle-btn:hover {
-  background: #f5f5f5;
-  color: #111;
 }
 
 /* 탭 메뉴 */

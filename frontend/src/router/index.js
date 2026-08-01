@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../views/Home.vue';
 import Products from '../views/Products.vue';
 import ProductDetail from '../views/ProductDetail.vue';
 import Cart from '../views/Cart.vue';
@@ -22,8 +21,8 @@ import AdminNaver from '../views/admin/Naver.vue';
 import AdminUsers from '../views/admin/Users.vue';
 
 const routes = [
-  { path: '/', component: Home },
-  { path: '/home', redirect: '/' },
+  { path: '/', redirect: '/brand' },
+  { path: '/home', redirect: '/products' },
   { path: '/brand', component: About },
   { path: '/products', component: Products },
   { path: '/products/:id', component: ProductDetail },
