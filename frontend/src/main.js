@@ -45,3 +45,5 @@ window.velcrocat = function () {
 };
 
 app.mount('#app');
+
+// build trigger: 애드센스 index.html 배포 반영용 (무해)
