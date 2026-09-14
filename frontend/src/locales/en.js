@@ -47,7 +47,7 @@ export default {
     companyRegNo: 'Business Reg. No.: 180-02-03888',
     companyBiz: 'Type: Retail / E-commerce Retail',
     companyAddress: 'Address: 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩), South Korea',
-    companyEmail: 'E-MAIL: velcrocat@velcrocat.com',
+    companyEmail: "E-MAIL: velcrocat{'@'}velcrocat.com",
     returnTitle: 'Exchange / Return',
     returnAddressLabel: 'Return address:',
     returnAddress: '경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩), South Korea',
@@ -88,8 +88,8 @@ export default {
     pickupMore: 'View All Products →',
     ctaTitle: 'Discover<br>Today\'s Style',
     ctaDesc: "Check out VELCROCAT's new collection now.<br>Don't miss out on comfort and style, together.",
-    bizLine1: 'Company: Velcrocat | Co-CEO: 김충성, 장윤호',
-    bizLine2: 'Business Reg. No.: 180-02-03888 | Type: Retail | Category: E-commerce Retail',
+    bizLine1: 'Company: Velcrocat · Co-CEO: 김충성, 장윤호',
+    bizLine2: 'Business Reg. No.: 180-02-03888 · Type: Retail · Category: E-commerce Retail',
     bizLine3: 'Address: 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩), South Korea',
     navCompanyIntro: 'About Us',
     navPrivacy: 'Privacy Policy'
@@ -389,11 +389,11 @@ export default {
     officerName: 'Name: 김충성, 장윤호',
     officerTitle: 'Title: Representative',
     officerContact: 'Contact: 070-4571-4499',
-    officerEmail: 'Email: velcrocat@velcrocat.com',
+    officerEmail: "Email: velcrocat{'@'}velcrocat.com",
     s8Desc: 'Data subjects may direct any inquiries, complaints, or requests for remedy related to personal information protection arising from the use of the Company\'s services to the Personal Information Protection Officer.',
     s9Title: '9. Changes to This Privacy Policy',
     s9Desc: 'This Privacy Policy is effective as of March 17, 2026. Any changes will be announced through the notices section of the website.',
-    footerLine1: 'Company: Velcrocat | Co-CEO: 김충성, 장윤호',
+    footerLine1: 'Company: Velcrocat · Co-CEO: 김충성, 장윤호',
     footerLine2: 'Business Registration No.: 180-02-03888',
     footerLine3: 'Address: 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩), South Korea'
   }

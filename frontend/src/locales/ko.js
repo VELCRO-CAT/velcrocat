@@ -47,7 +47,7 @@ export default {
     companyRegNo: '사업자등록번호 : 180-02-03888',
     companyBiz: '업태 : 도소매 / 종목 : 전자상거래 소매업',
     companyAddress: '주소 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)',
-    companyEmail: 'E-MAIL : velcrocat@velcrocat.com',
+    companyEmail: "E-MAIL : velcrocat{'@'}velcrocat.com",
     returnTitle: '교환 / 반품',
     returnAddressLabel: '교환/반품 주소 :',
     returnAddress: '경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)',
@@ -88,8 +88,8 @@ export default {
     pickupMore: '모든 상품 보기 →',
     ctaTitle: '오늘의 스타일을<br>만나보세요',
     ctaDesc: 'VELCROCAT의 새로운 컬렉션을 지금 확인하세요.<br>편안함과 스타일, 두 가지 모두를 놓치지 마세요.',
-    bizLine1: '상호 : 벨크로캣(velcrocat) | 공동 대표 : 김충성, 장윤호',
-    bizLine2: '사업자등록번호 : 180-02-03888 | 업태 : 도소매 | 종목 : 전자상거래 소매업',
+    bizLine1: '상호 : 벨크로캣(velcrocat) · 공동 대표 : 김충성, 장윤호',
+    bizLine2: '사업자등록번호 : 180-02-03888 · 업태 : 도소매 · 종목 : 전자상거래 소매업',
     bizLine3: '주소 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)',
     navCompanyIntro: '회사 소개',
     navPrivacy: '개인정보처리방침'
@@ -389,11 +389,11 @@ export default {
     officerName: '성명 : 김충성, 장윤호',
     officerTitle: '직책 : 대표',
     officerContact: '연락처 : 070-4571-4499',
-    officerEmail: '이메일 : velcrocat@velcrocat.com',
+    officerEmail: "이메일 : velcrocat{'@'}velcrocat.com",
     s8Desc: '정보주체는 회사의 서비스를 이용하면서 발생한 모든 개인정보 보호 관련 문의, 불만 처리, 피해구제 등에 관한 사항을 개인정보 보호책임자에게 문의하실 수 있습니다.',
     s9Title: '9. 개인정보 처리방침 변경',
     s9Desc: '이 개인정보처리방침은 2026년 3월 17일부터 적용됩니다. 변경 사항이 있을 경우 웹사이트 공지사항을 통하여 고지할 것입니다.',
-    footerLine1: '상호 : 벨크로캣(velcrocat) | 공동 대표 : 김충성, 장윤호',
+    footerLine1: '상호 : 벨크로캣(velcrocat) · 공동 대표 : 김충성, 장윤호',
     footerLine2: '사업자등록번호 : 180-02-03888',
     footerLine3: '주소 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)'
   }
