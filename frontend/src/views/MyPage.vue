@@ -1,7 +1,7 @@
 <template>
   <v-container class="py-16 mypage-wrap">
     <div class="text-center mb-10 reveal">
-      <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">마이페이지</h1>
+      <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">{{ t('mypage.title') }}</h1>
       <p class="text-caption text-grey mt-1" style="letter-spacing:4px">MY PAGE</p>
     </div>
 
@@ -18,35 +18,35 @@
 
     <!-- 내 정보 수정 -->
     <v-card v-if="activeTab === 'profile'" variant="outlined" class="pa-8 mypage-card reveal">
-      <h2 class="text-h6 font-weight-bold mb-6">내 정보 수정</h2>
+      <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.profileTitle') }}</h2>
       <v-form @submit.prevent="updateProfile">
         <v-text-field
           v-model="profile.name"
-          label="이름"
+          :label="t('auth.nameLabel')"
           variant="outlined"
           density="comfortable"
           class="mb-3"
         />
         <v-text-field
           v-model="profile.email"
-          label="이메일"
+          :label="t('auth.emailLabel')"
           type="email"
           variant="outlined"
           density="comfortable"
           class="mb-4"
         />
         <v-alert v-if="profileMsg" :type="profileMsgType" variant="tonal" density="compact" class="mb-4">{{ profileMsg }}</v-alert>
-        <v-btn type="submit" color="#111" size="large" :loading="profileLoading">저장</v-btn>
+        <v-btn type="submit" color="#111" size="large" :loading="profileLoading">{{ t('common.save') }}</v-btn>
       </v-form>
     </v-card>
 
     <!-- 비밀번호 변경 -->
     <v-card v-if="activeTab === 'password'" variant="outlined" class="pa-8 mypage-card reveal">
-      <h2 class="text-h6 font-weight-bold mb-6">비밀번호 변경</h2>
+      <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.passwordTitle') }}</h2>
       <v-form @submit.prevent="changePassword">
         <v-text-field
           v-model="pw.current"
-          label="현재 비밀번호"
+          :label="t('mypage.currentPasswordLabel')"
           :type="showPw ? 'text' : 'password'"
           :append-inner-icon="showPw ? 'mdi-eye-off' : 'mdi-eye'"
           @click:append-inner="showPw = !showPw"
@@ -56,7 +56,7 @@
         />
         <v-text-field
           v-model="pw.new"
-          label="새 비밀번호 (6자 이상)"
+          :label="t('auth.newPasswordLabel')"
           :type="showPw ? 'text' : 'password'"
           variant="outlined"
           density="comfortable"
@@ -64,25 +64,25 @@
         />
         <v-text-field
           v-model="pw.confirm"
-          label="새 비밀번호 확인"
+          :label="t('auth.newPasswordConfirmLabel')"
           :type="showPw ? 'text' : 'password'"
           variant="outlined"
           density="comfortable"
           class="mb-4"
         />
         <v-alert v-if="pwMsg" :type="pwMsgType" variant="tonal" density="compact" class="mb-4">{{ pwMsg }}</v-alert>
-        <v-btn type="submit" color="#111" size="large" :loading="pwLoading">변경</v-btn>
+        <v-btn type="submit" color="#111" size="large" :loading="pwLoading">{{ t('mypage.changeBtn') }}</v-btn>
       </v-form>
     </v-card>
 
     <!-- 주문 내역 -->
     <v-card v-if="activeTab === 'orders'" variant="outlined" class="pa-8 mypage-card reveal">
-      <h2 class="text-h6 font-weight-bold mb-6">주문 내역</h2>
+      <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.tabOrders') }}</h2>
       <div v-if="ordersLoading" class="text-center py-8">
         <v-progress-circular indeterminate color="#111" />
       </div>
       <div v-else-if="orders.length === 0" class="text-center py-8 text-grey">
-        주문 내역이 없습니다
+        {{ t('mypage.noOrders') }}
       </div>
       <div v-else class="orders-list">
         <div v-for="order in orders" :key="order.order_no" class="order-card">
@@ -99,15 +99,15 @@
               <div class="order-item-info">
                 <p class="order-item-name">{{ item.name }}</p>
                 <p class="order-item-detail">
-                  {{ item.size ? `사이즈: ${item.size}` : '' }}
-                  {{ item.quantity ? `/ 수량: ${item.quantity}` : '' }}
+                  {{ item.size ? `${t('detail.sizeLabel')}: ${item.size}` : '' }}
+                  {{ item.quantity ? `/ ${t('mypage.quantityLabel')}: ${item.quantity}` : '' }}
                 </p>
                 <p class="order-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
               </div>
             </div>
           </div>
           <div class="order-total">
-            합계: <strong>₩{{ Number(order.total).toLocaleString() }}</strong>
+            {{ t('mypage.orderTotalLabel') }}: <strong>₩{{ Number(order.total).toLocaleString() }}</strong>
           </div>
         </div>
       </div>
@@ -115,42 +115,41 @@
 
     <!-- 회원 탈퇴 -->
     <v-card v-if="activeTab === 'withdraw'" variant="outlined" class="pa-8 mypage-card reveal">
-      <h2 class="text-h6 font-weight-bold mb-4" style="color:#d32f2f">회원 탈퇴</h2>
-      <p class="text-body-2 text-grey-darken-1 mb-6">
-        탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.<br>
-        탈퇴를 원하시면 비밀번호를 입력해주세요.
-      </p>
+      <h2 class="text-h6 font-weight-bold mb-4" style="color:#d32f2f">{{ t('mypage.withdrawTitle') }}</h2>
+      <p class="text-body-2 text-grey-darken-1 mb-6" v-html="t('mypage.withdrawWarning')"></p>
       <v-form @submit.prevent="withdraw">
         <v-text-field
           v-model="withdrawPw"
-          label="비밀번호 확인"
+          :label="t('mypage.withdrawPasswordLabel')"
           type="password"
           variant="outlined"
           density="comfortable"
           class="mb-4"
         />
         <v-alert v-if="withdrawMsg" type="error" variant="tonal" density="compact" class="mb-4">{{ withdrawMsg }}</v-alert>
-        <v-btn type="submit" color="error" size="large" :loading="withdrawLoading">회원 탈퇴</v-btn>
+        <v-btn type="submit" color="error" size="large" :loading="withdrawLoading">{{ t('mypage.withdrawBtn') }}</v-btn>
       </v-form>
     </v-card>
   </v-container>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, nextTick } from 'vue';
+import { ref, reactive, onMounted, watch, nextTick, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const router = useRouter();
 
-const tabs = [
-  { key: 'profile', label: '내 정보' },
-  { key: 'password', label: '비밀번호 변경' },
-  { key: 'orders', label: '주문 내역' },
-  { key: 'withdraw', label: '회원 탈퇴' }
-];
+const tabs = computed(() => [
+  { key: 'profile', label: t('mypage.tabProfile') },
+  { key: 'password', label: t('mypage.tabPasswordChange') },
+  { key: 'orders', label: t('mypage.tabOrders') },
+  { key: 'withdraw', label: t('mypage.tabWithdraw') }
+]);
 const activeTab = ref('profile');
 
 // 내 정보
@@ -216,10 +215,10 @@ async function updateProfile() {
     localStorage.setItem('token', res.data.token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
     profileMsgType.value = 'success';
-    profileMsg.value = '정보가 수정되었습니다';
+    profileMsg.value = t('mypage.profileUpdateSuccess');
   } catch (e) {
     profileMsgType.value = 'error';
-    profileMsg.value = e.response?.data?.error || '수정에 실패했습니다';
+    profileMsg.value = e.response?.data?.error || t('mypage.profileUpdateFailed');
   } finally {
     profileLoading.value = false;
   }
@@ -227,17 +226,17 @@ async function updateProfile() {
 
 async function changePassword() {
   pwMsg.value = '';
-  if (pw.new !== pw.confirm) { pwMsgType.value = 'error'; pwMsg.value = '새 비밀번호가 일치하지 않습니다'; return; }
-  if (pw.new.length < 6) { pwMsgType.value = 'error'; pwMsg.value = '새 비밀번호는 6자 이상이어야 합니다'; return; }
+  if (pw.new !== pw.confirm) { pwMsgType.value = 'error'; pwMsg.value = t('mypage.passwordMismatchNew'); return; }
+  if (pw.new.length < 6) { pwMsgType.value = 'error'; pwMsg.value = t('mypage.passwordTooShortNew'); return; }
   pwLoading.value = true;
   try {
     await axios.put('/api/users/me/password', { currentPassword: pw.current, newPassword: pw.new });
     pwMsgType.value = 'success';
-    pwMsg.value = '비밀번호가 변경되었습니다';
+    pwMsg.value = t('mypage.passwordChangeSuccess');
     pw.current = ''; pw.new = ''; pw.confirm = '';
   } catch (e) {
     pwMsgType.value = 'error';
-    pwMsg.value = e.response?.data?.error || '변경에 실패했습니다';
+    pwMsg.value = e.response?.data?.error || t('mypage.passwordChangeFailedGeneric');
   } finally {
     pwLoading.value = false;
   }
@@ -245,15 +244,15 @@ async function changePassword() {
 
 async function withdraw() {
   withdrawMsg.value = '';
-  if (!withdrawPw.value) { withdrawMsg.value = '비밀번호를 입력해주세요'; return; }
-  if (!confirm('정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+  if (!withdrawPw.value) { withdrawMsg.value = t('mypage.withdrawEnterPassword'); return; }
+  if (!confirm(t('mypage.withdrawConfirm'))) return;
   withdrawLoading.value = true;
   try {
     await axios.delete('/api/users/me', { data: { password: withdrawPw.value } });
     authStore.logout();
     router.push('/');
   } catch (e) {
-    withdrawMsg.value = e.response?.data?.error || '탈퇴에 실패했습니다';
+    withdrawMsg.value = e.response?.data?.error || t('mypage.withdrawFailed');
   } finally {
     withdrawLoading.value = false;
   }
@@ -266,7 +265,13 @@ function formatDate(d) {
 }
 
 function statusLabel(s) {
-  const map = { paid: '결제완료', preparing: '준비중', shipped: '배송중', delivered: '배송완료', cancelled: '취소됨' };
+  const map = {
+    paid: t('mypage.statusPaid'),
+    preparing: t('mypage.statusPreparing'),
+    shipped: t('mypage.statusShipped'),
+    delivered: t('mypage.statusDelivered'),
+    cancelled: t('mypage.statusCancelled')
+  };
   return map[s] || s;
 }
 </script>

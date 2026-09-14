@@ -4,21 +4,23 @@
     class="naver-login-btn"
     :disabled="loading"
     @click="onClick"
-    aria-label="네이버 아이디로 로그인"
+    :aria-label="t('naver.loginBtn')"
   >
     <span class="naver-logo-box">
       <svg viewBox="0 0 16 16" class="naver-n" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path fill="#fff" d="M0 0v16h6.667v-8.36L11.333 16H16V0H9.333v8.36L4.667 0H0z"/>
       </svg>
     </span>
-    <span class="naver-text">{{ loading ? '연결 중...' : '네이버 아이디로 로그인' }}</span>
+    <span class="naver-text">{{ loading ? t('naver.loading') : t('naver.loginBtn') }}</span>
   </button>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 
+const { t } = useI18n();
 const loading = ref(false);
 
 async function onClick() {
@@ -28,7 +30,7 @@ async function onClick() {
     window.location.href = res.data.url;
   } catch {
     loading.value = false;
-    alert('네이버 로그인 연결에 실패했습니다');
+    alert(t('naver.connectError'));
   }
 }
 </script>

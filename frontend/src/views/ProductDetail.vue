@@ -1,14 +1,14 @@
 <template>
   <div class="detail-page">
     <div class="detail-wrap">
-      <v-btn variant="text" to="/products" prepend-icon="mdi-arrow-left" class="mb-6" style="color:#555">상품 목록으로</v-btn>
+      <v-btn variant="text" to="/products" prepend-icon="mdi-arrow-left" class="mb-6" style="color:#555">{{ t('detail.backToList') }}</v-btn>
 
       <v-progress-circular v-if="loading" indeterminate color="#111" class="d-block mx-auto my-12" />
 
       <div v-else-if="product" class="product-main">
         <!-- 이미지 캐러셀 -->
         <div class="product-img-area">
-          <img :src="allImages[currentImgIndex]" :alt="product.name" class="product-img" />
+          <img :src="allImages[currentImgIndex]" :alt="lf(product, 'name')" class="product-img" />
           <template v-if="allImages.length > 1">
             <button class="img-arrow img-arrow-left" @click="prevImage">‹</button>
             <button class="img-arrow img-arrow-right" @click="nextImage">›</button>
@@ -21,46 +21,46 @@
         <!-- 상품 정보 -->
         <div class="product-info">
           <p class="product-seller">{{ product.seller }}</p>
-          <h1 class="product-name">{{ product.name }}</h1>
+          <h1 class="product-name">{{ lf(product, 'name') }}</h1>
 
           <div class="product-price">₩{{ Number(product.price).toLocaleString() }}</div>
 
           <div class="divider" />
 
-          <p class="product-desc">{{ product.description }}</p>
+          <p class="product-desc">{{ lf(product, 'description') }}</p>
 
           <p v-if="product.stock > 0" class="product-stock">
             <v-icon size="15" color="#2a9d5c">mdi-check-circle</v-icon>
-            재고 있음 ({{ product.stock }}개)
+            {{ t('detail.inStock', { count: product.stock }) }}
           </p>
           <p v-else class="product-stock sold-out">
             <v-icon size="15" color="#e53e3e">mdi-close-circle</v-icon>
-            재고 없음
+            {{ t('detail.outOfStock') }}
           </p>
 
           <!-- 수량 (재고 있을 때만) -->
           <template v-if="product.stock > 0">
             <!-- 컬러 선택 -->
             <div v-if="availableColors.length > 0" class="option-row">
-              <p class="option-label">컬러 <span class="option-required">*</span></p>
+              <p class="option-label">{{ t('detail.colorLabel') }} <span class="option-required">*</span></p>
               <div class="color-grid">
                 <button
                   v-for="c in availableColors"
                   :key="c.name"
                   class="color-chip"
                   :class="{ selected: selectedColor === c.name }"
-                  :title="c.name"
+                  :title="colorName(c.name)"
                   @click="selectedColor = c.name"
                 >
                   <span class="color-swatch" :style="{ background: c.hex, border: c.border ? '1px solid #ccc' : 'none' }"></span>
-                  <span class="color-name">{{ c.name }}</span>
+                  <span class="color-name">{{ colorName(c.name) }}</span>
                 </button>
               </div>
             </div>
 
             <!-- 사이즈 선택 -->
             <div v-if="availableSizes.length > 0" class="option-row">
-              <p class="option-label">사이즈 <span class="option-required">*</span></p>
+              <p class="option-label">{{ t('detail.sizeLabel') }} <span class="option-required">*</span></p>
               <div class="size-grid">
                 <button
                   v-for="s in availableSizes"
@@ -80,10 +80,10 @@
 
             <!-- 총 금액 -->
             <div class="total-row">
-              <span class="total-label">총 상품금액(수량)</span>
+              <span class="total-label">{{ t('detail.totalLabel') }}</span>
               <span class="total-price">
                 ₩{{ (product.price * qty).toLocaleString() }}
-                <span class="total-qty">({{ qty }}개)</span>
+                <span class="total-qty">({{ t('detail.qtyUnit', { count: qty }) }})</span>
               </span>
             </div>
 
@@ -94,10 +94,10 @@
               </button>
               <button class="cart-btn hvr-sweep-to-right" @click="addToCart">
                 <v-icon size="18" class="mr-1">mdi-cart-plus</v-icon>
-                장바구니
+                {{ t('detail.addToCartBtn') }}
               </button>
               <button class="buy-btn" @click="buyNow">
-                바로 구매하기
+                {{ t('detail.buyNowBtn') }}
               </button>
             </div>
           </template>
@@ -108,14 +108,14 @@
               </button>
               <button class="cart-btn cart-btn-disabled" disabled style="flex:1">
                 <v-icon size="18" class="mr-1">mdi-cart-off</v-icon>
-                품절된 상품입니다
+                {{ t('detail.soldOutBtn') }}
               </button>
             </div>
           </template>
         </div>
       </div>
 
-      <div v-else class="text-center py-12 text-grey">상품을 찾을 수 없습니다</div>
+      <div v-else class="text-center py-12 text-grey">{{ t('detail.notFound') }}</div>
     </div>
 
     <!-- 상세 설명 섹션 -->
@@ -123,8 +123,8 @@
       <div class="detail-inner">
         <!-- 탭 메뉴 -->
         <div class="detail-tabs">
-          <button class="detail-tab" :class="{ active: activeTab === 'info' }" @click="activeTab = 'info'">상품 상세정보</button>
-          <button class="detail-tab" :class="{ active: activeTab === 'guide' }" @click="activeTab = 'guide'">배송/교환/반품</button>
+          <button class="detail-tab" :class="{ active: activeTab === 'info' }" @click="activeTab = 'info'">{{ t('detail.tabInfo') }}</button>
+          <button class="detail-tab" :class="{ active: activeTab === 'guide' }" @click="activeTab = 'guide'">{{ t('detail.tabGuide') }}</button>
         </div>
 
         <div class="detail-collapse">
@@ -137,16 +137,13 @@
                 <p class="brand-header-name">VELCRO CAT</p>
                 <p class="brand-header-sub">Comfortable & Minimal</p>
               </div>
-              <p class="brand-header-tag">
-                일상에 스며드는 감각적인 스타일,<br/>
-                과하지 않은 심플함의 가치
-              </p>
+              <p class="brand-header-tag" v-html="t('detail.brandTag')"></p>
             </div>
 
             <!-- 상품 설명 -->
             <div class="info-block">
-              <h3 class="info-title">{{ product.name }}</h3>
-              <p class="info-desc">{{ product.description }}</p>
+              <h3 class="info-title">{{ lf(product, 'name') }}</h3>
+              <p class="info-desc">{{ lf(product, 'description') }}</p>
             </div>
 
             <!-- 블로그식 상세 콘텐츠 -->
@@ -154,34 +151,34 @@
               <template v-for="(block, i) in detailBlocks" :key="i">
                 <p v-if="block.type === 'text'" class="info-block-text">{{ block.content }}</p>
                 <div v-else-if="block.type === 'image'" class="info-block-img">
-                  <img :src="block.content" :alt="product.name" />
+                  <img :src="block.content" :alt="lf(product, 'name')" />
                 </div>
               </template>
             </div>
             <!-- 이전 방식 호환 (detail_images) -->
             <div v-else-if="productImages.length > 0" class="info-images">
-              <img v-for="(img, i) in productImages" :key="i" :src="img" :alt="product.name" class="info-image" />
+              <img v-for="(img, i) in productImages" :key="i" :src="img" :alt="lf(product, 'name')" class="info-image" />
             </div>
 
             <!-- 소재/관리 가이드 -->
             <div class="care-guide">
-              <h4 class="care-title">CARE GUIDE</h4>
+              <h4 class="care-title">{{ t('detail.careTitle') }}</h4>
               <div class="care-items">
                 <div class="care-item">
                   <v-icon size="20" color="#555">mdi-washing-machine</v-icon>
-                  <span>찬물 손세탁 권장</span>
+                  <span>{{ t('detail.care1') }}</span>
                 </div>
                 <div class="care-item">
                   <v-icon size="20" color="#555">mdi-iron</v-icon>
-                  <span>낮은 온도 다림질</span>
+                  <span>{{ t('detail.care2') }}</span>
                 </div>
                 <div class="care-item">
                   <v-icon size="20" color="#555">mdi-tumble-dryer-off</v-icon>
-                  <span>건조기 사용 불가</span>
+                  <span>{{ t('detail.care3') }}</span>
                 </div>
                 <div class="care-item">
                   <v-icon size="20" color="#555">mdi-hanger</v-icon>
-                  <span>그늘에서 평평하게 건조</span>
+                  <span>{{ t('detail.care4') }}</span>
                 </div>
               </div>
             </div>
@@ -191,73 +188,73 @@
           <div v-if="activeTab === 'guide'" class="detail-content">
             <!-- 반품/교환 안내 박스 -->
             <div class="return-notice">
-              <h4 class="return-notice-title">벨크로캣 반품/교환 안내</h4>
-              <p class="return-notice-desc">반품 시 먼저 판매자와 연락하셔서 반품사유, 택배사, 배송비, 반품지 주소 등을 협의하신 후 반품상품을 발송해 주시기 바랍니다.</p>
+              <h4 class="return-notice-title">{{ t('detail.returnNoticeTitle') }}</h4>
+              <p class="return-notice-desc">{{ t('detail.returnNoticeDesc') }}</p>
             </div>
 
             <div class="guide-section">
-              <h4>배송 안내</h4>
+              <h4>{{ t('detail.shippingTitle') }}</h4>
               <table class="guide-table"><tbody>
                 <tr>
-                  <th>판매자 지정택배사</th>
-                  <td>한진택배</td>
+                  <th>{{ t('detail.shippingCarrierLabel') }}</th>
+                  <td>{{ t('detail.shippingCarrierValue') }}</td>
                 </tr>
                 <tr>
-                  <th>반품배송비</th>
-                  <td>편도 5,000원 (최초 배송비 무료인 경우 10,000원 부과)</td>
+                  <th>{{ t('detail.returnFeeLabel') }}</th>
+                  <td>{{ t('detail.returnFeeValue') }}</td>
                 </tr>
                 <tr>
-                  <th>교환배송비</th>
-                  <td>10,000원</td>
+                  <th>{{ t('detail.exchangeFeeLabel') }}</th>
+                  <td>{{ t('detail.exchangeFeeValue') }}</td>
                 </tr>
                 <tr>
-                  <th>보내실 곳</th>
-                  <td>경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)</td>
+                  <th>{{ t('detail.returnAddrLabel') }}</th>
+                  <td>{{ t('footer.returnAddress') }}</td>
                 </tr>
               </tbody></table>
             </div>
 
             <div class="guide-section">
-              <h4>반품/교환 사유에 따른 요청 가능 기간</h4>
+              <h4>{{ t('detail.periodTitle') }}</h4>
               <ul>
-                <li>구매자 단순 변심은 상품 수령 후 <strong>7일 이내</strong> (구매자 반품배송비 부담)</li>
-                <li>표시/광고와 상이, 계약 내용과 다르게 이행된 경우 상품 수령 후 <strong>3개월 이내</strong>, 또는 표시/광고와 다른 사실을 안 날로부터 <strong>30일 이내</strong> (판매자 반품배송비 부담)</li>
+                <li v-html="t('detail.period1')"></li>
+                <li v-html="t('detail.period2')"></li>
               </ul>
             </div>
 
             <div class="guide-section">
-              <h4>반품/교환 불가능 사유</h4>
+              <h4>{{ t('detail.noReturnTitle') }}</h4>
               <ul>
-                <li>반품요청기간이 지난 경우</li>
-                <li>구매자의 책임 있는 사유로 상품 등이 멸실 또는 훼손된 경우 (단, 상품의 내용을 확인하기 위하여 포장 등을 훼손한 경우는 제외)</li>
-                <li>구매자의 책임있는 사유로 포장이 훼손되어 상품가치가 현저히 상실된 경우 (예: 식품, 화장품, 향수류, 음반 등)</li>
-                <li>구매자의 사용 또는 일부 소비에 의하여 상품의 가치가 현저히 감소한 경우 (라벨이 , 떨어진 의류 또는 태그가 , 떨어진 명품 등의 상품인 경우)</li>
-                <li>시간의 경과에 의하여 재판매가 곤란할 정도로 상품 등의 가치가 현저히 감소한 경우</li>
-                <li>고객의 요청사항에 맞춰 제작에 들어가는 맞춤제작상품의 경우 (판매자에게 회복불가능한 손해가 예상되고, 그러한 예정으로 청약철회권 행사가 불가하다는 사실을 서면 동의 받은 경우)</li>
-                <li>복제가 가능한 상품 등의 포장을 훼손한 경우 (CD/DVD/GAME/도서의 경우 포장 개봉 시)</li>
+                <li>{{ t('detail.noReturn1') }}</li>
+                <li>{{ t('detail.noReturn2') }}</li>
+                <li>{{ t('detail.noReturn3') }}</li>
+                <li>{{ t('detail.noReturn4') }}</li>
+                <li>{{ t('detail.noReturn5') }}</li>
+                <li>{{ t('detail.noReturn6') }}</li>
+                <li>{{ t('detail.noReturn7') }}</li>
               </ul>
             </div>
 
             <div class="guide-section">
-              <h4>판매자 정보</h4>
+              <h4>{{ t('detail.sellerInfoTitle') }}</h4>
               <table class="guide-table"><tbody>
                 <tr>
-                  <th>상호명</th>
-                  <td>김충성, 장윤호 (공동)</td>
+                  <th>{{ t('detail.sellerNameLabel') }}</th>
+                  <td>{{ t('detail.sellerNameValue') }}</td>
                 </tr>
                 <tr>
-                  <th>대표자</th>
-                  <td>김충성, 장윤호</td>
+                  <th>{{ t('detail.ceoLabel') }}</th>
+                  <td>{{ t('detail.ceoValue') }}</td>
                 </tr>
               </tbody></table>
             </div>
 
             <div class="guide-section guide-notice">
-              <h4>주의사항</h4>
+              <h4>{{ t('detail.noticeTitle') }}</h4>
               <ul class="notice-list">
-                <li>전자상거래 등에서의 소비자보호에 관한 법률에 의한 반품규정이 판매자가 지정한 반품 조건보다 우선합니다.</li>
-                <li>전자상거래 등에서의 소비자보호에 관한 법률로 미성년자 물품을 구매하는 경우, 법정대리인이 동의하지 않으면 미성년자 본인 또는 법정대리인이 구매를 취소할 수 있습니다.</li>
-                <li>전기용품 및 생활용품 안전관리법에 의하여 다른 법률에서 안전관리대상 공산품인 전자제품, 생활용품, 어린이제품은 구매하실 경우에는 해당 제품이 안전인증, 안전확인, 공급자적합성확인, 안전기준준수 적용 제품인지 확인하시기 바랍니다.</li>
+                <li>{{ t('detail.notice1') }}</li>
+                <li>{{ t('detail.notice2') }}</li>
+                <li>{{ t('detail.notice3') }}</li>
               </ul>
             </div>
           </div>
@@ -269,7 +266,7 @@
     <!-- 최근 본 상품 -->
     <section v-if="recentProducts.length > 1" class="related-section">
       <div class="related-inner">
-        <h2 class="section-title">최근 확인한 상품</h2>
+        <h2 class="section-title">{{ t('detail.relatedRecent') }}</h2>
         <div class="related-grid">
           <router-link
             v-for="p in recentProducts.filter(p => p.id !== product?.id).slice(0, 6)"
@@ -278,9 +275,9 @@
             class="related-item"
           >
             <div class="related-img-wrap">
-              <img :src="p.image" :alt="p.name" class="related-img" />
+              <img :src="p.image" :alt="lf(p, 'name')" class="related-img" />
             </div>
-            <p class="related-name">{{ p.name }}</p>
+            <p class="related-name">{{ lf(p, 'name') }}</p>
             <p class="related-price">₩{{ Number(p.price).toLocaleString() }}</p>
           </router-link>
         </div>
@@ -290,7 +287,7 @@
     <!-- 같은 카테고리 상품 -->
     <section v-if="similarProducts.length" class="related-section">
       <div class="related-inner">
-        <h2 class="section-title">같은 카테고리의 상품</h2>
+        <h2 class="section-title">{{ t('detail.relatedSimilar') }}</h2>
         <div class="related-grid">
           <router-link
             v-for="p in similarProducts"
@@ -299,9 +296,9 @@
             class="related-item"
           >
             <div class="related-img-wrap">
-              <img :src="p.image" :alt="p.name" class="related-img" />
+              <img :src="p.image" :alt="lf(p, 'name')" class="related-img" />
             </div>
-            <p class="related-name">{{ p.name }}</p>
+            <p class="related-name">{{ lf(p, 'name') }}</p>
             <p class="related-price">₩{{ Number(p.price).toLocaleString() }}</p>
           </router-link>
         </div>
@@ -318,10 +315,14 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
 import { useWishlistStore } from '../stores/wishlist';
+import { useLocalized } from '../composables/useLocalized';
 
+const { t } = useI18n();
+const { lf, colorName } = useLocalized();
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
@@ -446,12 +447,12 @@ watch(() => route.params.id, (id) => {
 
 function validateOptions() {
   if (availableColors.value.length > 0 && !selectedColor.value) {
-    snackMsg.value = '컬러를 선택해주세요';
+    snackMsg.value = t('detail.selectColor');
     snackbar.value = true;
     return false;
   }
   if (availableSizes.value.length > 0 && !selectedSize.value) {
-    snackMsg.value = '사이즈를 선택해주세요';
+    snackMsg.value = t('detail.selectSize');
     snackbar.value = true;
     return false;
   }
@@ -462,13 +463,13 @@ function addToCart() {
   if (!validateOptions()) return;
   const opts = { color: selectedColor.value || null, size: selectedSize.value || null };
   for (let i = 0; i < qty.value; i++) cartStore.addItem(product.value, opts);
-  snackMsg.value = '장바구니에 담았습니다';
+  snackMsg.value = t('products.addedToCart');
   snackbar.value = true;
 }
 
 function toggleWish() {
   wishlistStore.toggle(product.value);
-  snackMsg.value = wishlistStore.isWished(product.value.id) ? '찜 목록에 추가했습니다' : '찜 목록에서 제거했습니다';
+  snackMsg.value = wishlistStore.isWished(product.value.id) ? t('products.addedToWish') : t('products.removedFromWish');
   snackbar.value = true;
 }
 

@@ -15,13 +15,14 @@
         <router-link to="/contact">CONTACT</router-link>
       </div>
       <div class="brand-nav-sub">
-        <a href="#" class="sub-link">회사 소개</a>
-        <router-link to="/privacy" class="sub-link">개인정보처리방침</router-link>
+        <a href="#" class="sub-link">{{ t('about.navCompanyIntro') }}</a>
+        <router-link to="/privacy" class="sub-link">{{ t('about.navPrivacy') }}</router-link>
         <a href="https://www.instagram.com/" target="_blank" class="sub-social">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
         </a>
       </div>
       <div class="brand-nav-btns">
+        <LanguageSwitcher class="brand-nav-lang" />
         <router-link to="/products" class="nav-btn nav-btn-gray">ONLINE SHOP</router-link>
       </div>
       <!-- 모바일 햄버거 -->
@@ -38,6 +39,7 @@
       <router-link to="/products" @click="mobileMenuOpen = false">SHOP</router-link>
       <router-link to="/contact" @click="mobileMenuOpen = false">CONTACT</router-link>
       <router-link to="/products" class="mobile-menu-shop" @click="mobileMenuOpen = false">ONLINE SHOP</router-link>
+      <LanguageSwitcher class="mobile-menu-lang" />
     </nav>
 
     <!-- 히어로 (배경 영상 슬라이드쇼) -->
@@ -61,13 +63,10 @@
       <div class="hero-content">
         <span class="hero-label hero-reveal">Brand Concept</span>
         <img src="../image/osakamarketLOGO6.png" alt="Velcro Cat" class="hero-main-logo hero-reveal hero-reveal-2" />
-        <p class="hero-desc hero-reveal hero-reveal-3">
-          일상과 스타일의 경계를 허무는 브랜드.<br>
-          편안함 속에서 나만의 감각을 찾다.
-        </p>
+        <p class="hero-desc hero-reveal hero-reveal-3" v-html="t('about.heroDesc')"></p>
         <div class="hero-btns hero-reveal hero-reveal-4">
-          <router-link to="/products" class="second-hero-btn">SHOP 바로가기</router-link>
-          <router-link to="/contact" class="second-hero-btn btn-outline">문의하기</router-link>
+          <router-link to="/products" class="second-hero-btn">{{ t('about.shopBtn') }}</router-link>
+          <router-link to="/contact" class="second-hero-btn btn-outline">{{ t('about.contactBtn') }}</router-link>
         </div>
       </div>
       <!-- 사운드 토글 (좌측 하단, 히어로 위에 떠 있음) -->
@@ -75,8 +74,8 @@
         class="hero-sound-btn"
         :class="{ muted: isMuted }"
         @click="toggleMute"
-        :title="isMuted ? '소리 켜기' : '소리 끄기'"
-        :aria-label="isMuted ? '소리 켜기' : '소리 끄기'"
+        :title="isMuted ? t('about.soundTurnOn') : t('about.soundTurnOff')"
+        :aria-label="isMuted ? t('about.soundTurnOn') : t('about.soundTurnOff')"
       >
         <svg v-if="!isMuted" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
           <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
@@ -84,7 +83,7 @@
         <svg v-else width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
           <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
         </svg>
-        <span class="hero-sound-label">{{ isMuted ? '소리 켜기' : '소리 끄기' }}</span>
+        <span class="hero-sound-label">{{ isMuted ? t('about.soundTurnOn') : t('about.soundTurnOff') }}</span>
       </button>
 
       <!-- 스크롤 인디케이터 (우측 하단, 원형 회전 텍스트) -->
@@ -133,18 +132,18 @@
         <!-- 설명 블록들이 먼저 보임 -->
         <div class="parallax-card parallax-card-1">
           <p class="parallax-label">ABOUT US</p>
-          <h2 class="parallax-title">일상에 스며드는<br>감각적인 스타일</h2>
-          <p class="parallax-desc">Velcro Cat은 편안함과 스타일의 균형을 추구합니다.<br>매일 입고 싶은 옷, 오래 곁에 두고 싶은 브랜드.</p>
+          <h2 class="parallax-title" v-html="t('about.card1Title')"></h2>
+          <p class="parallax-desc" v-html="t('about.card1Desc')"></p>
         </div>
         <div class="parallax-card parallax-card-2">
           <p class="parallax-label">PHILOSOPHY</p>
-          <h2 class="parallax-title">과하지 않은<br>심플함의 가치</h2>
-          <p class="parallax-desc">불필요한 것을 덜어내고 본질에 집중합니다.<br>자연스러운 실루엣, 시간이 지나도 변하지 않는 품질.</p>
+          <h2 class="parallax-title" v-html="t('about.card2Title')"></h2>
+          <p class="parallax-desc" v-html="t('about.card2Desc')"></p>
         </div>
         <div class="parallax-card parallax-card-3">
           <p class="parallax-label">ORIGIN</p>
-          <h2 class="parallax-title">서울에서<br>세계로</h2>
-          <p class="parallax-desc">서울의 감성과 일본의 장인 정신을 담아<br>누구나 공감할 수 있는 스타일을 만들어갑니다.</p>
+          <h2 class="parallax-title" v-html="t('about.card3Title')"></h2>
+          <p class="parallax-desc" v-html="t('about.card3Desc')"></p>
         </div>
         <!-- 마지막에 로고가 드러나는 빈 공간 -->
         <div class="parallax-spacer"></div>
@@ -160,16 +159,9 @@
         </div>
         <div class="story-text">
           <p class="section-label">Our Story</p>
-          <h2 class="section-title">고양이처럼<br>자유롭게</h2>
-          <p class="story-desc">
-            Velcro Cat은 오사카에서 시작된 라이프스타일 패션 브랜드입니다.
-            고양이가 어디에나 자연스럽게 녹아드는 것처럼,
-            일상 속에서 편안하면서도 감각적인 스타일을 추구합니다.
-          </p>
-          <p class="story-desc">
-            우리는 과하지 않은 심플함, 몸이 기억하는 편안함,
-            그리고 오래 입어도 질리지 않는 디자인을 믿습니다.
-          </p>
+          <h2 class="section-title" v-html="t('about.storyTitle')"></h2>
+          <p class="story-desc">{{ t('about.storyDesc1') }}</p>
+          <p class="story-desc">{{ t('about.storyDesc2') }}</p>
         </div>
       </div>
     </section>
@@ -178,28 +170,28 @@
     <section class="section values">
       <div class="values-header">
         <p class="section-label">Values</p>
-        <h2 class="section-title">우리가 추구하는<br>네 가지 가치</h2>
+        <h2 class="section-title" v-html="t('about.valuesTitle')"></h2>
       </div>
       <div class="values-grid">
         <div class="value-card">
           <div class="value-number">01</div>
           <h3>Comfort First</h3>
-          <p>입는 순간 느껴지는 편안함. 소재 선정부터 패턴 설계까지, 착용감을 최우선으로 합니다.</p>
+          <p>{{ t('about.value1') }}</p>
         </div>
         <div class="value-card">
           <div class="value-number">02</div>
           <h3>Minimal Design</h3>
-          <p>불필요한 장식을 덜어내고 본질에 집중합니다. 심플하지만 존재감 있는 디자인.</p>
+          <p>{{ t('about.value2') }}</p>
         </div>
         <div class="value-card">
           <div class="value-number">03</div>
           <h3>Quality Material</h3>
-          <p>직접 만져보고 선택한 원단만 사용합니다. 세탁 후에도 변하지 않는 품질을 약속합니다.</p>
+          <p>{{ t('about.value3') }}</p>
         </div>
         <div class="value-card">
           <div class="value-number">04</div>
           <h3>Everyday Style</h3>
-          <p>특별한 날이 아닌, 매일 입고 싶은 옷. 일상에 자연스럽게 스며드는 스타일을 만듭니다.</p>
+          <p>{{ t('about.value4') }}</p>
         </div>
       </div>
     </section>
@@ -214,19 +206,19 @@
         <div class="features-list">
           <div class="feature-item">
             <h3>Japan Quality</h3>
-            <p>일본 현지에서 엄선한 원단과 부자재를 사용합니다. 오사카 특유의 캐주얼 감성을 담았습니다.</p>
+            <p>{{ t('about.feature1') }}</p>
           </div>
           <div class="feature-item">
             <h3>Unisex Fit</h3>
-            <p>남녀 구분 없이 누구나 편하게 입을 수 있는 유니섹스 핏. 체형에 구애받지 않는 자유로운 실루엣.</p>
+            <p>{{ t('about.feature2') }}</p>
           </div>
           <div class="feature-item">
             <h3>Season-less</h3>
-            <p>계절에 얽매이지 않는 소재와 디자인. 레이어링으로 사계절 내내 활용할 수 있습니다.</p>
+            <p>{{ t('about.feature3') }}</p>
           </div>
           <div class="feature-item">
             <h3>Sustainable</h3>
-            <p>환경을 생각하는 소량 생산 방식. 과잉 재고 없이, 필요한 만큼만 정직하게 만듭니다.</p>
+            <p>{{ t('about.feature4') }}</p>
           </div>
         </div>
       </div>
@@ -236,8 +228,8 @@
     <section id="pickup" class="section pickup">
       <div class="pickup-header">
         <p class="section-label">Pick Up</p>
-        <h2 class="section-title">추천 아이템</h2>
-        <p class="pickup-sub">Velcro Cat이 제안하는 이번 시즌 스타일</p>
+        <h2 class="section-title">{{ t('about.pickupTitle') }}</h2>
+        <p class="pickup-sub">{{ t('about.pickupSub') }}</p>
       </div>
       <div class="pickup-grid">
         <router-link
@@ -247,14 +239,14 @@
           class="pickup-card"
         >
           <div class="pickup-img-wrap">
-            <img :src="item.image" :alt="item.name" />
+            <img :src="item.image" :alt="lf(item, 'name')" />
           </div>
-          <p class="pickup-name">{{ item.name }}</p>
+          <p class="pickup-name">{{ lf(item, 'name') }}</p>
           <p class="pickup-price">₩{{ Number(item.price).toLocaleString() }}</p>
         </router-link>
       </div>
       <div class="pickup-more">
-        <router-link to="/products" class="btn-outline">모든 상품 보기 →</router-link>
+        <router-link to="/products" class="btn-outline">{{ t('about.pickupMore') }}</router-link>
       </div>
     </section>
 
@@ -263,14 +255,11 @@
       <video src="../image/video3.mp4" class="second-hero-bg" autoplay muted loop playsinline />
       <div class="second-hero-content">
         <p class="second-hero-label">Shop Now</p>
-        <h2 class="second-hero-title">오늘의 스타일을<br>만나보세요</h2>
-        <p class="second-hero-desc">
-          VELCROCAT의 새로운 컬렉션을 지금 확인하세요.<br>
-          편안함과 스타일, 두 가지 모두를 놓치지 마세요.
-        </p>
+        <h2 class="second-hero-title" v-html="t('about.ctaTitle')"></h2>
+        <p class="second-hero-desc" v-html="t('about.ctaDesc')"></p>
         <div class="second-hero-actions">
-          <router-link to="/products" class="second-hero-btn">SHOP 바로가기</router-link>
-          <router-link to="/contact" class="second-hero-btn btn-outline">문의하기</router-link>
+          <router-link to="/products" class="second-hero-btn">{{ t('about.shopBtn') }}</router-link>
+          <router-link to="/contact" class="second-hero-btn btn-outline">{{ t('about.contactBtn') }}</router-link>
         </div>
       </div>
     </section>
@@ -290,12 +279,12 @@
           <a href="https://smartstore.naver.com/vcat" target="_blank">NAVER STORE</a>
         </div>
         <div class="footer-biz">
-          <p>상호 : 벨크로캣(velcrocat) | 공동 대표 : 김충성, 장윤호</p>
-          <p>사업자등록번호 : 180-02-03888 | 업태 : 도소매 | 종목 : 전자상거래 소매업</p>
-          <p>주소 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)</p>
-          <p>E-MAIL : velcrocat@velcrocat.com</p>
+          <p>{{ t('about.bizLine1') }}</p>
+          <p>{{ t('about.bizLine2') }}</p>
+          <p>{{ t('about.bizLine3') }}</p>
+          <p>{{ t('footer.companyEmail') }}</p>
         </div>
-        <p class="footer-copy">© 2026 벨크로캣(velcrocat). All rights reserved.</p>
+        <p class="footer-copy">{{ t('footer.copyright') }}</p>
       </div>
     </footer>
 
@@ -304,9 +293,14 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import bgMusic from '../image/music.mp3';
+import LanguageSwitcher from '../components/LanguageSwitcher.vue';
+import { useLocalized } from '../composables/useLocalized';
 
+const { t } = useI18n();
+const { lf } = useLocalized();
 const storyRef = ref(null);
 const pickupItems = ref([]);
 const bgAudio = ref(null);
@@ -626,7 +620,12 @@ onUnmounted(() => {
 .brand-nav-btns {
   margin-left: 16px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
+.brand-nav-btns :deep(.lang-switcher-btn) { color: #fff; }
+.brand-nav.nav-light .brand-nav-btns :deep(.lang-switcher-btn) { color: #111; }
 
 /* 히어로 영상 위에 떠 있는 사운드 토글 */
 .hero-sound-btn {

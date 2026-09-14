@@ -2,11 +2,11 @@
   <v-container class="py-16 d-flex justify-center align-center" style="min-height:60vh">
     <div class="text-center">
       <v-progress-circular v-if="!error" indeterminate color="#111" size="48" class="mb-4" />
-      <p v-if="!error" class="text-body-1">로그인 처리 중...</p>
+      <p v-if="!error" class="text-body-1">{{ t('authCallback.processing') }}</p>
       <div v-else>
         <v-icon size="48" color="error" class="mb-4">mdi-alert-circle-outline</v-icon>
         <p class="text-body-1 mb-4">{{ error }}</p>
-        <v-btn color="#111" @click="$router.push('/login')">로그인으로 돌아가기</v-btn>
+        <v-btn color="#111" @click="$router.push('/login')">{{ t('auth.backToLogin') }}</v-btn>
       </div>
     </div>
   </v-container>
@@ -15,9 +15,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
@@ -29,7 +31,7 @@ onMounted(async () => {
   const provider = route.params.provider;
 
   if (!code) {
-    error.value = '인증 코드가 없습니다';
+    error.value = t('authCallback.noCode');
     return;
   }
 
@@ -42,7 +44,7 @@ onMounted(async () => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
     router.push('/');
   } catch (e) {
-    error.value = e.response?.data?.error || '로그인에 실패했습니다';
+    error.value = e.response?.data?.error || t('auth.loginFailed');
   }
 });
 </script>

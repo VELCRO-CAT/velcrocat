@@ -12,14 +12,14 @@
     <!-- 관리자 버튼 (우측 상단 고정) -->
     <router-link v-if="authStore.isAdmin && !isAdminPage" to="/admin" class="admin-fab hvr-grow" @click="ensureAdminFlag">
       <v-icon size="16">mdi-shield-crown</v-icon>
-      관리자
+      {{ t('common.admin') }}
     </router-link>
 
     <!-- 네비게이션 바 (Brand 페이지에서는 숨김) -->
     <nav v-if="!isBrandPage && !isAdminPage" class="sticky-nav">
       <div class="nav-inner">
         <!-- 모바일 햄버거 버튼 (좌측) -->
-        <button class="hamburger" @click="menuOpen = true" aria-label="메뉴">
+        <button class="hamburger" @click="menuOpen = true" :aria-label="t('common.menu')">
           <span></span>
           <span></span>
           <span></span>
@@ -27,11 +27,11 @@
 
         <!-- PC 네비 -->
         <div class="nav-desktop">
-          <router-link to="/" class="nav-link hvr-underline-from-center">HOME</router-link>
-          <router-link to="/products" class="nav-link hvr-underline-from-center">SHOP</router-link>
+          <router-link to="/" class="nav-link hvr-underline-from-center">{{ t('nav.home') }}</router-link>
+          <router-link to="/products" class="nav-link hvr-underline-from-center">{{ t('nav.shop') }}</router-link>
           <!-- CATEGORY 드롭다운 -->
           <div class="nav-category" @mouseenter="catOpen = true" @mouseleave="catOpen = false; activeGender = null">
-            <span class="nav-link hvr-underline-from-center" style="cursor:pointer">CATEGORY</span>
+            <span class="nav-link hvr-underline-from-center" style="cursor:pointer">{{ t('nav.category') }}</span>
             <transition name="fade">
               <div v-if="catOpen" class="cat-dropdown">
                 <!-- 왼쪽: MEN / WOMEN 세로 배치 -->
@@ -56,27 +56,28 @@
                       :to="`/products?gender=${activeGender}&category=${cat.slug}`"
                       class="cat-sub-link"
                       @click="catOpen = false"
-                    >{{ cat.name }}</router-link>
+                    >{{ lf(cat, 'name') }}</router-link>
                     <router-link
                       :to="`/products?gender=${activeGender}`"
                       class="cat-sub-link cat-sub-all"
                       @click="catOpen = false"
-                    >전체보기</router-link>
+                    >{{ t('common.viewAll') }}</router-link>
                   </div>
                 </transition>
               </div>
             </transition>
           </div>
-          <router-link to="/contact" class="nav-link hvr-underline-from-center">CONTACT</router-link>
-          <router-link to="/brand" class="nav-link hvr-underline-from-center">BRAND</router-link>
+          <router-link to="/contact" class="nav-link hvr-underline-from-center">{{ t('nav.contact') }}</router-link>
+          <router-link to="/brand" class="nav-link hvr-underline-from-center">{{ t('nav.brand') }}</router-link>
           <template v-if="authStore.isLoggedIn">
-            <router-link to="/mypage" class="nav-link hvr-underline-from-center">MY PAGE</router-link>
-            <a class="nav-link hvr-underline-from-center" @click="logout" style="cursor:pointer">SIGN OUT</a>
+            <router-link to="/mypage" class="nav-link hvr-underline-from-center">{{ t('nav.myPage') }}</router-link>
+            <a class="nav-link hvr-underline-from-center" @click="logout" style="cursor:pointer">{{ t('nav.signOut') }}</a>
           </template>
           <template v-else>
-            <router-link to="/login" class="nav-link hvr-underline-from-center">SIGN IN</router-link>
-            <router-link to="/register" class="nav-link hvr-underline-from-center">SIGN UP</router-link>
+            <router-link to="/login" class="nav-link hvr-underline-from-center">{{ t('nav.signIn') }}</router-link>
+            <router-link to="/register" class="nav-link hvr-underline-from-center">{{ t('nav.signUp') }}</router-link>
           </template>
+          <LanguageSwitcher />
         </div>
 
         <!-- 찜 목록 -->
@@ -89,18 +90,18 @@
           <!-- 찜 드롭다운 -->
           <div v-if="wishOpen" class="wish-dropdown">
             <div class="wish-header">
-              <span>찜 목록</span>
-              <span class="wish-count">{{ wishlistStore.count }}개</span>
+              <span>{{ t('wishlist.title') }}</span>
+              <span class="wish-count">{{ t('wishlist.count', { count: wishlistStore.count }) }}</span>
             </div>
             <div v-if="wishlistStore.items.length === 0" class="wish-empty">
-              찜한 상품이 없습니다
+              {{ t('wishlist.empty') }}
             </div>
             <div v-else class="wish-list">
               <div v-for="item in wishlistStore.items" :key="item.id" class="wish-item">
                 <router-link :to="`/products/${item.id}`" class="wish-item-link" @click="wishOpen = false">
-                  <img :src="item.image" :alt="item.name" class="wish-item-img" />
+                  <img :src="item.image" :alt="lf(item, 'name')" class="wish-item-img" />
                   <div class="wish-item-info">
-                    <p class="wish-item-name">{{ item.name }}</p>
+                    <p class="wish-item-name">{{ lf(item, 'name') }}</p>
                     <p class="wish-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
                   </div>
                 </router-link>
@@ -134,11 +135,11 @@
           <button class="drawer-close" @click="menuOpen = false">✕</button>
         </div>
         <nav class="drawer-nav">
-          <router-link to="/" class="drawer-link" @click="menuOpen = false">HOME</router-link>
-          <router-link to="/products" class="drawer-link" @click="menuOpen = false">SHOP</router-link>
+          <router-link to="/" class="drawer-link" @click="menuOpen = false">{{ t('nav.home') }}</router-link>
+          <router-link to="/products" class="drawer-link" @click="menuOpen = false">{{ t('nav.shop') }}</router-link>
           <!-- 모바일 카테고리 -->
           <button class="drawer-link drawer-cat-toggle" @click="drawerCatOpen = !drawerCatOpen">
-            CATEGORY
+            {{ t('nav.category') }}
             <span class="drawer-arrow" :class="{ open: drawerCatOpen }">▸</span>
           </button>
           <div v-if="drawerCatOpen" class="drawer-cat-section">
@@ -154,27 +155,31 @@
                   :to="`/products?gender=${g.key}&category=${cat.slug}`"
                   class="drawer-cat-item"
                   @click="menuOpen = false"
-                >{{ cat.name }}</router-link>
+                >{{ lf(cat, 'name') }}</router-link>
                 <router-link
                   :to="`/products?gender=${g.key}`"
                   class="drawer-cat-item"
                   @click="menuOpen = false"
                   style="font-weight:600"
-                >전체보기</router-link>
+                >{{ t('common.viewAll') }}</router-link>
               </div>
             </div>
           </div>
-          <router-link to="/contact" class="drawer-link" @click="menuOpen = false">CONTACT</router-link>
-          <router-link to="/brand" class="drawer-link" @click="menuOpen = false">BRAND</router-link>
+          <router-link to="/contact" class="drawer-link" @click="menuOpen = false">{{ t('nav.contact') }}</router-link>
+          <router-link to="/brand" class="drawer-link" @click="menuOpen = false">{{ t('nav.brand') }}</router-link>
           <div class="drawer-divider" />
           <template v-if="authStore.isLoggedIn">
-            <router-link to="/mypage" class="drawer-link" @click="menuOpen = false">MY PAGE</router-link>
-            <a class="drawer-link" @click="logout" style="cursor:pointer">SIGN OUT</a>
+            <router-link to="/mypage" class="drawer-link" @click="menuOpen = false">{{ t('nav.myPage') }}</router-link>
+            <a class="drawer-link" @click="logout" style="cursor:pointer">{{ t('nav.signOut') }}</a>
           </template>
           <template v-else>
-            <router-link to="/login" class="drawer-link" @click="menuOpen = false">SIGN IN</router-link>
-            <router-link to="/register" class="drawer-link" @click="menuOpen = false">SIGN UP</router-link>
+            <router-link to="/login" class="drawer-link" @click="menuOpen = false">{{ t('nav.signIn') }}</router-link>
+            <router-link to="/register" class="drawer-link" @click="menuOpen = false">{{ t('nav.signUp') }}</router-link>
           </template>
+          <div class="drawer-divider" />
+          <div class="drawer-lang">
+            <LanguageSwitcher />
+          </div>
         </nav>
       </div>
     </transition>
@@ -191,36 +196,36 @@
         <div class="footer-cols">
           <!-- 고객센터 -->
           <div class="footer-col">
-            <h4>고객센터</h4>
-            <p class="footer-phone">070-4571-4499</p>
-            <p class="footer-info">운영시간 : 오전10시 ~ 오후5시</p>
-            <p class="footer-info">점심시간 : 오전11시 ~ 오후12시</p>
-            <p class="footer-info">주말, 공휴일 휴무</p>
+            <h4>{{ t('footer.csTitle') }}</h4>
+            <p class="footer-phone">{{ t('footer.csPhone') }}</p>
+            <p class="footer-info">{{ t('footer.csHours') }}</p>
+            <p class="footer-info">{{ t('footer.csLunch') }}</p>
+            <p class="footer-info">{{ t('footer.csClosed') }}</p>
           </div>
           <!-- 회사정보 -->
           <div class="footer-col">
-            <h4>회사정보</h4>
-            <p class="footer-info">상호 : 벨크로캣(velcrocat)</p>
-            <p class="footer-info">공동 대표 : 김충성, 장윤호</p>
-            <p class="footer-info">사업자등록번호 : 180-02-03888</p>
-            <p class="footer-info">업태 : 도소매 / 종목 : 전자상거래 소매업</p>
-            <p class="footer-info">주소 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)</p>
-            <p class="footer-info">E-MAIL : velcrocat@velcrocat.com</p>
+            <h4>{{ t('footer.companyTitle') }}</h4>
+            <p class="footer-info">{{ t('footer.companyName') }}</p>
+            <p class="footer-info">{{ t('footer.companyCeo') }}</p>
+            <p class="footer-info">{{ t('footer.companyRegNo') }}</p>
+            <p class="footer-info">{{ t('footer.companyBiz') }}</p>
+            <p class="footer-info">{{ t('footer.companyAddress') }}</p>
+            <p class="footer-info">{{ t('footer.companyEmail') }}</p>
           </div>
           <!-- 교환/반품 -->
           <div class="footer-col">
-            <h4>교환 / 반품</h4>
-            <p class="footer-info">교환/반품 주소 :</p>
-            <p class="footer-info">경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)</p>
-            <p class="footer-info" style="margin-top:12px">상품 수령 후 7일 이내 교환/반품 가능</p>
+            <h4>{{ t('footer.returnTitle') }}</h4>
+            <p class="footer-info">{{ t('footer.returnAddressLabel') }}</p>
+            <p class="footer-info">{{ t('footer.returnAddress') }}</p>
+            <p class="footer-info" style="margin-top:12px">{{ t('footer.returnPeriod') }}</p>
           </div>
           <!-- 상점 메뉴 -->
           <div class="footer-col">
-            <h4>상점 메뉴</h4>
-            <router-link to="/" class="footer-menu-link">메인페이지</router-link>
-            <router-link to="/brand" class="footer-menu-link">회사소개</router-link>
-            <router-link to="/products" class="footer-menu-link">전체상품</router-link>
-            <router-link to="/contact" class="footer-menu-link">고객문의</router-link>
+            <h4>{{ t('footer.menuTitle') }}</h4>
+            <router-link to="/" class="footer-menu-link">{{ t('footer.menuHome') }}</router-link>
+            <router-link to="/brand" class="footer-menu-link">{{ t('footer.menuBrand') }}</router-link>
+            <router-link to="/products" class="footer-menu-link">{{ t('footer.menuProducts') }}</router-link>
+            <router-link to="/contact" class="footer-menu-link">{{ t('footer.menuContact') }}</router-link>
           </div>
         </div>
         <!-- 하단 -->
@@ -229,7 +234,7 @@
             <img src="./image/osakamarketLOGO2.png" alt="Velcro Cat" class="footer-logo" />
             <span class="footer-brand-name">VELCRO CAT</span>
           </div>
-          <p class="footer-copy">© 2026 벨크로캣(velcrocat). All rights reserved.</p>
+          <p class="footer-copy">{{ t('footer.copyright') }}</p>
           <div class="footer-social">
             <a href="https://smartstore.naver.com/vcat" target="_blank" title="Naver SmartStore">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.273 12.845 7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"/></svg>
@@ -249,13 +254,18 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useCartStore } from './stores/cart';
 import { useAuthStore } from './stores/auth';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import AdminNotification from './components/AdminNotification.vue';
+import LanguageSwitcher from './components/LanguageSwitcher.vue';
 import { useWishlistStore } from './stores/wishlist';
+import { useLocalized } from './composables/useLocalized';
 
+const { t } = useI18n();
+const { lf } = useLocalized();
 const route = useRoute();
 const isBrandPage = computed(() => route.path === '/brand' || route.path === '/about');
 const isAdminPage = computed(() => route.path.startsWith('/admin'));
@@ -729,6 +739,9 @@ function logout() {
   height: 1px;
   background: #e8e8e8;
   margin: 8px 24px;
+}
+.drawer-lang {
+  padding: 4px 24px 12px;
 }
 
 /* 트랜지션 애니메이션 */

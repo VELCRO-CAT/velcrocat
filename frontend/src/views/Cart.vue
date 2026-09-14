@@ -1,11 +1,11 @@
 <template>
   <v-container style="max-width:1100px" class="py-8">
-    <h1 class="text-h5 font-weight-bold mb-6">장바구니</h1>
+    <h1 class="text-h5 font-weight-bold mb-6">{{ t('cart.title') }}</h1>
 
     <div v-if="cartStore.items.length === 0" class="text-center py-16">
       <v-icon size="80" color="grey-lighten-1">mdi-cart-outline</v-icon>
-      <p class="text-h6 text-grey mt-4 mb-6">장바구니가 비어있습니다</p>
-      <v-btn color="red-darken-4" variant="elevated" to="/products">상품 보러가기</v-btn>
+      <p class="text-h6 text-grey mt-4 mb-6">{{ t('cart.empty') }}</p>
+      <v-btn color="red-darken-4" variant="elevated" to="/products">{{ t('cart.browseProducts') }}</v-btn>
     </div>
 
     <v-row v-else>
@@ -16,11 +16,11 @@
             <v-img :src="item.image" width="80" height="80" rounded="lg" style="flex-shrink:0; background:#f5f5f5" />
             <div class="flex-grow-1">
               <p class="text-caption text-grey">{{ item.seller }}</p>
-              <p class="font-weight-medium">{{ item.name }}</p>
+              <p class="font-weight-medium">{{ lf(item, 'name') }}</p>
               <p v-if="item.color || item.size" class="text-caption text-grey">
-                <span v-if="item.color">컬러: {{ item.color }}</span>
+                <span v-if="item.color">{{ t('detail.colorLabel') }}: {{ colorName(item.color) }}</span>
                 <span v-if="item.color && item.size"> / </span>
-                <span v-if="item.size">사이즈: {{ item.size }}</span>
+                <span v-if="item.size">{{ t('detail.sizeLabel') }}: {{ item.size }}</span>
               </p>
               <p class="text-body-2 text-red-darken-4 font-weight-bold">₩{{ Number(item.price).toLocaleString() }}</p>
             </div>
@@ -42,28 +42,28 @@
           </div>
         </v-card>
 
-        <v-btn variant="text" color="grey" size="small" @click="cartStore.clearCart()">장바구니 비우기</v-btn>
+        <v-btn variant="text" color="grey" size="small" @click="cartStore.clearCart()">{{ t('cart.clearCart') }}</v-btn>
       </v-col>
 
       <!-- 주문 요약 -->
       <v-col cols="12" md="4">
         <v-card variant="outlined" class="pa-4">
-          <h2 class="text-subtitle-1 font-weight-bold mb-4">주문 요약</h2>
+          <h2 class="text-subtitle-1 font-weight-bold mb-4">{{ t('cart.summaryTitle') }}</h2>
           <div class="d-flex justify-space-between text-body-2 mb-2">
-            <span>상품 수</span><span>{{ cartStore.itemCount }}개</span>
+            <span>{{ t('cart.itemCount') }}</span><span>{{ t('detail.qtyUnit', { count: cartStore.itemCount }) }}</span>
           </div>
           <div class="d-flex justify-space-between text-body-2 mb-2">
-            <span>소계</span><span>₩{{ cartStore.total.toLocaleString() }}</span>
+            <span>{{ t('cart.subtotal') }}</span><span>₩{{ cartStore.total.toLocaleString() }}</span>
           </div>
           <div class="d-flex justify-space-between text-body-2 mb-3">
-            <span>배송비</span><span class="text-green font-weight-medium">무료</span>
+            <span>{{ t('cart.shipping') }}</span><span class="text-green font-weight-medium">{{ t('cart.free') }}</span>
           </div>
           <v-divider class="mb-3" />
           <div class="d-flex justify-space-between font-weight-bold text-h6 mb-4">
-            <span>합계</span>
+            <span>{{ t('cart.total') }}</span>
             <span class="text-red-darken-4">₩{{ cartStore.total.toLocaleString() }}</span>
           </div>
-          <v-btn color="red-darken-4" block size="large" @click="checkout">결제하기</v-btn>
+          <v-btn color="red-darken-4" block size="large" @click="checkout">{{ t('cart.checkoutBtn') }}</v-btn>
         </v-card>
       </v-col>
     </v-row>
@@ -71,10 +71,14 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
 import { useCartStore, variantKey } from '../stores/cart';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
+import { useLocalized } from '../composables/useLocalized';
 
+const { t } = useI18n();
+const { lf, colorName } = useLocalized();
 const cartStore = useCartStore();
 const vk = variantKey;
 const authStore = useAuthStore();

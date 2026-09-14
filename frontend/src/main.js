@@ -9,6 +9,7 @@ import '@mdi/font/css/materialdesignicons.css';
 import './assets/hover-light.css'; /* 필요한 6개 애니메이션만 (95KB → 3KB) */
 import App from './App.vue';
 import router from './router';
+import i18n from './i18n';
 
 const vuetify = createVuetify({
   components,
@@ -34,6 +35,8 @@ const app = createApp(App);
 app.use(pinia);
 app.use(router);
 app.use(vuetify);
+app.use(i18n);
+document.documentElement.setAttribute('lang', i18n.global.locale.value);
 
 import { useAuthStore } from './stores/auth';
 useAuthStore(pinia).initAuth();
