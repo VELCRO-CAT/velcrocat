@@ -63,7 +63,13 @@ router.post('/cancel', authMiddleware, async (req, res) => {
 
 router.get('/my', authMiddleware, async (req, res) => {
   try {
-    const orders = await db('orders').where('user_id', req.user.id).orderBy('created_at', 'desc');
+    // 결제가 확정되지 않은(pending) 주문은 노출하지 않는다.
+    // 결제 시도 중이거나 중간에 이탈한 주문은 /api/payment/mainpay/abandon 등에서 정리되며,
+    // 혹시 정리되지 않고 남아있더라도 사용자에게는 "결제 안 한 주문"으로 보이지 않아야 한다.
+    const orders = await db('orders')
+      .where('user_id', req.user.id)
+      .whereNot('status', 'pending')
+      .orderBy('created_at', 'desc');
     res.json(orders.map(o => ({
       ...o,
       items: safeParse(o.items_json, []),

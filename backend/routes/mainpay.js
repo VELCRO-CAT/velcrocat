@@ -108,8 +108,9 @@ router.post('/ready', authMiddleware, async (req, res) => {
       timestamp,
       signature,
       // 일부 결제창 UI가 사용하는 리다이렉트 URL (MPC가 무시해도 무해)
-      approvalUrl: `${SITE_URL}/api/payment/mainpay/approval`,
-      closeUrl: `${SITE_URL}/api/payment/mainpay/close`,
+      // orderNo를 쿼리로 직접 붙여서 MPC가 자체 파라미터명을 쓰더라도 주문 식별이 항상 가능하게 함
+      approvalUrl: `${SITE_URL}/api/payment/mainpay/approval?merchantData=${orderNo}`,
+      closeUrl: `${SITE_URL}/api/payment/mainpay/close?merchantData=${orderNo}`,
       notiUrl: `${SITE_URL}/api/payment/mainpay/notify`
     });
 
@@ -143,6 +144,50 @@ router.post('/ready', authMiddleware, async (req, res) => {
   }
 });
 
+// 1-1. 주문 상태 확인 (프론트가 결제창을 닫은 후 실제 결제 완료 여부를 확인할 때 사용)
+router.get('/status/:orderNo', authMiddleware, async (req, res) => {
+  try {
+    const order = await db('orders')
+      .where('order_no', req.params.orderNo)
+      .where('user_id', req.user.id)
+      .first();
+
+    if (!order) {
+      // 이미 취소/정리되어 삭제된 주문(=결제 미완료)일 수 있음
+      return res.status(404).json({ status: 'not_found' });
+    }
+
+    res.json({
+      orderNo: order.order_no,
+      status: order.status,
+      total: order.total
+    });
+  } catch (e) {
+    console.error('[MPC status 오류]', e);
+    res.status(500).json({ error: '주문 상태 확인 중 오류가 발생했습니다' });
+  }
+});
+
+// 1-2. 결제 포기 처리 (결제창을 열지 못했거나, 결제 완료를 확인하지 못한 채 이탈한 경우)
+// 실제 결제(paid)로 확정된 주문은 절대 건드리지 않는다 — status가 여전히 'pending'일 때만 제거.
+router.post('/abandon', authMiddleware, async (req, res) => {
+  try {
+    const { orderNo } = req.body;
+    if (!orderNo) return res.status(400).json({ error: '주문번호가 없습니다' });
+
+    const deleted = await db('orders')
+      .where('order_no', orderNo)
+      .where('user_id', req.user.id)
+      .where('status', 'pending')
+      .del();
+
+    res.json({ success: true, removed: deleted > 0 });
+  } catch (e) {
+    console.error('[MPC abandon 오류]', e);
+    res.status(500).json({ error: '처리 중 오류가 발생했습니다' });
+  }
+});
+
 // 2. 결제창 완료 후 브라우저 복귀 (approvalUrl)
 // MPC가 승인/후처리를 내부에서 마무리하므로 별도 /pay 호출은 불필요.
 // 여기서는 주문번호 기준으로 상태 확인 후 완료 페이지로 이동.
@@ -168,7 +213,9 @@ router.all('/approval', async (req, res) => {
     // MPC가 redirect 파라미터로 결과를 함께 전달하는 경우 처리
     const isFail = q.result === 'false' || q.resultCode === 'FAIL' || q.status === 'fail';
     if (isFail) {
-      await db('orders').where('order_no', orderNo).update({ status: 'cancelled' });
+      // 실제 결제가 이루어지지 않았으므로 pending 주문을 남기지 않고 제거한다
+      // (이미 notify로 paid 처리됐다면 위에서 걸러지므로 여기선 항상 미결제 상태)
+      await db('orders').where('order_no', orderNo).where('status', 'pending').del();
       const msg = q.message || q.resultMessage || '결제 실패';
       return res.send(closeAndRedirectHtml(
         `${SITE_URL}/checkout?error=${encodeURIComponent(msg)}`,
@@ -186,7 +233,18 @@ router.all('/approval', async (req, res) => {
 });
 
 // 3. 결제창 닫기/취소
-router.all('/close', (req, res) => {
+// MPC가 결제 미완료 상태에서 이 URL로 보내면(사용자가 결제창을 닫거나 취소) = 결제 시도가 없었던 것이므로
+// 방금 /ready에서 만든 pending 주문을 정리해 주문내역에 남지 않게 한다.
+router.all('/close', async (req, res) => {
+  try {
+    const q = { ...req.query, ...req.body };
+    const orderNo = q.merchantData || q.orderNo || '';
+    if (orderNo) {
+      await db('orders').where('order_no', orderNo).where('status', 'pending').del();
+    }
+  } catch (e) {
+    console.error('[MPC close 오류]', e);
+  }
   res.send(closeAndRedirectHtml(`${SITE_URL}/checkout?error=cancelled`, '결제가 취소되었습니다'));
 });
 
@@ -228,7 +286,8 @@ router.post('/notify', async (req, res) => {
     const success = result === true || result === 'true' || result === 'OK' || p.resultCode === '200' || p.status === 'paid';
 
     if (!success) {
-      await db('orders').where('order_no', orderNo).update({ status: 'cancelled' });
+      // 실제 결제가 이루어지지 않았으므로 pending 주문을 남기지 않고 제거한다
+      await db('orders').where('order_no', orderNo).where('status', 'pending').del();
       console.log('[MPC notify] 결제 실패/취소', orderNo, p.message);
       return res.send('OK');
     }

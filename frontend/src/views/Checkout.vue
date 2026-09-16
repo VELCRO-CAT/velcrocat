@@ -238,7 +238,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
@@ -261,6 +261,21 @@ const form = ref({
 });
 const showPostcode = ref(false);
 const selectedMethod = ref('card');
+
+// 마이페이지에 저장해 둔 기본 배송지가 있으면 불러와 미리 채워준다 (직접 수정 가능)
+onMounted(async () => {
+  try {
+    const { data } = await axios.get('/api/users/me');
+    if (data.default_address) {
+      form.value.name = data.default_recipient || form.value.name;
+      form.value.phone = data.default_phone || form.value.phone;
+      form.value.zip = data.default_zip || '';
+      form.value.address = data.default_address || '';
+      form.value.addressDetail = data.default_address_detail || '';
+      form.value.memo = data.default_memo || form.value.memo;
+    }
+  } catch {}
+});
 
 // 전화번호 자동 포맷팅
 function formatPhone(raw) {
@@ -335,11 +350,15 @@ async function processPayment() {
     if (!data?.nextPcUrl) {
       error.value = '결제창을 호출할 수 없습니다';
       loading.value = false;
+      // 결제창을 열지도 못했으므로 방금 생성된 pending 주문을 정리한다
+      if (data?.orderNo) abandonOrder(data.orderNo);
       return;
     }
 
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile && data.nextMobileUrl) {
+      // 모바일은 결제사 페이지로 완전히 이동하므로 페이지 상태가 사라짐 — 부득이 여기서 비운다.
+      // 실제 결제 완료 여부는 결제사가 돌아오는 /order-complete 화면에서 다시 확인한다.
       cartStore.clearCart();
       window.location.href = data.nextMobileUrl;
       return;
@@ -351,21 +370,29 @@ async function processPayment() {
     if (!popup) {
       error.value = '팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요';
       loading.value = false;
+      // 결제창을 열지도 못했으므로 방금 생성된 pending 주문을 정리한다
+      abandonOrder(data.orderNo);
       return;
     }
 
-    cartStore.clearCart();
-
+    // 장바구니는 여기서 비우지 않는다 — 실제 결제 완료가 확인된 뒤(/order-complete)에만 비운다.
+    // 결제창이 닫히면 곧바로 완료 확인 화면으로 이동해서, 그 화면이 실제 결제 여부를 직접 확인·표시한다.
     const checkClosed = setInterval(() => {
       if (popup.closed) {
         clearInterval(checkClosed);
-        loading.value = false;
+        router.push(`/order-complete?orderNo=${encodeURIComponent(data.orderNo)}`);
       }
     }, 500);
   } catch (e) {
     error.value = e.response?.data?.error || '결제 처리에 실패했습니다';
     loading.value = false;
   }
+}
+
+// 결제 시도가 실제로 이루어지지 않은 채 끝난 경우, 남아있는 pending 주문을 정리 (실패해도 무방)
+function abandonOrder(orderNo) {
+  if (!orderNo) return;
+  axios.post('/api/payment/mainpay/abandon', { orderNo }).catch(() => {});
 }
 </script>
 

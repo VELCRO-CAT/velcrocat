@@ -16,6 +16,120 @@
       >{{ tab.label }}</button>
     </div>
 
+    <!-- 주문 내역 -->
+    <v-card v-if="activeTab === 'orders'" variant="outlined" class="pa-8 mypage-card reveal">
+      <h2 class="text-h6 font-weight-bold mb-6">주문 내역</h2>
+      <div v-if="ordersLoading" class="text-center py-8">
+        <v-progress-circular indeterminate color="#111" />
+      </div>
+      <div v-else-if="orders.length === 0" class="text-center py-8 text-grey">
+        주문 내역이 없습니다
+      </div>
+      <div v-else class="orders-list">
+        <div v-for="order in orders" :key="order.order_no" class="order-card">
+          <div class="order-header">
+            <div>
+              <span class="order-no">{{ order.order_no }}</span>
+              <span class="order-date">{{ formatDate(order.created_at) }}</span>
+            </div>
+            <span class="order-status" :class="'status-' + order.status">{{ statusLabel(order.status) }}</span>
+          </div>
+          <div class="order-items">
+            <div v-for="(item, i) in order.items" :key="i" class="order-item">
+              <img :src="item.image" :alt="item.name" class="order-item-img" />
+              <div class="order-item-info">
+                <p class="order-item-name">{{ item.name }}</p>
+                <p class="order-item-detail">
+                  {{ item.size ? `사이즈: ${item.size}` : '' }}
+                  {{ item.quantity ? `/ 수량: ${item.quantity}` : '' }}
+                </p>
+                <p class="order-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 주문한 배송지 -->
+          <div v-if="order.shippingAddress?.address" class="order-shipping">
+            <v-icon size="14" color="#999" class="mr-1">mdi-map-marker-outline</v-icon>
+            <span class="order-shipping-text">
+              {{ order.shippingAddress.name }}
+              <span v-if="order.shippingAddress.phone">· {{ order.shippingAddress.phone }}</span>
+              · {{ order.shippingAddress.address }} {{ order.shippingAddress.addressDetail }}
+            </span>
+          </div>
+
+          <div class="order-total">
+            합계: <strong>₩{{ Number(order.total).toLocaleString() }}</strong>
+          </div>
+        </div>
+      </div>
+    </v-card>
+
+    <!-- 배송지 관리 -->
+    <v-card v-if="activeTab === 'address'" variant="outlined" class="pa-8 mypage-card reveal">
+      <h2 class="text-h6 font-weight-bold mb-2">기본 배송지</h2>
+      <p class="text-body-2 text-grey mb-6">저장해두면 결제 시 자동으로 채워집니다.</p>
+      <v-form @submit.prevent="saveAddress">
+        <v-text-field
+          v-model="addr.recipient"
+          label="받는 사람"
+          variant="outlined"
+          density="comfortable"
+          class="mb-3"
+        />
+        <v-text-field
+          v-model="addr.phone"
+          label="전화번호"
+          placeholder="010-0000-0000"
+          maxlength="13"
+          variant="outlined"
+          density="comfortable"
+          class="mb-3"
+          @input="addr.phone = formatPhone(addr.phone)"
+        />
+        <div class="d-flex ga-2 mb-3">
+          <v-text-field
+            v-model="addr.zip"
+            label="우편번호"
+            variant="outlined"
+            density="comfortable"
+            readonly
+            hide-details
+            @click="searchAddress"
+            style="cursor:pointer"
+          />
+          <v-btn color="#111" size="large" height="56" @click="searchAddress">주소 검색</v-btn>
+        </div>
+        <v-text-field
+          v-model="addr.address"
+          label="주소"
+          variant="outlined"
+          density="comfortable"
+          readonly
+          placeholder="주소 검색 버튼을 클릭하세요"
+          class="mb-3"
+        />
+        <v-text-field
+          v-model="addr.addressDetail"
+          label="상세주소"
+          variant="outlined"
+          density="comfortable"
+          placeholder="동/호수, 건물명 등"
+          class="mb-3"
+        />
+        <v-select
+          v-model="addr.memo"
+          :items="memoOptions"
+          label="배송 메모 (선택)"
+          variant="outlined"
+          density="comfortable"
+          class="mb-4"
+        />
+        <v-alert v-if="addrMsg" :type="addrMsgType" variant="tonal" density="compact" class="mb-4">{{ addrMsg }}</v-alert>
+        <v-btn type="submit" color="#111" size="large" :loading="addrLoading">기본 배송지로 저장</v-btn>
+      </v-form>
+    </v-card>
+
     <!-- 내 정보 수정 -->
     <v-card v-if="activeTab === 'profile'" variant="outlined" class="pa-8 mypage-card reveal">
       <h2 class="text-h6 font-weight-bold mb-6">내 정보 수정</h2>
@@ -75,44 +189,6 @@
       </v-form>
     </v-card>
 
-    <!-- 주문 내역 -->
-    <v-card v-if="activeTab === 'orders'" variant="outlined" class="pa-8 mypage-card reveal">
-      <h2 class="text-h6 font-weight-bold mb-6">주문 내역</h2>
-      <div v-if="ordersLoading" class="text-center py-8">
-        <v-progress-circular indeterminate color="#111" />
-      </div>
-      <div v-else-if="orders.length === 0" class="text-center py-8 text-grey">
-        주문 내역이 없습니다
-      </div>
-      <div v-else class="orders-list">
-        <div v-for="order in orders" :key="order.order_no" class="order-card">
-          <div class="order-header">
-            <div>
-              <span class="order-no">{{ order.order_no }}</span>
-              <span class="order-date">{{ formatDate(order.created_at) }}</span>
-            </div>
-            <span class="order-status" :class="'status-' + order.status">{{ statusLabel(order.status) }}</span>
-          </div>
-          <div class="order-items">
-            <div v-for="(item, i) in order.items" :key="i" class="order-item">
-              <img :src="item.image" :alt="item.name" class="order-item-img" />
-              <div class="order-item-info">
-                <p class="order-item-name">{{ item.name }}</p>
-                <p class="order-item-detail">
-                  {{ item.size ? `사이즈: ${item.size}` : '' }}
-                  {{ item.quantity ? `/ 수량: ${item.quantity}` : '' }}
-                </p>
-                <p class="order-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="order-total">
-            합계: <strong>₩{{ Number(order.total).toLocaleString() }}</strong>
-          </div>
-        </div>
-      </div>
-    </v-card>
-
     <!-- 회원 탈퇴 -->
     <v-card v-if="activeTab === 'withdraw'" variant="outlined" class="pa-8 mypage-card reveal">
       <h2 class="text-h6 font-weight-bold mb-4" style="color:#d32f2f">회원 탈퇴</h2>
@@ -133,6 +209,17 @@
         <v-btn type="submit" color="error" size="large" :loading="withdrawLoading">회원 탈퇴</v-btn>
       </v-form>
     </v-card>
+
+    <!-- 주소 검색 팝업 -->
+    <div v-if="showPostcode" class="postcode-overlay" @click.self="showPostcode = false">
+      <div class="postcode-modal">
+        <div class="postcode-header">
+          <span>주소 검색</span>
+          <button class="postcode-close" @click="showPostcode = false">✕</button>
+        </div>
+        <div id="mypage-daum-postcode-layer"></div>
+      </div>
+    </div>
   </v-container>
 </template>
 
@@ -146,18 +233,33 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const tabs = [
+  { key: 'orders', label: '주문 내역' },
+  { key: 'address', label: '배송지 관리' },
   { key: 'profile', label: '내 정보' },
   { key: 'password', label: '비밀번호 변경' },
-  { key: 'orders', label: '주문 내역' },
   { key: 'withdraw', label: '회원 탈퇴' }
 ];
-const activeTab = ref('profile');
+const activeTab = ref('orders');
 
 // 내 정보
 const profile = reactive({ name: '', email: '' });
 const profileMsg = ref('');
 const profileMsgType = ref('success');
 const profileLoading = ref(false);
+
+// 기본 배송지
+const addr = reactive({ recipient: '', phone: '', zip: '', address: '', addressDetail: '', memo: '' });
+const addrMsg = ref('');
+const addrMsgType = ref('success');
+const addrLoading = ref(false);
+const showPostcode = ref(false);
+const memoOptions = [
+  '문 앞에 놓아주세요',
+  '경비실에 맡겨주세요',
+  '택배함에 넣어주세요',
+  '배송 전 연락 부탁드립니다',
+  '부재시 문 앞에 놓아주세요'
+];
 
 // 비밀번호
 const pw = reactive({ current: '', new: '', confirm: '' });
@@ -188,11 +290,18 @@ watch(activeTab, () => showReveal());
 onMounted(async () => {
   showReveal();
 
-  // 내 정보 로드
+  // 내 정보 + 기본 배송지 로드
   try {
     const res = await axios.get('/api/users/me');
     profile.name = res.data.name;
     profile.email = res.data.email;
+
+    addr.recipient = res.data.default_recipient || res.data.name || '';
+    addr.phone = res.data.default_phone || '';
+    addr.zip = res.data.default_zip || '';
+    addr.address = res.data.default_address || '';
+    addr.addressDetail = res.data.default_address_detail || '';
+    addr.memo = res.data.default_memo || '';
   } catch {}
 
   // 주문 로드
@@ -222,6 +331,44 @@ async function updateProfile() {
     profileMsg.value = e.response?.data?.error || '수정에 실패했습니다';
   } finally {
     profileLoading.value = false;
+  }
+}
+
+// 전화번호 자동 포맷팅 (체크아웃과 동일한 형식)
+function formatPhone(raw) {
+  const digits = String(raw || '').replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
+function searchAddress() {
+  showPostcode.value = true;
+  nextTick(() => {
+    setTimeout(() => {
+      new window.daum.Postcode({
+        oncomplete(data) {
+          addr.zip = data.zonecode;
+          addr.address = data.roadAddress || data.jibunAddress;
+          showPostcode.value = false;
+        }
+      }).embed(document.getElementById('mypage-daum-postcode-layer'));
+    }, 100);
+  });
+}
+
+async function saveAddress() {
+  addrMsg.value = '';
+  addrLoading.value = true;
+  try {
+    await axios.put('/api/users/me/address', { ...addr });
+    addrMsgType.value = 'success';
+    addrMsg.value = '기본 배송지가 저장되었습니다';
+  } catch (e) {
+    addrMsgType.value = 'error';
+    addrMsg.value = e.response?.data?.error || '저장에 실패했습니다';
+  } finally {
+    addrLoading.value = false;
   }
 }
 
@@ -282,18 +429,19 @@ function statusLabel(s) {
   gap: 0;
   border-bottom: 2px solid #111;
   margin-bottom: 32px;
+  overflow-x: auto;
 }
 .mypage-tab {
   flex: 1;
-  padding: 12px 0;
+  padding: 12px 8px;
   background: none;
   border: none;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
   color: #999;
   cursor: pointer;
   transition: all 0.2s;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 .mypage-tab.active {
   color: #111;
@@ -326,6 +474,16 @@ function statusLabel(s) {
 .order-item-detail { font-size: 12px; color: #999; margin: 2px 0; }
 .order-item-price { font-size: 13px; font-weight: 600; margin: 0; }
 
+.order-shipping {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed #eee;
+}
+.order-shipping-text { font-size: 12px; color: #888; line-height: 1.5; }
+
 .order-total {
   text-align: right;
   margin-top: 16px;
@@ -333,5 +491,41 @@ function statusLabel(s) {
   border-top: 1px solid #eee;
   font-size: 14px;
   color: #333;
+}
+
+/* 주소 검색 팝업 (체크아웃과 동일한 스타일) */
+.postcode-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.postcode-modal {
+  background: #fff;
+  width: 500px;
+  max-width: 92vw;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+}
+.postcode-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #111;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+.postcode-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
 }
 </style>
