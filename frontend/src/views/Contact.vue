@@ -3,44 +3,44 @@
     <!-- 페이지 헤더 -->
     <div class="page-header reveal">
       <span class="page-label">CONTACT</span>
-      <h1 class="page-title">문의하기</h1>
-      <p class="page-desc">궁금한 점이 있으시면 아래 양식으로 문의해 주세요.<br>빠른 시일 내에 답변 드리겠습니다.</p>
+      <h1 class="page-title">{{ t('contact.title') }}</h1>
+      <p class="page-desc" v-html="t('contact.desc')"></p>
     </div>
 
     <!-- 문의 폼 -->
     <div class="form-wrap">
       <div v-if="sent" class="success-box">
         <v-icon size="48" color="#111">mdi-check-circle-outline</v-icon>
-        <h2>문의가 접수되었습니다</h2>
-        <p>빠른 시일 내에 이메일로 답변 드리겠습니다.</p>
-        <button class="submit-btn" @click="sent = false">새 문의 작성</button>
+        <h2>{{ t('contact.successTitle') }}</h2>
+        <p>{{ t('contact.successDesc') }}</p>
+        <button class="submit-btn" @click="sent = false">{{ t('contact.newInquiryBtn') }}</button>
       </div>
 
       <form v-else @submit.prevent="submit" class="contact-form">
 
         <!-- 문의 유형 -->
         <div class="field reveal">
-          <label>문의 유형 <span class="required">*</span></label>
+          <label>{{ t('contact.typeLabel') }} <span class="required">*</span></label>
           <div class="type-grid">
             <button
-              v-for="t in inquiryTypes"
-              :key="t"
+              v-for="it in inquiryTypes"
+              :key="it.value"
               type="button"
               class="type-btn hvr-bounce-to-top"
-              :class="{ active: form.inquiryType === t }"
-              @click="form.inquiryType = t"
-            >{{ t }}</button>
+              :class="{ active: form.inquiryType === it.value }"
+              @click="form.inquiryType = it.value"
+            >{{ it.title }}</button>
           </div>
         </div>
 
         <!-- 이름 / 전화번호 -->
         <div class="field-group reveal">
           <div class="field">
-            <label>이름 <span class="required">*</span></label>
-            <input v-model="form.name" type="text" placeholder="이름을 입력해주세요" required @input="filterName" />
+            <label>{{ t('auth.nameLabel') }} <span class="required">*</span></label>
+            <input v-model="form.name" type="text" :placeholder="t('contact.namePlaceholder')" required @input="filterName" />
           </div>
           <div class="field">
-            <label>전화번호 <span class="required">*</span></label>
+            <label>{{ t('checkout.phoneLabel') }} <span class="required">*</span></label>
             <input
               v-model="form.phone"
               type="tel"
@@ -55,24 +55,24 @@
         <!-- 이메일 / 주문번호 -->
         <div class="field-group reveal">
           <div class="field">
-            <label>이메일 <span class="required">*</span></label>
-            <input v-model="form.email" type="email" placeholder="이메일을 입력해주세요" required />
+            <label>{{ t('auth.emailLabel') }} <span class="required">*</span></label>
+            <input v-model="form.email" type="email" :placeholder="t('contact.emailPlaceholder')" required />
           </div>
           <div class="field">
-            <label>주문번호 <span class="optional">(선택)</span></label>
-            <input v-model="form.orderNumber" type="text" placeholder="주문번호가 있는 경우 입력" />
+            <label>{{ t('contact.orderNumberLabel') }} <span class="optional">{{ t('checkout.memoOptional') }}</span></label>
+            <input v-model="form.orderNumber" type="text" :placeholder="t('contact.orderNumberPlaceholder')" />
           </div>
         </div>
 
         <!-- 문의 내용 -->
         <div class="field reveal">
-          <label>문의 내용 <span class="required">*</span></label>
-          <textarea v-model="form.message" placeholder="문의 내용을 자세히 입력해주세요" rows="7" required></textarea>
+          <label>{{ t('contact.messageLabel') }} <span class="required">*</span></label>
+          <textarea v-model="form.message" :placeholder="t('contact.messagePlaceholder')" rows="7" required></textarea>
         </div>
 
         <p v-if="error" class="error-msg">{{ error }}</p>
         <button type="submit" class="submit-btn hvr-sweep-to-right reveal" :disabled="loading">
-          {{ loading ? 'SENDING...' : 'SEND MESSAGE' }}
+          {{ loading ? t('contact.sendingBtn') : t('contact.sendBtn') }}
         </button>
       </form>
     </div>
@@ -80,8 +80,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import axios from 'axios';
+
+const { t } = useI18n();
 
 onMounted(() => {
   const observer = new IntersectionObserver((entries) => {
@@ -95,7 +98,13 @@ onMounted(() => {
   document.querySelectorAll('.contact-page .reveal').forEach(el => observer.observe(el));
 });
 
-const inquiryTypes = ['상품 문의', '배송 문의', '교환/반품', '결제 문의', '기타'];
+const inquiryTypes = computed(() => [
+  { title: t('contact.type1'), value: '상품 문의' },
+  { title: t('contact.type2'), value: '배송 문의' },
+  { title: t('contact.type3'), value: '교환/반품' },
+  { title: t('contact.type4'), value: '결제 문의' },
+  { title: t('contact.type5'), value: '기타' }
+]);
 
 const form = ref({
   inquiryType: '기타',
@@ -133,7 +142,7 @@ async function submit() {
     sent.value = true;
     form.value = { inquiryType: '기타', name: '', phone: '', email: '', orderNumber: '', message: '' };
   } catch (e) {
-    error.value = e.response?.data?.error || '전송에 실패했습니다. 다시 시도해주세요.';
+    error.value = e.response?.data?.error || t('contact.submitFailed');
   } finally {
     loading.value = false;
   }

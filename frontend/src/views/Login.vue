@@ -2,14 +2,14 @@
   <v-container class="py-16 d-flex justify-center">
     <v-card width="440" variant="outlined" class="pa-8 login-card">
       <div class="text-center mb-8 reveal reveal-1">
-        <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">로그인</h1>
+        <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">{{ t('auth.loginTitle') }}</h1>
         <p class="text-caption text-grey mt-1" style="letter-spacing:4px">LOGIN</p>
       </div>
 
       <v-form @submit.prevent="handleLogin" class="reveal reveal-2">
         <v-text-field
           v-model="email"
-          label="이메일"
+          :label="t('auth.emailLabel')"
           type="email"
           variant="outlined"
           density="comfortable"
@@ -18,7 +18,7 @@
         />
         <v-text-field
           v-model="password"
-          label="비밀번호"
+          :label="t('auth.passwordLabel')"
           :type="showPw ? 'text' : 'password'"
           :append-inner-icon="showPw ? 'mdi-eye-off' : 'mdi-eye'"
           @click:append-inner="showPw = !showPw"
@@ -30,13 +30,13 @@
 
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
 
-        <v-btn type="submit" color="#111" block size="large" :loading="loading">로그인</v-btn>
+        <v-btn type="submit" color="#111" block size="large" :loading="loading">{{ t('auth.loginBtn') }}</v-btn>
       </v-form>
 
       <!-- 소셜 로그인 -->
       <div class="reveal reveal-3 mt-6">
         <div class="social-divider">
-          <span>또는</span>
+          <span>{{ t('auth.or') }}</span>
         </div>
         <div class="mt-4">
           <NaverLoginButton />
@@ -45,11 +45,11 @@
 
       <div class="text-center mt-4 reveal reveal-4">
         <p class="text-body-2 mb-1">
-          <router-link to="/forgot-password" style="color:#888;font-weight:500;text-decoration:none">비밀번호를 잊으셨나요?</router-link>
+          <router-link to="/forgot-password" style="color:#888;font-weight:500;text-decoration:none">{{ t('auth.forgotPasswordLink') }}</router-link>
         </p>
         <p class="text-body-2">
-          계정이 없으신가요?
-          <router-link to="/register" style="color:#111;font-weight:600">회원가입</router-link>
+          {{ t('auth.noAccount') }}
+          <router-link to="/register" style="color:#111;font-weight:600">{{ t('auth.registerLink') }}</router-link>
         </p>
       </div>
     </v-card>
@@ -59,9 +59,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 import NaverLoginButton from '../components/NaverLoginButton.vue';
+
+const { t } = useI18n();
 
 onMounted(() => {
   document.querySelectorAll('.login-card .reveal').forEach((el, i) => {
@@ -85,7 +88,7 @@ async function handleLogin() {
     await authStore.login(email.value, password.value);
     router.push(route.query.redirect || '/');
   } catch (e) {
-    error.value = e.response?.data?.error || '로그인에 실패했습니다';
+    error.value = e.response?.data?.error || t('auth.loginFailed');
   } finally {
     loading.value = false;
   }

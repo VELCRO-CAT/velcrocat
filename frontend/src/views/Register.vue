@@ -2,18 +2,18 @@
   <v-container class="py-16 d-flex justify-center">
     <v-card width="440" variant="outlined" class="pa-8 reg-card">
       <div class="text-center mb-8 reveal">
-        <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">회원가입</h1>
+        <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">{{ t('auth.registerTitle') }}</h1>
         <p class="text-caption text-grey mt-1" style="letter-spacing:4px">REGISTER</p>
       </div>
 
       <v-form @submit.prevent="handleSubmit" class="reveal">
-        <v-text-field v-model="name" label="이름" variant="outlined" density="comfortable" class="mb-3" required />
+        <v-text-field v-model="name" :label="t('auth.nameLabel')" variant="outlined" density="comfortable" class="mb-3" required />
 
         <!-- 이메일 + 인증코드 발송 버튼 -->
         <div class="d-flex align-center gap-2 mb-1">
           <v-text-field
             v-model="email"
-            label="이메일"
+            :label="t('auth.emailLabel')"
             type="email"
             variant="outlined"
             density="comfortable"
@@ -29,9 +29,9 @@
             :disabled="!email || codeCooldown > 0"
             @click="sendCode"
             style="height:48px;min-width:100px;white-space:nowrap"
-          >{{ codeCooldown > 0 ? `${codeCooldown}초` : (codeSent ? '재발송' : '인증코드') }}</v-btn>
+          >{{ codeCooldown > 0 ? t('auth.secondsUnit', { count: codeCooldown }) : (codeSent ? t('auth.resendBtn') : t('auth.sendCodeBtn')) }}</v-btn>
           <v-chip v-else color="success" variant="flat" size="small" style="height:48px;padding:0 16px">
-            <v-icon start size="16">mdi-check-circle</v-icon>인증완료
+            <v-icon start size="16">mdi-check-circle</v-icon>{{ t('auth.codeVerifiedChip') }}
           </v-chip>
         </div>
 
@@ -40,7 +40,7 @@
           <div class="d-flex align-center gap-2 mt-2">
             <v-text-field
               v-model="code"
-              label="인증코드 6자리"
+              :label="t('auth.codeLabel')"
               variant="outlined"
               density="comfortable"
               maxlength="6"
@@ -52,7 +52,7 @@
               :loading="verifyLoading"
               @click="verifyCode"
               style="height:48px;min-width:80px"
-            >확인</v-btn>
+            >{{ t('auth.confirmBtn') }}</v-btn>
           </div>
           <p class="text-caption text-grey mt-1">{{ timerText }}</p>
         </div>
@@ -60,7 +60,7 @@
 
         <v-text-field
           v-model="password"
-          label="비밀번호 (6자 이상)"
+          :label="t('auth.passwordHintLabel')"
           :type="showPw ? 'text' : 'password'"
           :append-inner-icon="showPw ? 'mdi-eye-off' : 'mdi-eye'"
           @click:append-inner="showPw = !showPw"
@@ -71,7 +71,7 @@
         />
         <v-text-field
           v-model="confirmPassword"
-          label="비밀번호 확인"
+          :label="t('auth.confirmPasswordLabel')"
           :type="showPw ? 'text' : 'password'"
           variant="outlined"
           density="comfortable"
@@ -82,25 +82,25 @@
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
         <v-alert v-if="success" type="success" variant="tonal" density="compact" class="mb-4">{{ success }}</v-alert>
 
-        <v-btn type="submit" color="#111" block size="large" :loading="loading" :disabled="!emailVerified">회원가입</v-btn>
+        <v-btn type="submit" color="#111" block size="large" :loading="loading" :disabled="!emailVerified">{{ t('auth.registerBtn') }}</v-btn>
       </v-form>
 
       <!-- 소셜 회원가입 (네이버) -->
       <div class="reveal mt-6">
         <div class="social-divider">
-          <span>또는</span>
+          <span>{{ t('auth.or') }}</span>
         </div>
         <div class="mt-4">
           <NaverLoginButton />
         </div>
         <p class="text-caption text-grey text-center mt-2">
-          네이버 계정으로 간편하게 가입할 수 있습니다
+          {{ t('auth.naverRegisterHint') }}
         </p>
       </div>
 
       <p class="text-center text-body-2 mt-4 reveal">
-        이미 계정이 있으신가요?
-        <router-link to="/login" style="color:#111;font-weight:600">로그인</router-link>
+        {{ t('auth.alreadyHaveAccount') }}
+        <router-link to="/login" style="color:#111;font-weight:600">{{ t('auth.loginLink') }}</router-link>
       </p>
     </v-card>
   </v-container>
@@ -109,9 +109,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 import NaverLoginButton from '../components/NaverLoginButton.vue';
+
+const { t } = useI18n();
 
 onMounted(() => {
   document.querySelectorAll('.reg-card .reveal').forEach((el, i) => {
@@ -150,10 +153,10 @@ function startTimer(seconds) {
     remaining--;
     const m = Math.floor(remaining / 60);
     const s = remaining % 60;
-    timerText.value = `남은 시간: ${m}:${String(s).padStart(2, '0')}`;
+    timerText.value = t('auth.timeRemaining', { time: `${m}:${String(s).padStart(2, '0')}` });
     if (remaining <= 0) {
       clearInterval(timerInterval);
-      timerText.value = '인증코드가 만료되었습니다';
+      timerText.value = t('auth.codeExpired');
     }
   }, 1000);
 }
@@ -179,11 +182,11 @@ async function sendCode() {
   try {
     await axios.post('/api/users/register/send-code', { email: email.value });
     codeSent.value = true;
-    success.value = '인증코드가 발송되었습니다';
+    success.value = t('auth.codeSentSuccess');
     startTimer(15 * 60);
     startCooldown();
   } catch (e) {
-    error.value = e.response?.data?.error || '인증코드 발송에 실패했습니다';
+    error.value = e.response?.data?.error || t('auth.codeSendFailed');
   } finally {
     codeLoading.value = false;
   }
@@ -200,11 +203,11 @@ async function verifyCode() {
     });
     emailVerified.value = true;
     verifyToken.value = res.data.verifyToken;
-    success.value = '이메일 인증이 완료되었습니다';
+    success.value = t('auth.emailVerifiedSuccess');
     clearInterval(timerInterval);
     timerText.value = '';
   } catch (e) {
-    error.value = e.response?.data?.error || '인증에 실패했습니다';
+    error.value = e.response?.data?.error || t('auth.verifyFailed');
   } finally {
     verifyLoading.value = false;
   }
@@ -213,8 +216,8 @@ async function verifyCode() {
 async function handleSubmit() {
   error.value = '';
   success.value = '';
-  if (!emailVerified.value) { error.value = '이메일 인증을 완료해주세요'; return; }
-  if (password.value !== confirmPassword.value) { error.value = '비밀번호가 일치하지 않습니다'; return; }
+  if (!emailVerified.value) { error.value = t('auth.pleaseVerifyEmail'); return; }
+  if (password.value !== confirmPassword.value) { error.value = t('auth.passwordMismatch'); return; }
   loading.value = true;
   try {
     const res = await axios.post('/api/users/register', {
@@ -230,7 +233,7 @@ async function handleSubmit() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
     router.push('/');
   } catch (e) {
-    error.value = e.response?.data?.error || '회원가입에 실패했습니다';
+    error.value = e.response?.data?.error || t('auth.registerFailed');
   } finally {
     loading.value = false;
   }

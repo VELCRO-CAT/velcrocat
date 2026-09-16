@@ -3,22 +3,22 @@
     <v-container style="max-width:1180px" class="py-10">
       <!-- 상단 헤더 -->
       <div class="checkout-header">
-        <h1 class="checkout-title">결제</h1>
+        <h1 class="checkout-title">{{ t('checkout.title') }}</h1>
         <p class="checkout-subtitle">CHECKOUT</p>
         <div class="checkout-steps">
           <div class="step done">
             <span class="step-num">1</span>
-            <span>장바구니</span>
+            <span>{{ t('checkout.step1') }}</span>
           </div>
           <div class="step-divider"></div>
           <div class="step active">
             <span class="step-num">2</span>
-            <span>주문/결제</span>
+            <span>{{ t('checkout.step2') }}</span>
           </div>
           <div class="step-divider"></div>
           <div class="step">
             <span class="step-num">3</span>
-            <span>완료</span>
+            <span>{{ t('checkout.step3') }}</span>
           </div>
         </div>
       </div>
@@ -30,22 +30,22 @@
           <div class="section-card">
             <div class="section-head">
               <v-icon size="20" color="#111">mdi-truck-fast-outline</v-icon>
-              <h2 class="section-heading">배송지 정보</h2>
+              <h2 class="section-heading">{{ t('checkout.shippingTitle') }}</h2>
             </div>
 
             <v-row dense>
               <v-col cols="12" sm="6">
-                <label class="field-label">받는 사람 <span class="required">*</span></label>
+                <label class="field-label">{{ t('checkout.nameLabel') }} <span class="required">*</span></label>
                 <v-text-field
                   v-model="form.name"
                   variant="outlined"
                   density="comfortable"
                   hide-details
-                  placeholder="이름을 입력하세요"
+                  :placeholder="t('checkout.namePlaceholder')"
                 />
               </v-col>
               <v-col cols="12" sm="6">
-                <label class="field-label">전화번호 <span class="required">*</span></label>
+                <label class="field-label">{{ t('checkout.phoneLabel') }} <span class="required">*</span></label>
                 <v-text-field
                   v-model="form.phone"
                   variant="outlined"
@@ -58,25 +58,25 @@
               </v-col>
 
               <v-col cols="12" class="mt-3">
-                <label class="field-label">이메일 <span class="required">*</span></label>
+                <label class="field-label">{{ t('checkout.emailLabel') }} <span class="required">*</span></label>
                 <v-text-field
                   v-model="form.email"
                   variant="outlined"
                   density="comfortable"
                   hide-details
                   type="email"
-                  placeholder="주문 확인·배송 안내 이메일을 입력하세요"
+                  :placeholder="t('checkout.emailPlaceholder')"
                 />
               </v-col>
 
               <v-col cols="12" sm="4" class="mt-3">
-                <label class="field-label">우편번호</label>
+                <label class="field-label">{{ t('checkout.zipLabel') }}</label>
                 <v-text-field
                   v-model="form.zip"
                   variant="outlined"
                   density="comfortable"
                   hide-details
-                  placeholder="우편번호"
+                  :placeholder="t('checkout.zipPlaceholder')"
                   readonly
                   @click="searchAddress"
                   style="cursor:pointer"
@@ -85,41 +85,43 @@
               <v-col cols="12" sm="8" class="mt-3 d-flex align-end">
                 <button class="addr-search-btn" @click="searchAddress">
                   <v-icon size="18">mdi-magnify</v-icon>
-                  주소 검색
+                  {{ t('checkout.addressSearchBtn') }}
                 </button>
               </v-col>
 
               <v-col cols="12" class="mt-3">
-                <label class="field-label">주소 <span class="required">*</span></label>
+                <label class="field-label">{{ t('checkout.addressLabel') }} <span class="required">*</span></label>
                 <v-text-field
                   v-model="form.address"
                   variant="outlined"
                   density="comfortable"
                   hide-details
                   readonly
-                  placeholder="주소 검색 버튼을 클릭하세요"
+                  :placeholder="t('checkout.addressPlaceholder')"
                 />
               </v-col>
               <v-col cols="12" class="mt-3">
-                <label class="field-label">상세주소 <span class="required">*</span></label>
+                <label class="field-label">{{ t('checkout.addressDetailLabel') }} <span class="required">*</span></label>
                 <v-text-field
                   v-model="form.addressDetail"
                   variant="outlined"
                   density="comfortable"
                   hide-details
-                  placeholder="동/호수, 건물명 등"
+                  :placeholder="t('checkout.addressDetailPlaceholder')"
                 />
               </v-col>
 
               <v-col cols="12" class="mt-3">
-                <label class="field-label">배송 메모 <span class="optional">(선택)</span></label>
+                <label class="field-label">{{ t('checkout.memoLabel') }} <span class="optional">{{ t('checkout.memoOptional') }}</span></label>
                 <v-select
                   v-model="form.memo"
                   :items="memoOptions"
+                  item-title="title"
+                  item-value="value"
                   variant="outlined"
                   density="comfortable"
                   hide-details
-                  placeholder="배송 메모를 선택하세요"
+                  :placeholder="t('checkout.memoPlaceholder')"
                 />
               </v-col>
             </v-row>
@@ -129,7 +131,7 @@
           <div class="section-card mt-4">
             <div class="section-head">
               <v-icon size="20" color="#111">mdi-credit-card-outline</v-icon>
-              <h2 class="section-heading">결제 수단</h2>
+              <h2 class="section-heading">{{ t('checkout.paymentTitle') }}</h2>
             </div>
 
             <div class="pay-methods">
@@ -163,22 +165,22 @@
         <v-col cols="12" md="4">
           <div class="summary-card">
             <div class="summary-head">
-              <h2 class="summary-title">주문 내역</h2>
-              <span class="summary-count">{{ cartStore.items.length }}개 상품</span>
+              <h2 class="summary-title">{{ t('checkout.orderTitle') }}</h2>
+              <span class="summary-count">{{ t('checkout.orderCount', { count: cartStore.items.length }) }}</span>
             </div>
 
             <div class="summary-items">
               <div v-for="item in cartStore.items" :key="item.id + '_' + (item.color || '') + '_' + (item.size || '')" class="summary-item">
                 <div class="summary-img-wrap">
-                  <img :src="item.image" :alt="item.name" class="summary-img" />
+                  <img :src="item.image" :alt="lf(item, 'name')" class="summary-img" />
                   <span class="summary-qty">{{ item.quantity || item.qty }}</span>
                 </div>
                 <div class="summary-info">
-                  <p class="summary-name">{{ item.name }}</p>
+                  <p class="summary-name">{{ lf(item, 'name') }}</p>
                   <p v-if="item.color || item.size" class="summary-size">
-                    <span v-if="item.color">컬러: {{ item.color }}</span>
+                    <span v-if="item.color">{{ t('detail.colorLabel') }}: {{ colorName(item.color) }}</span>
                     <span v-if="item.color && item.size"> · </span>
-                    <span v-if="item.size">사이즈: {{ item.size }}</span>
+                    <span v-if="item.size">{{ t('detail.sizeLabel') }}: {{ item.size }}</span>
                   </p>
                 </div>
                 <p class="summary-price">₩{{ (item.price * (item.quantity || item.qty || 1)).toLocaleString() }}</p>
@@ -188,18 +190,18 @@
             <div class="summary-divider"></div>
 
             <div class="summary-row">
-              <span>상품금액</span>
+              <span>{{ t('checkout.productAmount') }}</span>
               <span>₩{{ cartStore.total.toLocaleString() }}</span>
             </div>
             <div class="summary-row">
-              <span>배송비</span>
-              <span class="summary-free">무료</span>
+              <span>{{ t('cart.shipping') }}</span>
+              <span class="summary-free">{{ t('cart.free') }}</span>
             </div>
 
             <div class="summary-divider"></div>
 
             <div class="summary-total">
-              <span>총 결제금액</span>
+              <span>{{ t('checkout.totalPay') }}</span>
               <span class="total-amount">₩{{ cartStore.total.toLocaleString() }}</span>
             </div>
 
@@ -210,14 +212,14 @@
             >
               <span v-if="loading" class="loading-spinner"></span>
               <template v-else>
-                <span>{{ cartStore.total.toLocaleString() }}원 결제하기</span>
+                <span>{{ t('checkout.payBtn', { amount: cartStore.total.toLocaleString() }) }}</span>
                 <v-icon size="18" class="ml-1">mdi-arrow-right</v-icon>
               </template>
             </button>
 
             <div class="summary-secure">
               <v-icon size="14" color="#888">mdi-lock</v-icon>
-              <span>안전한 SSL 암호화 결제</span>
+              <span>{{ t('checkout.secureText') }}</span>
             </div>
           </div>
         </v-col>
@@ -227,7 +229,7 @@
       <div v-if="showPostcode" class="postcode-overlay" @click.self="showPostcode = false">
         <div class="postcode-modal">
           <div class="postcode-header">
-            <span>주소 검색</span>
+            <span>{{ t('checkout.addressSearchBtn') }}</span>
             <button class="postcode-close" @click="showPostcode = false">✕</button>
           </div>
           <div id="daum-postcode-layer"></div>
@@ -240,10 +242,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
 import { useAuthStore } from '../stores/auth';
+import { useLocalized } from '../composables/useLocalized';
 
+const { t } = useI18n();
+const { lf, colorName } = useLocalized();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const router = useRouter();
@@ -289,20 +295,20 @@ function onPhoneInput() {
 }
 
 // 결제 수단 목록
-const payMethods = [
-  { key: 'card', label: '신용/체크카드', mdi: 'mdi-credit-card-outline' }
-];
+const payMethods = computed(() => [
+  { key: 'card', label: t('checkout.paymentCard'), mdi: 'mdi-credit-card-outline' }
+]);
 
-// 배송 메모 옵션
-const memoOptions = [
-  '문 앞에 놓아주세요',
-  '경비실에 맡겨주세요',
-  '택배함에 넣어주세요',
-  '배송 전 연락 부탁드립니다',
-  '부재시 문 앞에 놓아주세요'
-];
+// 배송 메모 옵션 (value는 관리자 화면 호환을 위해 항상 한국어로 전송)
+const memoOptions = computed(() => [
+  { title: t('checkout.memo1'), value: '문 앞에 놓아주세요' },
+  { title: t('checkout.memo2'), value: '경비실에 맡겨주세요' },
+  { title: t('checkout.memo3'), value: '택배함에 넣어주세요' },
+  { title: t('checkout.memo4'), value: '배송 전 연락 부탁드립니다' },
+  { title: t('checkout.memo5'), value: '부재시 문 앞에 놓아주세요' }
+]);
 
-const payDesc = computed(() => '카드사 결제창이 열리며, 카드 정보를 안전하게 입력할 수 있습니다.');
+const payDesc = computed(() => t('checkout.paymentDesc'));
 
 // 주소 검색
 function searchAddress() {
@@ -322,12 +328,12 @@ function searchAddress() {
 async function processPayment() {
   error.value = '';
 
-  if (!form.value.name) { error.value = '이름을 입력해주세요'; return; }
-  if (!form.value.phone || form.value.phone.replace(/\D/g, '').length < 10) { error.value = '올바른 전화번호를 입력해주세요'; return; }
-  if (!form.value.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) { error.value = '올바른 이메일을 입력해주세요'; return; }
-  if (!form.value.address) { error.value = '주소를 검색해주세요'; return; }
-  if (!form.value.addressDetail?.trim()) { error.value = '상세주소를 입력해주세요'; return; }
-  if (cartStore.items.length === 0) { error.value = '장바구니가 비어있습니다'; return; }
+  if (!form.value.name) { error.value = t('checkout.errorName'); return; }
+  if (!form.value.phone || form.value.phone.replace(/\D/g, '').length < 10) { error.value = t('checkout.errorPhone'); return; }
+  if (!form.value.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) { error.value = t('checkout.errorEmail'); return; }
+  if (!form.value.address) { error.value = t('checkout.errorAddress'); return; }
+  if (!form.value.addressDetail?.trim()) { error.value = t('checkout.errorAddressDetail'); return; }
+  if (cartStore.items.length === 0) { error.value = t('checkout.errorEmptyCart'); return; }
 
   loading.value = true;
 
@@ -348,7 +354,7 @@ async function processPayment() {
     });
 
     if (!data?.nextPcUrl) {
-      error.value = '결제창을 호출할 수 없습니다';
+      error.value = t('checkout.errorNoPayUrl');
       loading.value = false;
       // 결제창을 열지도 못했으므로 방금 생성된 pending 주문을 정리한다
       if (data?.orderNo) abandonOrder(data.orderNo);
@@ -368,7 +374,7 @@ async function processPayment() {
       'width=600,height=750,scrollbars=yes,resizable=yes');
 
     if (!popup) {
-      error.value = '팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요';
+      error.value = t('checkout.errorPopupBlocked');
       loading.value = false;
       // 결제창을 열지도 못했으므로 방금 생성된 pending 주문을 정리한다
       abandonOrder(data.orderNo);
@@ -384,7 +390,7 @@ async function processPayment() {
       }
     }, 500);
   } catch (e) {
-    error.value = e.response?.data?.error || '결제 처리에 실패했습니다';
+    error.value = e.response?.data?.error || t('checkout.errorPaymentFailed');
     loading.value = false;
   }
 }

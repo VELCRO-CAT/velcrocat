@@ -12,21 +12,21 @@
       <div class="filter-inner">
         <div class="filter-group">
           <select v-model="selectedGender" class="filter-select" @change="selectedCategory = null; fetchProducts()">
-            <option :value="null">전체 성별</option>
+            <option :value="null">{{ t('products.allGenders') }}</option>
             <option value="men">MEN</option>
             <option value="women">WOMEN</option>
           </select>
           <select v-model="selectedCategory" class="filter-select" @change="fetchProducts">
-            <option :value="null">전체 카테고리</option>
+            <option :value="null">{{ t('products.allCategories') }}</option>
             <option v-for="cat in categoryItems" :key="cat.value" :value="cat.value">
               {{ cat.title }}
             </option>
           </select>
           <select v-model="sortBy" class="filter-select" @change="fetchProducts">
-            <option :value="null">기본순</option>
-            <option value="price_asc">가격 낮은순</option>
-            <option value="price_desc">가격 높은순</option>
-            <option value="rating">평점 높은순</option>
+            <option :value="null">{{ t('products.sortDefault') }}</option>
+            <option value="price_asc">{{ t('products.sortPriceAsc') }}</option>
+            <option value="price_desc">{{ t('products.sortPriceDesc') }}</option>
+            <option value="rating">{{ t('products.sortRating') }}</option>
           </select>
         </div>
         <div class="search-wrap">
@@ -34,13 +34,13 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="상품 검색"
+            :placeholder="t('products.searchPlaceholder')"
             class="search-input"
             @input="fetchProducts"
           />
         </div>
       </div>
-      <p class="result-count">총 {{ total }}개의 상품</p>
+      <p class="result-count">{{ t('products.resultCount', { count: total }) }}</p>
     </div>
 
     <!-- 로딩 -->
@@ -63,7 +63,7 @@
               v-for="(img, si) in getImages(product)"
               :key="si"
               :src="img"
-              :alt="product.name"
+              :alt="lf(product, 'name')"
               class="product-img"
               :class="{ active: (slideIndex[product.id] || 0) === si }"
             />
@@ -81,14 +81,14 @@
                 :key="c.name"
                 class="swatch"
                 :style="{ background: c.hex, boxShadow: c.border ? 'inset 0 0 0 1px #ddd' : 'none', transitionDelay: (ci * 0.05) + 's' }"
-                :title="c.name"
+                :title="colorName(c.name)"
               ></span>
             </div>
           </div>
           <div class="product-info">
             <p class="product-seller">{{ product.seller }}</p>
-            <p class="product-name">{{ product.name }}</p>
-            <p class="product-desc">{{ product.description }}</p>
+            <p class="product-name">{{ lf(product, 'name') }}</p>
+            <p class="product-desc">{{ lf(product, 'description') }}</p>
             <div class="product-bottom">
               <span class="product-price">₩{{ Number(product.price).toLocaleString() }}</span>
             </div>
@@ -100,7 +100,7 @@
     <!-- 결과 없음 -->
     <div v-else class="empty-wrap">
       <v-icon size="48" color="#ccc">mdi-package-variant</v-icon>
-      <p>상품을 찾을 수 없습니다</p>
+      <p>{{ t('products.empty') }}</p>
     </div>
 
     <!-- 스낵바 -->
@@ -114,10 +114,14 @@
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import { useCartStore } from '../stores/cart';
 import { useWishlistStore } from '../stores/wishlist';
+import { useLocalized } from '../composables/useLocalized';
 
+const { t } = useI18n();
+const { lf, colorName } = useLocalized();
 const route = useRoute();
 const cartStore = useCartStore();
 const wishlistStore = useWishlistStore();
@@ -203,14 +207,14 @@ const categoryItems = computed(() => {
   if (selectedGender.value) {
     cats = cats.filter(c => c.gender === selectedGender.value);
   }
-  return cats.map(c => ({ title: c.name, value: c.slug }));
+  return cats.map(c => ({ title: lf(c, 'name'), value: c.slug }));
 });
 
 // 페이지 타이틀
 const pageTitle = computed(() => {
   if (selectedGender.value === 'men') return 'MEN';
   if (selectedGender.value === 'women') return 'WOMEN';
-  return '전체 상품';
+  return t('products.allProducts');
 });
 
 async function fetchProducts() {
@@ -260,13 +264,13 @@ onMounted(async () => {
 
 function addToCart(product) {
   cartStore.addItem(product);
-  snackMsg.value = '장바구니에 담았습니다';
+  snackMsg.value = t('products.addedToCart');
   snackbar.value = true;
 }
 
 function toggleWish(product) {
   wishlistStore.toggle(product);
-  snackMsg.value = wishlistStore.isWished(product.id) ? '찜 목록에 추가했습니다' : '찜 목록에서 제거했습니다';
+  snackMsg.value = wishlistStore.isWished(product.id) ? t('products.addedToWish') : t('products.removedFromWish');
   snackbar.value = true;
 }
 </script>

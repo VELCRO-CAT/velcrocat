@@ -103,6 +103,34 @@
             class="mb-3"
             placeholder="소재, 사이즈, 특징 등을 입력해주세요"
           />
+
+          <!-- 다국어 번역 (선택) -->
+          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">다국어 번역 (선택 — 비워두면 한국어로 표시)</p>
+          <v-btn-toggle v-model="langTab" mandatory density="compact" color="grey-darken-4" class="mb-3" variant="outlined">
+            <v-btn value="en" size="small">EN</v-btn>
+            <v-btn value="zh" size="small">中文</v-btn>
+            <v-btn value="ja" size="small">日本語</v-btn>
+          </v-btn-toggle>
+          <template v-for="lang in ['en', 'zh', 'ja']" :key="lang">
+            <div v-show="langTab === lang">
+              <v-text-field
+                v-model="form[`name_${lang}`]"
+                :label="`상품명 (${langLabel(lang)})`"
+                variant="outlined"
+                density="compact"
+                class="mb-3"
+              />
+              <v-textarea
+                v-model="form[`description_${lang}`]"
+                :label="`상세설명 (${langLabel(lang)})`"
+                variant="outlined"
+                density="compact"
+                rows="3"
+                class="mb-3"
+              />
+            </div>
+          </template>
+
           <v-select
             v-model="form.category"
             :items="categoryItems"
@@ -262,6 +290,11 @@ const urlInput = ref('');
 const detailBlocks = ref([]);
 const selectedColors = ref([]);
 const selectedSizes = ref([]);
+const langTab = ref('en');
+
+function langLabel(lang) {
+  return { en: '영어', zh: '중국어', ja: '일본어' }[lang] || lang;
+}
 
 const COLOR_OPTIONS = [
   { name: '블랙',     hex: '#1a1a1a' },
@@ -302,7 +335,10 @@ function categoryLabel(slug) {
   return found ? found.title : slug;
 }
 
-const defaultForm = () => ({ name: '', price: 0, stock: 0, category: 'tops', description: '', image: '', seller: '오사카마켓' });
+const defaultForm = () => ({
+  name: '', price: 0, stock: 0, category: 'tops', description: '', image: '', seller: '오사카마켓',
+  name_en: '', description_en: '', name_zh: '', description_zh: '', name_ja: '', description_ja: ''
+});
 const form = ref(defaultForm());
 
 async function fetchProducts() {
