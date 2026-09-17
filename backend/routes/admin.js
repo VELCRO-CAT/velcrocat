@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const Anthropic = require('@anthropic-ai/sdk');
 const db = require('../db');
 const { adminMiddleware } = require('../middleware/auth');
 
@@ -128,65 +127,9 @@ async function pickProductColumns(body) {
   return out;
 }
 
-// ─────────────────────────────────────────
-// Claude(Anthropic API) 자동 번역
-// 관리자가 한국어만 입력하면, 저장 시 비어있는 영어/중국어/일본어 필드를
-// Claude에게 한 번에 번역시켜 자동으로 채운다.
-// (이미 값이 있으면 건드리지 않음 — 수동으로 고친 번역을 덮어쓰지 않기 위함)
-// ─────────────────────────────────────────
-const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
-
-async function translateProductFields(name, description) {
-  if (!anthropic) return null;
-  try {
-    const response = await anthropic.messages.create({
-      model: 'claude-opus-5',
-      max_tokens: 2048,
-      output_config: { effort: 'low' }, // 단순 번역 작업이라 낮은 effort로 비용 절감
-      messages: [{
-        role: 'user',
-        content:
-          '다음은 한국 온라인 쇼핑몰의 의류 상품 정보다. 영어(en), 중국어 간체(zh), 일본어(ja)로 ' +
-          '자연스럽게 번역해라. 다른 설명 없이 아래 JSON 형식으로만 답변해라.\n\n' +
-          `상품명: ${name || '(없음)'}\n` +
-          `상세설명: ${description || '(없음)'}\n\n` +
-          '{"en":{"name":"...","description":"..."},"zh":{"name":"...","description":"..."},"ja":{"name":"...","description":"..."}}'
-      }]
-    });
-    const textBlock = response.content.find(b => b.type === 'text');
-    const match = textBlock?.text.match(/\{[\s\S]*\}/);
-    return match ? JSON.parse(match[0]) : null;
-  } catch (e) {
-    console.error('[Claude 번역 오류]', e.message);
-    return null;
-  }
-}
-
-// name/description 중 비어있는 name_xx/description_xx만 골라 번역해서 채움
-async function autoTranslateProduct(data) {
-  if (!anthropic) return data; // API 키 미설정 시 그냥 통과(한국어 폴백 유지)
-  if (!data.name && !data.description) return data;
-
-  const langs = ['en', 'zh', 'ja'];
-  const needsTranslation = langs.some(l => (data.name && !data[`name_${l}`]) || (data.description && !data[`description_${l}`]));
-  if (!needsTranslation) return data; // 이미 다 채워져 있으면 API 호출 안 함
-
-  const translations = await translateProductFields(data.name, data.description);
-  if (!translations) return data;
-
-  for (const l of langs) {
-    const t = translations[l];
-    if (!t) continue;
-    if (data.name && !data[`name_${l}`] && t.name) data[`name_${l}`] = t.name;
-    if (data.description && !data[`description_${l}`] && t.description) data[`description_${l}`] = t.description;
-  }
-  return data;
-}
-
 router.post('/products', adminMiddleware, async (req, res) => {
   try {
-    let data = await pickProductColumns(req.body);
-    data = await autoTranslateProduct(data);
+    const data = await pickProductColumns(req.body);
     const [{ id }] = await db('products').insert(data).returning('id');
     const product = await db('products').where('id', id).first();
     res.status(201).json(product);
@@ -198,8 +141,7 @@ router.post('/products', adminMiddleware, async (req, res) => {
 
 router.put('/products/:id', adminMiddleware, async (req, res) => {
   try {
-    let data = await pickProductColumns(req.body);
-    data = await autoTranslateProduct(data);
+    const data = await pickProductColumns(req.body);
     await db('products').where('id', req.params.id).update(data);
     const product = await db('products').where('id', req.params.id).first();
     if (!product) return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
