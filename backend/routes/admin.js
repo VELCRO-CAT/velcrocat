@@ -127,9 +127,62 @@ async function pickProductColumns(body) {
   return out;
 }
 
+// ─────────────────────────────────────────
+// 네이버 파파고(NCP) 자동 번역
+// 관리자가 한국어만 입력하면, 비워둔 영어/중국어/일본어 필드를 자동으로 채워준다.
+// (이미 값이 있으면 건드리지 않음 — 수동으로 고친 번역을 덮어쓰지 않기 위함)
+// ─────────────────────────────────────────
+const PAPAGO_CLIENT_ID = process.env.PAPAGO_CLIENT_ID || '';
+const PAPAGO_CLIENT_SECRET = process.env.PAPAGO_CLIENT_SECRET || '';
+const PAPAGO_TARGETS = { en: 'en', zh: 'zh-CN', ja: 'ja' };
+
+async function translateText(text, target) {
+  if (!text || !text.trim() || !PAPAGO_CLIENT_ID || !PAPAGO_CLIENT_SECRET) return '';
+  try {
+    const res = await fetch('https://papago.apigw.ntruss.com/nmt/v1/translation', {
+      method: 'POST',
+      headers: {
+        'X-NCP-APIGW-API-KEY-ID': PAPAGO_CLIENT_ID,
+        'X-NCP-APIGW-API-KEY': PAPAGO_CLIENT_SECRET,
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      },
+      body: new URLSearchParams({ source: 'ko', target, text })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      console.error('[Papago 번역 실패]', target, data);
+      return '';
+    }
+    return data?.message?.result?.translatedText || '';
+  } catch (e) {
+    console.error('[Papago 번역 오류]', target, e.message);
+    return '';
+  }
+}
+
+// name/description 중 비어있는 name_xx/description_xx만 골라 번역해서 채움
+async function autoTranslateProduct(data) {
+  if (!PAPAGO_CLIENT_ID || !PAPAGO_CLIENT_SECRET) return data; // 키 미설정 시 그냥 통과(한국어 폴백 유지)
+
+  const jobs = [];
+  for (const [suffix, target] of Object.entries(PAPAGO_TARGETS)) {
+    const nameKey = `name_${suffix}`;
+    const descKey = `description_${suffix}`;
+    if (data.name && !data[nameKey]) {
+      jobs.push(translateText(data.name, target).then(t => { if (t) data[nameKey] = t; }));
+    }
+    if (data.description && !data[descKey]) {
+      jobs.push(translateText(data.description, target).then(t => { if (t) data[descKey] = t; }));
+    }
+  }
+  if (jobs.length) await Promise.all(jobs);
+  return data;
+}
+
 router.post('/products', adminMiddleware, async (req, res) => {
   try {
-    const data = await pickProductColumns(req.body);
+    let data = await pickProductColumns(req.body);
+    data = await autoTranslateProduct(data);
     const [{ id }] = await db('products').insert(data).returning('id');
     const product = await db('products').where('id', id).first();
     res.status(201).json(product);
@@ -141,7 +194,8 @@ router.post('/products', adminMiddleware, async (req, res) => {
 
 router.put('/products/:id', adminMiddleware, async (req, res) => {
   try {
-    const data = await pickProductColumns(req.body);
+    let data = await pickProductColumns(req.body);
+    data = await autoTranslateProduct(data);
     await db('products').where('id', req.params.id).update(data);
     const product = await db('products').where('id', req.params.id).first();
     if (!product) return res.status(404).json({ error: '상품을 찾을 수 없습니다' });

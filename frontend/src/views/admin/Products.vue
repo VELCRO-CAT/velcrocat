@@ -105,7 +105,7 @@
           />
 
           <!-- 다국어 번역 (선택) -->
-          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">다국어 번역 (선택 — 비워두면 한국어로 표시)</p>
+          <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">다국어 번역 (비워두면 저장 시 자동 번역됩니다. 직접 입력하면 그 값을 우선 사용)</p>
           <v-btn-toggle v-model="langTab" mandatory density="compact" color="grey-darken-4" class="mb-3" variant="outlined">
             <v-btn value="en" size="small">EN</v-btn>
             <v-btn value="zh" size="small">中文</v-btn>
