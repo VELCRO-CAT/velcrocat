@@ -233,17 +233,17 @@ router.all('/approval', async (req, res) => {
 });
 
 // 3. 결제창 닫기/취소
-// MPC가 결제 미완료 상태에서 이 URL로 보내면(사용자가 결제창을 닫거나 취소) = 결제 시도가 없었던 것이므로
-// 방금 /ready에서 만든 pending 주문을 정리해 주문내역에 남지 않게 한다.
+// ⚠️ 2026-09-17 확인: MPC가 이 URL을 "사용자가 취소했다"는 의미로만 부르는 게 아니라,
+// 결제 성공 여부와 무관하게 팝업을 닫는 관례적인 단계로도 호출하는 것으로 보임
+// (approvalUrl 직후 곧바로 이어서 호출되는 사례 확인 — 이때 notify가 아직 도착 전이라
+// 주문이 여전히 'pending'인 상태였는데, 예전 코드가 이걸 '취소'로 오판해 결제 완료된
+// 주문을 삭제해버리는 사고가 있었음). 그래서 여기서는 절대 주문을 지우지 않고,
+// order-complete로 보내 실제 상태(notify 결과)를 폴링해서 확정하게 한다.
 router.all('/close', async (req, res) => {
-  try {
-    const q = { ...req.query, ...req.body };
-    const orderNo = q.merchantData || q.orderNo || '';
-    if (orderNo) {
-      await db('orders').where('order_no', orderNo).where('status', 'pending').del();
-    }
-  } catch (e) {
-    console.error('[MPC close 오류]', e);
+  const q = { ...req.query, ...req.body };
+  const orderNo = q.merchantData || q.orderNo || '';
+  if (orderNo) {
+    return res.send(closeAndRedirectHtml(`${SITE_URL}/order-complete?orderNo=${orderNo}`, '결제 확인 중...'));
   }
   res.send(closeAndRedirectHtml(`${SITE_URL}/checkout?error=cancelled`, '결제가 취소되었습니다'));
 });
