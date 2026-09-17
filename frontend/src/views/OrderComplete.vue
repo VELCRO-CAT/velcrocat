@@ -44,7 +44,7 @@
     </div>
 
     <!-- 결제 미완료 -->
-    <div v-else class="py-8">
+    <div v-else-if="phase === 'failed'" class="py-8">
       <v-icon size="72" color="grey-darken-1" class="mb-4">mdi-close-circle-outline</v-icon>
       <h1 class="text-h5 font-weight-bold mb-2">결제가 완료되지 않았습니다</h1>
       <p class="text-body-1 text-grey-darken-1 mb-8">
@@ -54,6 +54,21 @@
       <div class="d-flex flex-column flex-sm-row justify-center ga-3 mt-4">
         <v-btn color="#111" size="large" to="/checkout">다시 결제하기</v-btn>
         <v-btn variant="outlined" color="#111" size="large" to="/cart">장바구니로 이동</v-btn>
+      </div>
+    </div>
+
+    <!-- 확인 지연 (결제는 됐을 수 있으나 아직 확정 안 됨 — 절대 주문을 지우지 않는다) -->
+    <div v-else class="py-8">
+      <v-icon size="72" color="orange-darken-2" class="mb-4">mdi-clock-alert-outline</v-icon>
+      <h1 class="text-h5 font-weight-bold mb-2">결제 확인이 지연되고 있습니다</h1>
+      <p class="text-body-1 text-grey-darken-1 mb-8">
+        결제는 진행되었을 수 있으나 시스템에서 아직 확정되지 않았습니다.<br>
+        <strong>다시 결제하지 마시고</strong>, 잠시 후 마이페이지에서 확인해 주시거나<br>
+        고객센터로 주문번호({{ route.query.orderNo }})를 문의해 주세요.
+      </p>
+      <div class="d-flex flex-column flex-sm-row justify-center ga-3 mt-4">
+        <v-btn color="#111" size="large" to="/mypage">마이페이지 확인</v-btn>
+        <v-btn variant="outlined" color="#111" size="large" to="/contact">고객센터 문의</v-btn>
       </div>
     </div>
   </v-container>
@@ -68,7 +83,7 @@ import { useCartStore } from '../stores/cart';
 const route = useRoute();
 const cartStore = useCartStore();
 
-const phase = ref('checking'); // 'checking' | 'paid' | 'failed'
+const phase = ref('checking'); // 'checking' | 'paid' | 'failed' | 'delayed'
 const order = ref(null);
 
 let pollTimer = null;
@@ -98,7 +113,7 @@ async function checkStatus() {
     }
     // 아직 pending → 계속 확인
   } catch (e) {
-    // 404(not_found) 등 = 이미 정리된(결제 안 된) 주문
+    // 404(not_found) = 애초에 결제창을 열지 못해 주문이 생성/정리된 경우 등. 실제 결제 이후엔 거의 발생하지 않음.
     if (e.response?.status === 404) {
       phase.value = 'failed';
       return;
@@ -106,9 +121,10 @@ async function checkStatus() {
   }
 
   if (attempts >= MAX_ATTEMPTS) {
-    // 시간 안에 결제 확인이 안 됨 → 결제 시도가 없었던 것으로 보고 정리 (best-effort)
-    axios.post('/api/payment/mainpay/abandon', { orderNo }).catch(() => {});
-    phase.value = 'failed';
+    // ⚠️ 결제가 실제로는 완료됐는데 notify(웹훅)가 늦게 도착하는 경우가 있을 수 있으므로
+    // 여기서 절대로 주문을 삭제하지 않는다(예전엔 abandon 호출로 삭제했으나 실결제 주문을
+    // 지워버리는 사고가 발생해 제거함). pending 상태 그대로 두고 안내만 한다.
+    phase.value = 'delayed';
     return;
   }
 
