@@ -36,9 +36,11 @@ const currentLabel = computed(() => {
   return found ? found.label : 'Language';
 });
 
-// 언어별로 길이가 다른 전체 이름 대신 항상 2글자인 코드를 써서
+// 언어별로 길이가 다른 전체 이름 대신 짧은 코드를 써서
 // 언어 전환 시 버튼 너비가 바뀌어 옆 요소가 밀리는 것을 방지
-const shortLabel = computed(() => locale.value.toUpperCase());
+// 한국어만 'KOR'로 표기 (요청사항), 나머지 언어는 2글자 코드 그대로
+const SHORT_LABEL_OVERRIDES = { ko: 'KOR' };
+const shortLabel = computed(() => SHORT_LABEL_OVERRIDES[locale.value] || locale.value.toUpperCase());
 
 function updatePosition() {
   const btn = btnEl.value?.$el || btnEl.value;

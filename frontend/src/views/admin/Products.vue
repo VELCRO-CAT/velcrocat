@@ -336,7 +336,7 @@ function categoryLabel(slug) {
 }
 
 const defaultForm = () => ({
-  name: '', price: 0, stock: 0, category: 'tops', description: '', image: '', seller: '오사카마켓',
+  name: '', price: 0, stock: 0, category: 'tops', description: '', image: '', seller: '벨크로캣',
   name_en: '', description_en: '', name_zh: '', description_zh: '', name_ja: '', description_ja: ''
 });
 const form = ref(defaultForm());
