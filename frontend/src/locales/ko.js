@@ -16,7 +16,7 @@ export default {
   },
   nav: {
     home: '홈',
-    shop: '상품',
+    shop: '상품보기',
     category: '카테고리',
     contact: '문의',
     brand: 'BRAND',
