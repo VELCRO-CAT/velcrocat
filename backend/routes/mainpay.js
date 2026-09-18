@@ -345,6 +345,20 @@ router.post('/notify', async (req, res) => {
       pay_tran_date: p.tranDate || null
     });
 
+    // 재고 차감 (결제 확정 시점에만 — 위 idempotent 체크 덕분에 같은 주문은 한 번만 차감됨)
+    try {
+      const items = JSON.parse(order.items_json || '[]');
+      for (const item of items) {
+        const qty = Number(item.quantity) || 0;
+        if (!item.id || qty <= 0) continue;
+        await db('products')
+          .where('id', item.id)
+          .update({ stock: db.raw('GREATEST(stock - ?, 0)', [qty]) });
+      }
+    } catch (stockErr) {
+      console.error('[MPC notify] 재고 차감 실패', orderNo, stockErr.message);
+    }
+
     await db('notifications').insert({
       type: 'order',
       title: '새 주문이 접수되었습니다',
