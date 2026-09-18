@@ -4,7 +4,9 @@
   <v-main class="bg-grey-lighten-4 admin-page">
     <v-container class="admin-container" style="max-width:900px">
       <h1 class="page-title">회원 관리</h1>
-      <p class="page-sub mb-5">가입된 회원 목록 ({{ users.length }}명)</p>
+      <p class="page-sub mb-5">
+        가입된 회원 목록 ({{ users.length }}명)<span v-if="totalPages > 1"> · {{ currentPage }}/{{ totalPages }}페이지</span>
+      </p>
 
       <v-progress-circular v-if="loading" indeterminate color="grey-darken-3" class="d-block mx-auto my-12" />
 
@@ -14,7 +16,7 @@
       </div>
 
       <div v-else class="user-list">
-        <div v-for="user in users" :key="user.id" class="user-card">
+        <div v-for="user in pagedUsers" :key="user.id" class="user-card">
           <div class="user-avatar">
             <v-icon size="20" color="#999">mdi-account</v-icon>
           </div>
@@ -32,6 +34,19 @@
             @click="openMailDialog(user)"
           >메일 보내기</v-btn>
         </div>
+      </div>
+
+      <div v-if="totalPages > 1" class="pagination">
+        <button class="page-nav-btn" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">
+          <v-icon size="16">mdi-chevron-left</v-icon>
+        </button>
+        <template v-for="(p, i) in pageNumbers" :key="i">
+          <span v-if="p === '...'" class="page-ellipsis">…</span>
+          <button v-else class="page-num-btn" :class="{ active: p === currentPage }" @click="goToPage(p)">{{ p }}</button>
+        </template>
+        <button class="page-nav-btn" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">
+          <v-icon size="16">mdi-chevron-right</v-icon>
+        </button>
       </div>
     </v-container>
   </v-main>
@@ -135,12 +150,42 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import axios from 'axios';
 import AdminSidebar from '../../components/AdminSidebar.vue';
 
 const users = ref([]);
 const loading = ref(true);
+
+const PAGE_SIZE = 10;
+const currentPage = ref(1);
+const totalPages = computed(() => Math.max(1, Math.ceil(users.value.length / PAGE_SIZE)));
+const pagedUsers = computed(() => {
+  const start = (currentPage.value - 1) * PAGE_SIZE;
+  return users.value.slice(start, start + PAGE_SIZE);
+});
+const pageNumbers = computed(() => {
+  const total = totalPages.value;
+  const cur = currentPage.value;
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const keep = new Set([1, 2, total - 1, total, cur - 1, cur, cur + 1]);
+  const sorted = [...keep].filter(p => p >= 1 && p <= total).sort((a, b) => a - b);
+  const result = [];
+  let prev = 0;
+  for (const p of sorted) {
+    if (prev && p - prev > 1) result.push('...');
+    result.push(p);
+    prev = p;
+  }
+  return result;
+});
+watch(() => users.value.length, () => {
+  if (currentPage.value > totalPages.value) currentPage.value = totalPages.value;
+});
+function goToPage(p) {
+  if (p < 1 || p > totalPages.value) return;
+  currentPage.value = p;
+}
 
 onMounted(async () => {
   const res = await axios.get('/api/admin/users');
@@ -296,6 +341,36 @@ async function sendMail() {
   color: #aaa;
   flex-shrink: 0;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+}
+.page-nav-btn,
+.page-num-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.page-nav-btn:hover:not(:disabled),
+.page-num-btn:hover { border-color: #111; color: #111; }
+.page-nav-btn:disabled { opacity: 0.35; cursor: default; }
+.page-num-btn.active { background: #111; border-color: #111; color: #fff; }
+.page-ellipsis { color: #bbb; font-size: 12px; padding: 0 2px; }
 
 @media (max-width: 768px) {
   .admin-page { padding-top: 52px !important; }
