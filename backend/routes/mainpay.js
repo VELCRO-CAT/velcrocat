@@ -42,6 +42,19 @@ function generateOrderNo() {
   return `V${ts}${rnd}`;
 }
 
+// 브라우저 콜백(approval/close)에서 주문번호 추출.
+// MPC가 closeUrl에 우리가 붙여둔 merchantData 쿼리를 유지 안 하고
+// aid/result만 붙여서 부를 수도 있으므로, 그 경우 aid로 주문을 역조회한다.
+async function resolveOrderNo(q) {
+  const direct = q.merchantData || q.orderNo || '';
+  if (direct) return direct;
+  if (q.aid) {
+    const order = await db('orders').where('pay_aid', q.aid).first();
+    if (order) return order.order_no;
+  }
+  return '';
+}
+
 // 팝업 닫고 부모창 리다이렉트
 function closeAndRedirectHtml(redirectUrl, message = '결제 처리 중...') {
   return `<!DOCTYPE html>
@@ -129,6 +142,13 @@ router.post('/ready', authMiddleware, async (req, res) => {
     }
 
     const d = data.data || {};
+
+    // MPC의 closeUrl 리다이렉트는 aid/result만 붙여서 호출하므로(merchantData 유지 여부 불확실),
+    // aid로도 주문을 찾을 수 있도록 미리 저장해둔다.
+    if (d.aid) {
+      await db('orders').where('order_no', orderNo).update({ pay_aid: d.aid });
+    }
+
     res.json({
       success: true,
       orderNo,
@@ -194,7 +214,7 @@ router.post('/abandon', authMiddleware, async (req, res) => {
 router.all('/approval', async (req, res) => {
   try {
     const q = { ...req.query, ...req.body };
-    const orderNo = q.merchantData || q.orderNo || '';
+    const orderNo = await resolveOrderNo(q);
 
     if (!orderNo) {
       return res.send(closeAndRedirectHtml(`${SITE_URL}/checkout?error=invalid_request`, '잘못된 요청입니다'));
@@ -241,7 +261,7 @@ router.all('/approval', async (req, res) => {
 // order-complete로 보내 실제 상태(notify 결과)를 폴링해서 확정하게 한다.
 router.all('/close', async (req, res) => {
   const q = { ...req.query, ...req.body };
-  const orderNo = q.merchantData || q.orderNo || '';
+  const orderNo = await resolveOrderNo(q);
   if (orderNo) {
     return res.send(closeAndRedirectHtml(`${SITE_URL}/order-complete?orderNo=${orderNo}`, '결제 확인 중...'));
   }
@@ -253,43 +273,70 @@ router.all('/close', async (req, res) => {
 router.post('/notify', async (req, res) => {
   try {
     const p = { ...req.body, ...req.query };
-    const orderNo = p.merchantData || p.orderNo;
+
+    // ⚠️ 2026-09-18 확인: 실서비스 notify 페이로드에는 orderNo/merchantData 필드가 없고,
+    // MPC가 부여한 mbrRefNo(형식: "{issued_tid}_{orderNo}")에 주문번호가 들어있다.
+    // (예: mbrRefNo="MPA2605290001_VMU5ZIC3VGAQJ" → orderNo="VMU5ZIC3VGAQJ")
+    // 예전 코드는 orderNo/merchantData만 찾아서 매번 "orderNo 누락"으로 실패,
+    // 실제 승인된 결제가 계속 pending에 머물러 있던 원인이었다.
+    let orderNo = p.merchantData || p.orderNo;
+    if (!orderNo && p.mbrRefNo) {
+      const idx = String(p.mbrRefNo).indexOf('_');
+      orderNo = idx !== -1 ? p.mbrRefNo.slice(idx + 1) : p.mbrRefNo;
+    }
+
+    const ackJson = (resultCode, message) => ({
+      resultCode,
+      message,
+      mbrNo: p.mbrNo,
+      mbrRefNo: p.mbrRefNo,
+      refNo: p.refNo
+    });
+
+    if (!orderNo) {
+      console.warn('[MPC notify] orderNo 누락', p);
+      return res.status(400).json(ackJson('9999', 'orderNo 누락'));
+    }
+
     const amount = p.amount;
     const timestamp = p.timestamp;
     const sig = p.signature;
 
-    if (!orderNo) {
-      console.warn('[MPC notify] orderNo 누락', p);
-      return res.status(400).send('FAIL');
-    }
-
-    // 시그니처 검증 (전달된 경우만)
+    // 시그니처 검증 (전달된 경우만 — 실서비스 notify는 signature를 안 보내는 것으로 확인됨)
     if (sig && timestamp && amount) {
       const expected = sign(orderNo, amount, timestamp);
       if (expected !== sig) {
         console.warn('[MPC notify] 서명 불일치', { orderNo, expected, sig });
-        return res.status(400).send('SIGN_FAIL');
+        return res.status(400).json(ackJson('9998', '서명 불일치'));
       }
     }
 
     const order = await db('orders').where('order_no', orderNo).first();
     if (!order) {
       console.warn('[MPC notify] 주문 없음', orderNo);
-      return res.status(404).send('NOT_FOUND');
+      return res.status(404).json(ackJson('9997', '주문 없음'));
     }
 
     if (order.status === 'paid') {
-      return res.send('OK'); // idempotent
+      return res.json(ackJson('0000', '정상')); // idempotent
     }
 
-    const result = p.result;
-    const success = result === true || result === 'true' || result === 'OK' || p.resultCode === '200' || p.status === 'paid';
+    // cmd: 0=승인, 1=취소, 2=부분취소 (문서 기준). 레거시 필드도 함께 확인.
+    const cmd = String(p.cmd ?? '');
+    const isApproval = cmd === '0' || p.result === true || p.result === 'true' || p.result === 'OK' || p.resultCode === '200' || p.status === 'paid';
+    const isCancel = cmd === '1' || cmd === '2';
 
-    if (!success) {
-      // 실제 결제가 이루어지지 않았으므로 pending 주문을 남기지 않고 제거한다
-      await db('orders').where('order_no', orderNo).where('status', 'pending').del();
-      console.log('[MPC notify] 결제 실패/취소', orderNo, p.message);
-      return res.send('OK');
+    if (isCancel) {
+      await db('orders').where('order_no', orderNo).update({ status: 'cancelled' });
+      console.log('[MPC notify] 취소 통지 처리', orderNo);
+      return res.json(ackJson('0000', '정상'));
+    }
+
+    if (!isApproval) {
+      // 인식 못한 상태값 — 과거에 이 분기에서 결제 완료 주문을 잘못 삭제한 사고가 있었으므로
+      // 여기서는 주문을 건드리지 않고 로그만 남긴다 (관리자가 수동 확인).
+      console.warn('[MPC notify] 인식 불가 상태 — 주문 변경 없이 무시', orderNo, p);
+      return res.json(ackJson('0000', '정상'));
     }
 
     await db('orders').where('order_no', orderNo).update({
@@ -307,10 +354,10 @@ router.post('/notify', async (req, res) => {
     });
 
     console.log(`[MPC notify] 결제 완료 ${orderNo} / ${order.total}원`);
-    res.send('OK');
+    res.json(ackJson('0000', '정상'));
   } catch (e) {
     console.error('[MPC notify 오류]', e);
-    res.status(500).send('ERROR');
+    res.status(500).json({ resultCode: '9990', message: 'ERROR' });
   }
 });
 
