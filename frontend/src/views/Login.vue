@@ -86,7 +86,7 @@ async function handleLogin() {
   loading.value = true;
   try {
     await authStore.login(email.value, password.value);
-    router.push(route.query.redirect || '/');
+    router.push(route.query.redirect || '/products');
   } catch (e) {
     error.value = e.response?.data?.error || t('auth.loginFailed');
   } finally {

@@ -231,7 +231,7 @@ async function handleSubmit() {
     localStorage.setItem('token', res.data.token);
     localStorage.setItem('user', JSON.stringify(res.data.user));
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-    router.push('/');
+    router.push('/products');
   } catch (e) {
     error.value = e.response?.data?.error || t('auth.registerFailed');
   } finally {
