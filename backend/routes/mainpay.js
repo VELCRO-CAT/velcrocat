@@ -20,15 +20,28 @@ const transporter = nodemailer.createTransport({
   tls: { rejectUnauthorized: false }
 });
 
-// 주문 확인 메일 본문 (상품/사이즈/색상/수량/배송지)
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// 주문 확인 메일 본문 (상품 이미지/이름/사이즈/색상/수량/배송지)
 function buildOrderEmailHtml(order, items, shippingAddress) {
   const rows = items.map(item => {
     const opts = [item.color, item.size].filter(Boolean).join(' · ');
+    const rawImg = item.image || '';
+    const imgSrc = rawImg ? (rawImg.startsWith('http') ? rawImg : `${SITE_URL}${rawImg}`) : '';
+    const thumb = imgSrc
+      ? `<img src="${imgSrc}" width="56" height="56" alt="" style="width:56px;height:56px;object-fit:cover;border:1px solid #eee;border-radius:4px;display:block" />`
+      : `<div style="width:56px;height:56px;background:#f5f5f5;border:1px solid #eee;border-radius:4px"></div>`;
     return `
       <tr>
+        <td style="padding:12px 8px 12px 0;border-bottom:1px solid #eee;width:56px">${thumb}</td>
         <td style="padding:12px 0;border-bottom:1px solid #eee;font-size:13px;color:#111">
-          ${item.name}
-          <div style="font-size:12px;color:#999;margin-top:3px">${opts ? opts + ' · ' : ''}수량 ${item.quantity || 1}개</div>
+          ${escapeHtml(item.name)}
+          <div style="font-size:12px;color:#999;margin-top:3px">${opts ? escapeHtml(opts) + ' · ' : ''}수량 ${item.quantity || 1}개</div>
         </td>
         <td style="padding:12px 0;border-bottom:1px solid #eee;font-size:13px;color:#111;text-align:right;white-space:nowrap">
           ₩${Number(item.price || 0).toLocaleString()}
