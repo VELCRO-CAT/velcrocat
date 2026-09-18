@@ -74,7 +74,10 @@ function buildOrderEmailHtml(order, items, shippingAddress) {
       </tr>
     </table>
     ${addressBlock}
-    <p style="margin-top:32px;font-size:12px;color:#999;line-height:1.6">
+    <div style="text-align:center;margin-top:28px">
+      <a href="${SITE_URL}/admin/orders" style="display:inline-block;background:#111;color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:0.3px;padding:12px 28px;border-radius:4px">주문 내역 보기</a>
+    </div>
+    <p style="margin-top:20px;font-size:12px;color:#999;line-height:1.6;text-align:center">
       주문 내역은 마이페이지에서도 확인하실 수 있습니다.<br>
       문의사항은 고객센터로 연락해주세요.
     </p>
