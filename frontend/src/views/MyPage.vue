@@ -5,6 +5,31 @@
       <p class="text-caption text-grey mt-1" style="letter-spacing:4px">MY PAGE</p>
     </div>
 
+    <!-- 프로필 요약 -->
+    <div v-if="profile.name" class="mypage-hero reveal">
+      <div class="mypage-hero-id">
+        <div class="mypage-avatar">{{ avatarInitial }}</div>
+        <div>
+          <p class="mypage-hero-name">{{ profile.name }}</p>
+          <p class="mypage-hero-sub">{{ profile.email }}<span v-if="joinedLabel"> · {{ joinedLabel }}</span></p>
+        </div>
+      </div>
+      <div class="mypage-hero-stats">
+        <div class="mypage-hero-stat">
+          <span class="n">{{ orderStats.total }}</span>
+          <span class="l">{{ t('mypage.statTotalOrders') }}</span>
+        </div>
+        <div class="mypage-hero-stat">
+          <span class="n">{{ orderStats.inProgress }}</span>
+          <span class="l">{{ t('mypage.statInProgress') }}</span>
+        </div>
+        <div class="mypage-hero-stat">
+          <span class="n">₩{{ orderStats.spent.toLocaleString() }}</span>
+          <span class="l">{{ t('mypage.statSpent') }}</span>
+        </div>
+      </div>
+    </div>
+
     <!-- 탭 -->
     <div class="mypage-tabs reveal">
       <button
@@ -26,42 +51,73 @@
         {{ t('mypage.noOrders') }}
       </div>
       <div v-else class="orders-list">
-        <div v-for="order in orders" :key="order.order_no" class="order-card">
-          <div class="order-header">
-            <div>
-              <span class="order-no">{{ order.order_no }}</span>
-              <span class="order-date">{{ formatDate(order.created_at) }}</span>
+        <template v-for="group in groupedOrders" :key="group.key">
+          <p class="order-month-head">{{ group.label }}</p>
+          <div
+            v-for="order in group.orders"
+            :key="order.order_no"
+            class="order-card"
+            :class="{ 'is-cancelled': order.status === 'cancelled' }"
+          >
+            <div class="order-header">
+              <div>
+                <span class="order-no">{{ order.order_no }}</span>
+                <span class="order-date">{{ formatDate(order.created_at) }}</span>
+              </div>
+              <span v-if="order.status === 'cancelled'" class="order-cancel-flag">{{ statusLabel('cancelled') }}</span>
             </div>
-            <span class="order-status" :class="'status-' + order.status">{{ statusLabel(order.status) }}</span>
-          </div>
-          <div class="order-items">
-            <div v-for="(item, i) in order.items" :key="i" class="order-item">
-              <img :src="item.image" :alt="item.name" class="order-item-img" />
-              <div class="order-item-info">
-                <p class="order-item-name">{{ item.name }}</p>
-                <p class="order-item-detail">
-                  {{ item.size ? `${t('detail.sizeLabel')}: ${item.size}` : '' }}
-                  {{ item.quantity ? `/ ${t('mypage.quantityLabel')}: ${item.quantity}` : '' }}
-                </p>
-                <p class="order-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+
+            <div v-if="order.status !== 'cancelled'" class="order-stepper">
+              <div class="order-stepper-track">
+                <template v-for="(s, idx) in STEP_ORDER" :key="s">
+                  <span class="order-stepper-node" :class="{ done: idx <= stepIndex(order.status) }"></span>
+                  <span v-if="idx < STEP_ORDER.length - 1" class="order-stepper-bar" :class="{ done: idx < stepIndex(order.status) }"></span>
+                </template>
+              </div>
+              <div class="order-stepper-labels">
+                <span v-for="s in STEP_ORDER" :key="s" :class="{ on: s === order.status }">{{ statusLabel(s) }}</span>
+              </div>
+            </div>
+
+            <div class="order-items">
+              <div v-for="(item, i) in order.items" :key="i" class="order-item">
+                <img :src="item.image" :alt="item.name" class="order-item-img" />
+                <div class="order-item-info">
+                  <p class="order-item-name">{{ item.name }}</p>
+                  <p class="order-item-detail">
+                    {{ item.size ? `${t('detail.sizeLabel')}: ${item.size}` : '' }}
+                    {{ item.quantity ? `/ ${t('mypage.quantityLabel')}: ${item.quantity}` : '' }}
+                  </p>
+                  <p class="order-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 주문한 배송지 -->
+            <div v-if="order.shippingAddress?.address" class="order-shipping">
+              <v-icon size="14" color="#999" class="mr-1">mdi-map-marker-outline</v-icon>
+              <span class="order-shipping-text">
+                {{ order.shippingAddress.name }}
+                <span v-if="order.shippingAddress.phone">· {{ order.shippingAddress.phone }}</span>
+                · {{ order.shippingAddress.address }} {{ order.shippingAddress.addressDetail }}
+              </span>
+            </div>
+
+            <div class="order-footer">
+              <div class="order-total">
+                {{ t('mypage.orderTotalLabel') }}: <strong>₩{{ Number(order.total).toLocaleString() }}</strong>
+              </div>
+              <div class="order-actions">
+                <router-link
+                  v-if="order.status === 'delivered' && order.items.length === 1"
+                  :to="`/products/${order.items[0].id}`"
+                  class="order-action-btn"
+                >{{ t('mypage.rebuyBtn') }}</router-link>
+                <router-link to="/contact" class="order-action-btn">{{ t('mypage.contactBtn') }}</router-link>
               </div>
             </div>
           </div>
-
-          <!-- 주문한 배송지 -->
-          <div v-if="order.shippingAddress?.address" class="order-shipping">
-            <v-icon size="14" color="#999" class="mr-1">mdi-map-marker-outline</v-icon>
-            <span class="order-shipping-text">
-              {{ order.shippingAddress.name }}
-              <span v-if="order.shippingAddress.phone">· {{ order.shippingAddress.phone }}</span>
-              · {{ order.shippingAddress.address }} {{ order.shippingAddress.addressDetail }}
-            </span>
-          </div>
-
-          <div class="order-total">
-            {{ t('mypage.orderTotalLabel') }}: <strong>₩{{ Number(order.total).toLocaleString() }}</strong>
-          </div>
-        </div>
+        </template>
       </div>
     </v-card>
 
@@ -227,9 +283,16 @@ import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const authStore = useAuthStore();
 const router = useRouter();
+
+const LOCALE_TAGS = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' };
+const STEP_ORDER = ['paid', 'confirmed', 'processing', 'shipped', 'delivered'];
+function stepIndex(status) {
+  const i = STEP_ORDER.indexOf(status);
+  return i === -1 ? 0 : i;
+}
 
 // 주문내역을 기본 탭으로 노출 (배송지 관리는 아직 번역 키가 없어 한국어 고정)
 const tabs = computed(() => [
@@ -242,7 +305,7 @@ const tabs = computed(() => [
 const activeTab = ref('orders');
 
 // 내 정보
-const profile = reactive({ name: '', email: '' });
+const profile = reactive({ name: '', email: '', createdAt: '' });
 const profileMsg = ref('');
 const profileMsgType = ref('success');
 const profileLoading = ref(false);
@@ -272,6 +335,43 @@ const showPw = ref(false);
 const orders = ref([]);
 const ordersLoading = ref(false);
 
+const avatarInitial = computed(() => (profile.name || '').trim().charAt(0).toUpperCase() || '?');
+
+const joinedLabel = computed(() => {
+  if (!profile.createdAt) return '';
+  const tag = LOCALE_TAGS[locale.value] || 'ko-KR';
+  const formatted = new Intl.DateTimeFormat(tag, { year: 'numeric', month: 'short' }).format(new Date(profile.createdAt));
+  return t('mypage.joinedSince', { date: formatted });
+});
+
+const IN_PROGRESS_STATUSES = ['paid', 'confirmed', 'processing', 'shipped'];
+const orderStats = computed(() => {
+  const list = orders.value;
+  return {
+    total: list.length,
+    inProgress: list.filter(o => IN_PROGRESS_STATUSES.includes(o.status)).length,
+    spent: list.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + Number(o.total || 0), 0)
+  };
+});
+
+const groupedOrders = computed(() => {
+  const tag = LOCALE_TAGS[locale.value] || 'ko-KR';
+  const formatter = new Intl.DateTimeFormat(tag, { year: 'numeric', month: 'long' });
+  const groups = [];
+  const byKey = new Map();
+  for (const order of orders.value) {
+    const d = new Date(order.created_at);
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    if (!byKey.has(key)) {
+      const group = { key, label: formatter.format(d), orders: [] };
+      byKey.set(key, group);
+      groups.push(group);
+    }
+    byKey.get(key).orders.push(order);
+  }
+  return groups;
+});
+
 // 탈퇴
 const withdrawPw = ref('');
 const withdrawMsg = ref('');
@@ -295,6 +395,7 @@ onMounted(async () => {
     const res = await axios.get('/api/users/me');
     profile.name = res.data.name;
     profile.email = res.data.email;
+    profile.createdAt = res.data.created_at || '';
 
     addr.recipient = res.data.default_recipient || res.data.name || '';
     addr.phone = res.data.default_phone || '';
@@ -415,6 +516,8 @@ function formatDate(d) {
 function statusLabel(s) {
   const map = {
     paid: t('mypage.statusPaid'),
+    confirmed: t('mypage.statusConfirmed'),
+    processing: t('mypage.statusProcessing'),
     preparing: t('mypage.statusPreparing'),
     shipped: t('mypage.statusShipped'),
     delivered: t('mypage.statusDelivered'),
@@ -429,6 +532,38 @@ function statusLabel(s) {
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 .mypage-wrap { max-width: 640px; margin: 0 auto; }
+
+/* 프로필 요약 */
+.mypage-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid #eee;
+}
+.mypage-hero-id { display: flex; align-items: center; gap: 14px; }
+.mypage-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.mypage-hero-name { font-size: 15px; font-weight: 700; margin: 0; }
+.mypage-hero-sub { font-size: 12px; color: #999; margin: 3px 0 0; }
+.mypage-hero-stats { display: flex; gap: 22px; }
+.mypage-hero-stat { text-align: right; }
+.mypage-hero-stat .n { display: block; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+.mypage-hero-stat .l { display: block; font-size: 10px; color: #999; letter-spacing: 0.04em; margin-top: 2px; }
 
 .mypage-tabs {
   display: flex;
@@ -460,17 +595,33 @@ function statusLabel(s) {
 .mypage-card { border-radius: 0 !important; }
 
 /* 주문 내역 */
-.orders-list { display: flex; flex-direction: column; gap: 20px; }
+.order-month-head {
+  font-size: 12px;
+  font-weight: 700;
+  color: #999;
+  letter-spacing: 0.04em;
+  margin: 28px 0 12px;
+}
+.order-month-head:first-child { margin-top: 0; }
+
+.orders-list { display: flex; flex-direction: column; gap: 16px; }
 .order-card { border: 1px solid #eee; padding: 20px; }
-.order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.order-card.is-cancelled { opacity: 0.6; }
+.order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
 .order-no { font-weight: 600; font-size: 14px; letter-spacing: 0.5px; }
 .order-date { color: #999; font-size: 13px; margin-left: 12px; }
-.order-status { font-size: 12px; padding: 4px 10px; border-radius: 2px; font-weight: 600; }
-.status-paid { background: #e3f2fd; color: #1565c0; }
-.status-preparing { background: #fff3e0; color: #e65100; }
-.status-shipped { background: #e8f5e9; color: #2e7d32; }
-.status-delivered { background: #f5f5f5; color: #333; }
-.status-cancelled { background: #fce4ec; color: #c62828; }
+.order-cancel-flag { font-size: 11px; font-weight: 700; color: #c62828; background: #fce4ec; padding: 4px 9px; border-radius: 2px; }
+
+/* 주문 상태 스텝 */
+.order-stepper { margin-bottom: 18px; }
+.order-stepper-track { display: flex; align-items: center; }
+.order-stepper-node { width: 7px; height: 7px; border-radius: 50%; background: #e0e0e0; flex-shrink: 0; }
+.order-stepper-node.done { background: #111; }
+.order-stepper-bar { flex: 1; height: 1px; background: #e0e0e0; margin: 0 4px; min-width: 8px; }
+.order-stepper-bar.done { background: #111; }
+.order-stepper-labels { display: flex; justify-content: space-between; margin-top: 6px; }
+.order-stepper-labels span { font-size: 10px; color: #bbb; }
+.order-stepper-labels span.on { color: #111; font-weight: 700; }
 
 .order-items { display: flex; flex-direction: column; gap: 12px; }
 .order-item { display: flex; gap: 12px; align-items: center; }
@@ -490,14 +641,29 @@ function statusLabel(s) {
 }
 .order-shipping-text { font-size: 12px; color: #888; line-height: 1.5; }
 
-.order-total {
-  text-align: right;
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-top: 16px;
   padding-top: 12px;
   border-top: 1px solid #eee;
-  font-size: 14px;
-  color: #333;
 }
+.order-total { font-size: 14px; color: #333; }
+.order-actions { display: flex; gap: 8px; }
+.order-action-btn {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 7px 12px;
+  border: 1px solid #111;
+  color: #111;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.order-action-btn:hover { background: #111; color: #fff; }
 
 /* 주소 검색 팝업 (체크아웃과 동일한 스타일) */
 .postcode-overlay {
