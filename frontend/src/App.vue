@@ -308,7 +308,8 @@ function ensureAdminFlag() {
 function logout() {
   authStore.logout();
   menuOpen.value = false;
-  router.push('/');
+  // 로그아웃 후 회사소개(홈)로 안 가고 상품 목록에 머무르게
+  router.push('/products');
 }
 </script>
 

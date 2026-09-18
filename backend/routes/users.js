@@ -47,12 +47,12 @@ router.post('/register/send-code', async (req, res) => {
   if (process.env.MAIL_USER && process.env.MAIL_PASS) {
     try {
       await transporter.sendMail({
-        from: `"오사카마켓" <${process.env.MAIL_USER}>`,
+        from: `"벨크로캣" <${process.env.MAIL_USER}>`,
         to: email,
-        subject: '[오사카마켓] 회원가입 이메일 인증코드',
+        subject: '[벨크로캣] 회원가입 이메일 인증코드',
         html: `
           <div style="max-width:480px;margin:0 auto;font-family:'Apple SD Gothic Neo',sans-serif;padding:40px 20px">
-            <h2 style="text-align:center;letter-spacing:2px;margin-bottom:30px">OSAKA MARKET</h2>
+            <h2 style="text-align:center;letter-spacing:2px;margin-bottom:30px">VELCROCAT</h2>
             <p style="color:#333">회원가입을 위한 이메일 인증코드입니다.</p>
             <div style="text-align:center;margin:30px 0;padding:20px;background:#f5f5f5;border-radius:8px">
               <span style="font-size:32px;letter-spacing:8px;font-weight:bold">${code}</span>
@@ -240,12 +240,12 @@ router.post('/forgot-password', async (req, res) => {
   if (process.env.MAIL_USER && process.env.MAIL_PASS) {
     try {
       await transporter.sendMail({
-        from: `"오사카마켓" <${process.env.MAIL_USER}>`,
+        from: `"벨크로캣" <${process.env.MAIL_USER}>`,
         to: email,
-        subject: '[오사카마켓] 비밀번호 재설정 인증코드',
+        subject: '[벨크로캣] 비밀번호 재설정 인증코드',
         html: `
           <div style="max-width:480px;margin:0 auto;font-family:'Apple SD Gothic Neo',sans-serif;padding:40px 20px">
-            <h2 style="text-align:center;letter-spacing:2px;margin-bottom:30px">OSAKA MARKET</h2>
+            <h2 style="text-align:center;letter-spacing:2px;margin-bottom:30px">VELCROCAT</h2>
             <p style="color:#333">비밀번호 재설정을 위한 인증코드입니다.</p>
             <div style="text-align:center;margin:30px 0;padding:20px;background:#f5f5f5;border-radius:8px">
               <span style="font-size:32px;letter-spacing:8px;font-weight:bold">${code}</span>
