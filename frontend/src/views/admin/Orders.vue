@@ -37,6 +37,41 @@
               <span class="order-label">결제수단</span>
               <span class="order-value">{{ methodLabel(order.payment_method) }}</span>
             </div>
+
+            <button class="order-detail-toggle" @click="toggleExpand(order.id)">
+              <span>주문 상품 {{ order.items?.length || 0 }}건 {{ isExpanded(order.id) ? '접기' : '상세보기' }}</span>
+              <v-icon size="16">{{ isExpanded(order.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+            </button>
+
+            <div v-if="isExpanded(order.id)" class="order-detail">
+              <div v-for="(item, i) in order.items" :key="i" class="order-item-row">
+                <img v-if="item.image" :src="item.image" :alt="item.name" class="order-item-thumb" />
+                <div v-else class="order-item-thumb order-item-thumb-empty">
+                  <v-icon size="18" color="#ccc">mdi-image-off-outline</v-icon>
+                </div>
+                <div class="order-item-meta">
+                  <p class="order-item-name">{{ item.name }}</p>
+                  <p class="order-item-opts">
+                    <span v-if="item.color">색상: {{ item.color }}</span>
+                    <span v-if="item.color && item.size"> · </span>
+                    <span v-if="item.size">사이즈: {{ item.size }}</span>
+                    <span v-if="item.quantity"> · 수량: {{ item.quantity }}</span>
+                  </p>
+                </div>
+                <div class="order-item-price">₩{{ Number(item.price).toLocaleString() }}</div>
+              </div>
+
+              <div v-if="order.shippingAddress?.address" class="order-shipping-detail">
+                <v-icon size="14" color="#999" class="mr-1">mdi-map-marker-outline</v-icon>
+                <span>
+                  {{ order.shippingAddress.name }}
+                  <span v-if="order.shippingAddress.phone">· {{ order.shippingAddress.phone }}</span>
+                  <br>
+                  ({{ order.shippingAddress.zip }}) {{ order.shippingAddress.address }} {{ order.shippingAddress.addressDetail }}
+                  <span v-if="order.shippingAddress.memo"> — {{ order.shippingAddress.memo }}</span>
+                </span>
+              </div>
+            </div>
           </div>
           <div class="order-bottom">
             <div class="order-bottom-left">
@@ -62,6 +97,17 @@ import AdminSidebar from '../../components/AdminSidebar.vue';
 
 const orders = ref([]);
 const loading = ref(true);
+const expandedIds = ref(new Set());
+
+function toggleExpand(id) {
+  const next = new Set(expandedIds.value);
+  if (next.has(id)) next.delete(id);
+  else next.add(id);
+  expandedIds.value = next;
+}
+function isExpanded(id) {
+  return expandedIds.value.has(id);
+}
 const statusItems = [
   { title: '대기중', value: 'pending' },
   { title: '결제완료', value: 'paid' },
@@ -155,6 +201,85 @@ function formatDate(dt) {
 .order-price {
   font-weight: 800;
   color: #111;
+}
+
+.order-detail-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 0 0;
+  border-top: 1px dashed #eee;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+}
+.order-detail-toggle:hover { color: #111; }
+
+.order-detail {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.order-item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.order-item-thumb {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.order-item-thumb-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+.order-item-meta { flex: 1; min-width: 0; }
+.order-item-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #222;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.order-item-opts {
+  font-size: 11px;
+  color: #999;
+  margin: 2px 0 0;
+}
+.order-item-price {
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  white-space: nowrap;
+}
+.order-shipping-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  margin-top: 2px;
+  padding-top: 10px;
+  border-top: 1px dashed #eee;
+  font-size: 11.5px;
+  color: #777;
+  line-height: 1.6;
 }
 .order-bottom {
   display: flex;
