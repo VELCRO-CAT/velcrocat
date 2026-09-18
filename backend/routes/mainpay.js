@@ -59,6 +59,7 @@ function buildOrderEmailHtml(order, items, shippingAddress) {
 
   return `
   <div style="max-width:480px;margin:0 auto;font-family:'Apple SD Gothic Neo',sans-serif;padding:40px 20px">
+    <img src="${SITE_URL}/uploads/email-logo.png" alt="VELCROCAT" width="56" height="56" style="display:block;width:56px;height:56px;margin:0 auto 14px" />
     <h2 style="text-align:center;letter-spacing:2px;margin-bottom:6px">VELCROCAT</h2>
     <p style="text-align:center;font-size:11px;letter-spacing:4px;color:#999;margin:0 0 30px">SEOUL</p>
     <p style="color:#333;font-size:14px">${order.user_name}님, 주문이 정상적으로 완료되었습니다.</p>

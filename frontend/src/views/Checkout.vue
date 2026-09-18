@@ -33,6 +33,34 @@
               <h2 class="section-heading">{{ t('checkout.shippingTitle') }}</h2>
             </div>
 
+            <!-- 저장된 배송지 선택 -->
+            <div v-if="addresses.length > 0" class="saved-addr-picker">
+              <p class="field-label mb-2">{{ t('checkout.savedAddressLabel') }}</p>
+              <div class="saved-addr-list">
+                <button
+                  v-for="a in addresses"
+                  :key="a.id"
+                  type="button"
+                  class="saved-addr-card"
+                  :class="{ active: selectedAddressId === a.id }"
+                  @click="selectSavedAddress(a.id)"
+                >
+                  <span v-if="a.is_default" class="saved-addr-badge">{{ t('checkout.savedAddressDefaultBadge') }}</span>
+                  <span class="saved-addr-recipient">{{ a.recipient }}</span>
+                  <span class="saved-addr-line">{{ a.address }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="saved-addr-card saved-addr-card-new"
+                  :class="{ active: selectedAddressId === 'new' }"
+                  @click="selectSavedAddress('new')"
+                >
+                  <v-icon size="16">mdi-plus</v-icon>
+                  {{ t('checkout.savedAddressNewBtn') }}
+                </button>
+              </div>
+            </div>
+
             <v-row dense>
               <v-col cols="12" sm="6">
                 <label class="field-label">{{ t('checkout.nameLabel') }} <span class="required">*</span></label>
@@ -125,7 +153,7 @@
                 />
               </v-col>
 
-              <v-col v-if="!hasDefaultAddress" cols="12" class="mt-3">
+              <v-col v-if="selectedAddressId === 'new'" cols="12" class="mt-3">
                 <v-checkbox
                   v-model="saveAsDefaultAddress"
                   :label="t('checkout.saveAsDefaultLabel')"
@@ -277,29 +305,47 @@ const form = ref({
 });
 const showPostcode = ref(false);
 const selectedMethod = ref('card');
-const hasDefaultAddress = ref(true); // 로드되기 전까지는 저장 체크박스를 깜빡이지 않도록 true로 시작
+const addresses = ref([]);
+const selectedAddressId = ref('new');
 const saveAsDefaultAddress = ref(true);
 
-// 마이페이지에 저장해 둔 기본 배송지가 있으면 불러와 미리 채워준다 (직접 수정 가능)
-// 저장된 배송지가 하나도 없으면(첫 구매 등) 이번 주소를 기본 배송지로 저장할 수 있는 체크박스를 보여준다
+// 마이페이지에 저장해 둔 배송지 목록을 불러와 선택할 수 있게 하고, 기본 배송지는 자동으로 채워준다
 onMounted(async () => {
   try {
     const { data } = await axios.get('/api/addresses');
     const list = Array.isArray(data) ? data : [];
-    hasDefaultAddress.value = list.length > 0;
+    addresses.value = list;
     const def = list.find(a => a.is_default) || list[0];
     if (def) {
-      form.value.name = def.recipient || form.value.name;
-      form.value.phone = def.phone || form.value.phone;
-      form.value.zip = def.zip || '';
-      form.value.address = def.address || '';
-      form.value.addressDetail = def.address_detail || '';
-      form.value.memo = def.memo || form.value.memo;
+      selectedAddressId.value = def.id;
+      fillFormFromAddress(def);
     }
-  } catch {
-    hasDefaultAddress.value = false;
-  }
+  } catch {}
 });
+
+function fillFormFromAddress(a) {
+  form.value.name = a.recipient || form.value.name;
+  form.value.phone = a.phone || form.value.phone;
+  form.value.zip = a.zip || '';
+  form.value.address = a.address || '';
+  form.value.addressDetail = a.address_detail || '';
+  form.value.memo = a.memo || form.value.memo;
+}
+
+// 저장된 배송지 카드를 고르면 그 주소로 채우고, "새 배송지 입력"을 고르면 직접 입력할 수 있게 비운다
+function selectSavedAddress(id) {
+  selectedAddressId.value = id;
+  if (id === 'new') {
+    form.value.phone = '';
+    form.value.zip = '';
+    form.value.address = '';
+    form.value.addressDetail = '';
+    form.value.memo = '문 앞에 놓아주세요';
+    return;
+  }
+  const a = addresses.value.find(x => x.id === id);
+  if (a) fillFormFromAddress(a);
+}
 
 // 전화번호 자동 포맷팅
 function formatPhone(raw) {
@@ -353,8 +399,8 @@ async function processPayment() {
   if (!form.value.addressDetail?.trim()) { error.value = t('checkout.errorAddressDetail'); return; }
   if (cartStore.items.length === 0) { error.value = t('checkout.errorEmptyCart'); return; }
 
-  // 저장된 배송지가 없는 회원이 체크했다면, 결제 진행과 별개로 이 주소를 기본 배송지로 저장
-  if (!hasDefaultAddress.value && saveAsDefaultAddress.value) {
+  // 새 배송지를 직접 입력했고 저장하기로 체크했다면, 결제 진행과 별개로 기본 배송지로 저장
+  if (selectedAddressId.value === 'new' && saveAsDefaultAddress.value) {
     try {
       await axios.post('/api/addresses', {
         recipient: form.value.name,
@@ -365,7 +411,6 @@ async function processPayment() {
         memo: form.value.memo,
         isDefault: true
       });
-      hasDefaultAddress.value = true;
     } catch {
       // 주소 저장에 실패해도 결제 진행은 막지 않는다
     }
@@ -533,6 +578,57 @@ function abandonOrder(orderNo) {
 }
 .required { color: #e53e3e; margin-left: 2px; }
 .optional { color: #999; font-weight: 400; font-size: 11px; margin-left: 2px; }
+
+/* 저장된 배송지 선택 */
+.saved-addr-picker { margin-bottom: 20px; }
+.saved-addr-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+.saved-addr-card {
+  text-align: left;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: border-color 0.15s;
+}
+.saved-addr-card:hover { border-color: #999; }
+.saved-addr-card.active { border-color: #111; border-width: 1.5px; }
+.saved-addr-badge {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: #111;
+  padding: 2px 7px;
+  border-radius: 2px;
+  margin-bottom: 2px;
+}
+.saved-addr-recipient { font-size: 13px; font-weight: 600; color: #111; }
+.saved-addr-line {
+  font-size: 11.5px;
+  color: #888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-addr-card-new {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+  border-style: dashed;
+}
+.saved-addr-card-new:hover { color: #111; }
 
 :deep(.v-field) {
   border-radius: 8px !important;
