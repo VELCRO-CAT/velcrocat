@@ -23,10 +23,59 @@
             <div class="user-email">{{ user.email }}</div>
           </div>
           <div class="user-date">{{ formatDate(user.created_at) }}</div>
+          <v-btn
+            size="small"
+            variant="outlined"
+            color="grey-darken-3"
+            class="ml-3"
+            prepend-icon="mdi-email-outline"
+            @click="openMailDialog(user)"
+          >메일 보내기</v-btn>
         </div>
       </div>
     </v-container>
   </v-main>
+
+  <!-- 개별 메일 발송 다이얼로그 -->
+  <v-dialog v-model="mailDialog" max-width="520" persistent>
+    <v-card>
+      <v-card-title class="pa-5 pb-3 text-body-1 font-weight-bold">
+        메일 보내기
+        <p class="text-caption text-grey mt-1" style="font-weight:400">받는 사람: {{ mailTarget?.name }} ({{ mailTarget?.email }})</p>
+      </v-card-title>
+      <v-divider />
+      <v-card-text class="pa-5">
+        <v-text-field
+          v-model="mailForm.subject"
+          label="제목 *"
+          variant="outlined"
+          density="compact"
+          class="mb-3"
+        />
+        <v-textarea
+          v-model="mailForm.body"
+          label="내용 *"
+          variant="outlined"
+          density="compact"
+          rows="8"
+          placeholder="줄바꿈은 그대로 반영됩니다"
+        />
+        <v-alert v-if="mailError" type="error" variant="tonal" density="compact" class="mt-2">{{ mailError }}</v-alert>
+        <v-alert v-if="mailSuccess" type="success" variant="tonal" density="compact" class="mt-2">{{ mailSuccess }}</v-alert>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions class="pa-4">
+        <v-spacer />
+        <v-btn variant="outlined" @click="closeMailDialog">닫기</v-btn>
+        <v-btn
+          color="grey-darken-4"
+          :loading="mailSending"
+          :disabled="!mailForm.subject.trim() || !mailForm.body.trim()"
+          @click="sendMail"
+        >발송</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -46,6 +95,49 @@ onMounted(async () => {
 function formatDate(str) {
   if (!str) return '-';
   return new Date(str).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+
+// 개별 메일 발송
+const mailDialog = ref(false);
+const mailTarget = ref(null);
+const mailForm = ref({ subject: '', body: '' });
+const mailSending = ref(false);
+const mailError = ref('');
+const mailSuccess = ref('');
+
+function openMailDialog(user) {
+  mailTarget.value = user;
+  mailForm.value = { subject: '', body: '' };
+  mailError.value = '';
+  mailSuccess.value = '';
+  mailDialog.value = true;
+}
+
+function closeMailDialog() {
+  mailDialog.value = false;
+}
+
+async function sendMail() {
+  mailError.value = '';
+  mailSuccess.value = '';
+  mailSending.value = true;
+  try {
+    const res = await axios.post('/api/newsletter/send', {
+      subject: mailForm.value.subject.trim(),
+      body: mailForm.value.body.trim(),
+      recipients: [mailTarget.value.email]
+    });
+    if (res.data.sent > 0) {
+      mailSuccess.value = `${mailTarget.value.email} 로 메일을 발송했습니다`;
+      mailForm.value = { subject: '', body: '' };
+    } else {
+      mailError.value = res.data.failures?.[0]?.error || '발송에 실패했습니다';
+    }
+  } catch (e) {
+    mailError.value = e.response?.data?.error || '발송에 실패했습니다';
+  } finally {
+    mailSending.value = false;
+  }
 }
 </script>
 
@@ -97,5 +189,7 @@ function formatDate(str) {
   .admin-page { padding-top: 52px !important; }
   .admin-container { padding: 16px !important; }
   .page-title { font-size: 17px; }
+  .user-card { flex-wrap: wrap; }
+  .user-date { order: 3; margin-left: 54px; }
 }
 </style>
