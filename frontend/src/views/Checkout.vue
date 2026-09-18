@@ -263,7 +263,7 @@ const form = ref({
   zip: '',
   address: '',
   addressDetail: '',
-  memo: ''
+  memo: '문 앞에 놓아주세요'
 });
 const showPostcode = ref(false);
 const selectedMethod = ref('card');

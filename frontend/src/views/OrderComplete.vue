@@ -88,7 +88,10 @@ const order = ref(null);
 
 let pollTimer = null;
 let attempts = 0;
-const MAX_ATTEMPTS = 12; // 약 1.5초 간격 × 12회 = 18초
+// PG(MPC) notify 웹훅은 결제 후 보통 15~18초 뒤에 도착한다(실측 확인됨).
+// 예전 18초(12회×1.5초) 기준으로는 이 시간에 딱 걸려 "결제 확인 지연" 오탐이 잦았으므로
+// 60초(40회×1.5초)로 넉넉히 늘려 정상적인 지연은 이 화면 안에서 자연스럽게 확인되게 한다.
+const MAX_ATTEMPTS = 40;
 const POLL_INTERVAL_MS = 1500;
 
 async function checkStatus() {

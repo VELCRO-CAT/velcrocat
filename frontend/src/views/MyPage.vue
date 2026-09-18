@@ -311,7 +311,7 @@ const profileMsgType = ref('success');
 const profileLoading = ref(false);
 
 // 기본 배송지
-const addr = reactive({ recipient: '', phone: '', zip: '', address: '', addressDetail: '', memo: '' });
+const addr = reactive({ recipient: '', phone: '', zip: '', address: '', addressDetail: '', memo: '문 앞에 놓아주세요' });
 const addrMsg = ref('');
 const addrMsgType = ref('success');
 const addrLoading = ref(false);
@@ -402,7 +402,7 @@ onMounted(async () => {
     addr.zip = res.data.default_zip || '';
     addr.address = res.data.default_address || '';
     addr.addressDetail = res.data.default_address_detail || '';
-    addr.memo = res.data.default_memo || '';
+    addr.memo = res.data.default_memo || addr.memo;
   } catch {}
 
   // 주문 로드

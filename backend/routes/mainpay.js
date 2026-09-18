@@ -4,8 +4,68 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const db = require('../db');
 const { authMiddleware } = require('../middleware/auth');
+
+// 네이버 SMTP (users.js/newsletter.js와 동일 설정 — MAIL_USER/MAIL_PASS .env)
+const transporter = nodemailer.createTransport({
+  host: 'smtp.naver.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS
+  },
+  tls: { rejectUnauthorized: false }
+});
+
+// 주문 확인 메일 본문 (상품/사이즈/색상/수량/배송지)
+function buildOrderEmailHtml(order, items, shippingAddress) {
+  const rows = items.map(item => {
+    const opts = [item.color, item.size].filter(Boolean).join(' · ');
+    return `
+      <tr>
+        <td style="padding:12px 0;border-bottom:1px solid #eee;font-size:13px;color:#111">
+          ${item.name}
+          <div style="font-size:12px;color:#999;margin-top:3px">${opts ? opts + ' · ' : ''}수량 ${item.quantity || 1}개</div>
+        </td>
+        <td style="padding:12px 0;border-bottom:1px solid #eee;font-size:13px;color:#111;text-align:right;white-space:nowrap">
+          ₩${Number(item.price || 0).toLocaleString()}
+        </td>
+      </tr>`;
+  }).join('');
+
+  const addressBlock = shippingAddress?.address ? `
+    <p style="margin:24px 0 0;font-size:12px;color:#888;line-height:1.7">
+      <strong style="color:#333">배송지</strong><br>
+      ${shippingAddress.name || ''}${shippingAddress.phone ? ` · ${shippingAddress.phone}` : ''}<br>
+      (${shippingAddress.zip || ''}) ${shippingAddress.address || ''} ${shippingAddress.addressDetail || ''}
+      ${shippingAddress.memo ? `<br>배송 메모: ${shippingAddress.memo}` : ''}
+    </p>` : '';
+
+  return `
+  <div style="max-width:480px;margin:0 auto;font-family:'Apple SD Gothic Neo',sans-serif;padding:40px 20px">
+    <h2 style="text-align:center;letter-spacing:2px;margin-bottom:6px">VELCROCAT</h2>
+    <p style="text-align:center;font-size:11px;letter-spacing:4px;color:#999;margin:0 0 30px">SEOUL</p>
+    <p style="color:#333;font-size:14px">${order.user_name}님, 주문이 정상적으로 완료되었습니다.</p>
+    <p style="color:#999;font-size:12px;margin:4px 0 24px">주문번호 ${order.order_no}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      ${rows}
+    </table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px">
+      <tr>
+        <td style="padding-top:14px;font-size:14px;font-weight:700;color:#111">합계</td>
+        <td style="padding-top:14px;font-size:16px;font-weight:800;color:#111;text-align:right">₩${Number(order.total).toLocaleString()}</td>
+      </tr>
+    </table>
+    ${addressBlock}
+    <p style="margin-top:32px;font-size:12px;color:#999;line-height:1.6">
+      주문 내역은 마이페이지에서도 확인하실 수 있습니다.<br>
+      문의사항은 고객센터로 연락해주세요.
+    </p>
+  </div>`;
+}
 
 const MPC_HOST          = process.env.MPC_HOST          || 'https://mpc.icu';
 const MPC_CLIENT_ID     = process.env.MPC_CLIENT_ID     || 'VCAT';
@@ -345,9 +405,13 @@ router.post('/notify', async (req, res) => {
       pay_tran_date: p.tranDate || null
     });
 
+    let items = [];
+    try { items = JSON.parse(order.items_json || '[]'); } catch {}
+    let shippingAddress = null;
+    try { shippingAddress = order.shipping_address_json ? JSON.parse(order.shipping_address_json) : null; } catch {}
+
     // 재고 차감 (결제 확정 시점에만 — 위 idempotent 체크 덕분에 같은 주문은 한 번만 차감됨)
     try {
-      const items = JSON.parse(order.items_json || '[]');
       for (const item of items) {
         const qty = Number(item.quantity) || 0;
         if (!item.id || qty <= 0) continue;
@@ -357,6 +421,20 @@ router.post('/notify', async (req, res) => {
       }
     } catch (stockErr) {
       console.error('[MPC notify] 재고 차감 실패', orderNo, stockErr.message);
+    }
+
+    // 주문 확인 메일 (상품/사이즈/색상/배송지 안내)
+    if (order.user_email && process.env.MAIL_USER && process.env.MAIL_PASS) {
+      try {
+        await transporter.sendMail({
+          from: `"VELCROCAT" <${process.env.MAIL_USER}>`,
+          to: order.user_email,
+          subject: `[VELCROCAT] 주문이 완료되었습니다 (${orderNo})`,
+          html: buildOrderEmailHtml(order, items, shippingAddress)
+        });
+      } catch (mailErr) {
+        console.error('[MPC notify] 주문 확인 메일 발송 실패', orderNo, mailErr.message);
+      }
     }
 
     await db('notifications').insert({
