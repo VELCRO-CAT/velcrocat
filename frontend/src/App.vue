@@ -68,7 +68,6 @@
             </transition>
           </div>
           <router-link to="/contact" class="nav-link hvr-underline-from-center">{{ t('nav.contact') }}</router-link>
-          <router-link to="/brand" class="nav-link hvr-underline-from-center">{{ t('nav.brand') }}</router-link>
           <template v-if="authStore.isLoggedIn">
             <router-link to="/mypage" class="nav-link hvr-underline-from-center">{{ t('nav.myPage') }}</router-link>
             <a class="nav-link hvr-underline-from-center" @click="logout" style="cursor:pointer">{{ t('nav.signOut') }}</a>
@@ -77,48 +76,52 @@
             <router-link to="/login" class="nav-link hvr-underline-from-center">{{ t('nav.signIn') }}</router-link>
             <router-link to="/register" class="nav-link hvr-underline-from-center">{{ t('nav.signUp') }}</router-link>
           </template>
-          <LanguageSwitcher />
         </div>
 
-        <!-- 찜 목록 -->
-        <div class="nav-wish" @mouseenter="wishOpen = true" @mouseleave="wishOpen = false">
-          <button class="nav-wish-btn">
-            <v-badge :content="wishlistStore.count" :model-value="wishlistStore.count > 0" color="black">
-              <v-icon size="20" color="#111">mdi-star-outline</v-icon>
-            </v-badge>
-          </button>
-          <!-- 찜 드롭다운 -->
-          <div v-if="wishOpen" class="wish-dropdown">
-            <div class="wish-header">
-              <span>{{ t('wishlist.title') }}</span>
-              <span class="wish-count">{{ t('wishlist.count', { count: wishlistStore.count }) }}</span>
-            </div>
-            <div v-if="wishlistStore.items.length === 0" class="wish-empty">
-              {{ t('wishlist.empty') }}
-            </div>
-            <div v-else class="wish-list">
-              <div v-for="item in wishlistStore.items" :key="item.id" class="wish-item">
-                <router-link :to="`/products/${item.id}`" class="wish-item-link" @click="wishOpen = false">
-                  <img :src="item.image" :alt="lf(item, 'name')" class="wish-item-img" />
-                  <div class="wish-item-info">
-                    <p class="wish-item-name">{{ lf(item, 'name') }}</p>
-                    <p class="wish-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
-                  </div>
-                </router-link>
-                <button class="wish-item-remove" @click="wishlistStore.remove(item.id)">
-                  <v-icon size="14" color="#999">mdi-close</v-icon>
-                </button>
+        <!-- 언어 전환 + 찜 + 카트 (항상 우측 고정 표시) -->
+        <div class="nav-right-group">
+          <LanguageSwitcher />
+
+          <!-- 찜 목록 -->
+          <div class="nav-wish" @mouseenter="wishOpen = true" @mouseleave="wishOpen = false">
+            <button class="nav-wish-btn">
+              <v-badge :content="wishlistStore.count" :model-value="wishlistStore.count > 0" color="black">
+                <v-icon size="20" color="#111">mdi-star-outline</v-icon>
+              </v-badge>
+            </button>
+            <!-- 찜 드롭다운 -->
+            <div v-if="wishOpen" class="wish-dropdown">
+              <div class="wish-header">
+                <span>{{ t('wishlist.title') }}</span>
+                <span class="wish-count">{{ t('wishlist.count', { count: wishlistStore.count }) }}</span>
+              </div>
+              <div v-if="wishlistStore.items.length === 0" class="wish-empty">
+                {{ t('wishlist.empty') }}
+              </div>
+              <div v-else class="wish-list">
+                <div v-for="item in wishlistStore.items" :key="item.id" class="wish-item">
+                  <router-link :to="`/products/${item.id}`" class="wish-item-link" @click="wishOpen = false">
+                    <img :src="item.image" :alt="lf(item, 'name')" class="wish-item-img" />
+                    <div class="wish-item-info">
+                      <p class="wish-item-name">{{ lf(item, 'name') }}</p>
+                      <p class="wish-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+                    </div>
+                  </router-link>
+                  <button class="wish-item-remove" @click="wishlistStore.remove(item.id)">
+                    <v-icon size="14" color="#999">mdi-close</v-icon>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- 카트 (항상 표시) -->
-        <router-link to="/cart" class="nav-cart hvr-buzz-out">
-          <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
-            <v-icon size="20" color="#111">mdi-cart-outline</v-icon>
-          </v-badge>
-        </router-link>
+          <!-- 카트 -->
+          <router-link to="/cart" class="nav-cart hvr-buzz-out">
+            <v-badge :content="cartStore.itemCount" :model-value="cartStore.itemCount > 0" color="black">
+              <v-icon size="20" color="#111">mdi-cart-outline</v-icon>
+            </v-badge>
+          </router-link>
+        </div>
       </div>
     </nav>
 
@@ -166,7 +169,6 @@
             </div>
           </div>
           <router-link to="/contact" class="drawer-link" @click="menuOpen = false">{{ t('nav.contact') }}</router-link>
-          <router-link to="/brand" class="drawer-link" @click="menuOpen = false">{{ t('nav.brand') }}</router-link>
           <div class="drawer-divider" />
           <template v-if="authStore.isLoggedIn">
             <router-link to="/mypage" class="drawer-link" @click="menuOpen = false">{{ t('nav.myPage') }}</router-link>
@@ -397,10 +399,16 @@ function logout() {
   align-items: center;
 }
 
-/* 찜 + 카트 우측 정렬 */
-.nav-wish {
+/* 언어 전환 + 찜 + 카트 그룹 (우측 고정) */
+.nav-right-group {
   position: absolute;
-  right: 52px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.nav-wish {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 9px 0;
@@ -508,8 +516,6 @@ function logout() {
 .wish-item-remove:hover { opacity: 0.5; }
 
 .nav-cart {
-  position: absolute;
-  right: 16px;
   display: flex;
   align-items: center;
   color: #111;
