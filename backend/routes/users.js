@@ -177,22 +177,6 @@ router.put('/me', authMiddleware, async (req, res) => {
   res.json({ message: '정보가 수정되었습니다', user: safeUser, token });
 });
 
-// 기본 배송지 저장/수정
-router.put('/me/address', authMiddleware, async (req, res) => {
-  const { recipient, phone, zip, address, addressDetail, memo } = req.body;
-  await db('users').where('id', req.user.id).update({
-    default_recipient: recipient || null,
-    default_phone: phone || null,
-    default_zip: zip || null,
-    default_address: address || null,
-    default_address_detail: addressDetail || null,
-    default_memo: memo || null
-  });
-  const user = await db('users').where('id', req.user.id).first();
-  const { password: _, ...safeUser } = user;
-  res.json({ message: '기본 배송지가 저장되었습니다', user: safeUser });
-});
-
 // 비밀번호 변경 (로그인 상태)
 router.put('/me/password', authMiddleware, async (req, res) => {
   const { currentPassword, newPassword } = req.body;

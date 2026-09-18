@@ -212,6 +212,7 @@ export default {
     memo3: 'Please put it in the parcel locker',
     memo4: 'Please call before delivery',
     memo5: 'Leave at the door if unavailable',
+    saveAsDefaultLabel: 'Save this address as my default',
     errorName: 'Please enter your name',
     errorPhone: 'Please enter a valid phone number',
     errorEmail: 'Please enter a valid email address',

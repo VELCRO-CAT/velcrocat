@@ -123,9 +123,42 @@
 
     <!-- 배송지 관리 -->
     <v-card v-if="activeTab === 'address'" variant="outlined" class="pa-8 mypage-card reveal">
-      <h2 class="text-h6 font-weight-bold mb-2">기본 배송지</h2>
-      <p class="text-body-2 text-grey mb-6">저장해두면 결제 시 자동으로 채워집니다.</p>
-      <v-form @submit.prevent="saveAddress">
+      <div class="addr-tab-head">
+        <div>
+          <h2 class="text-h6 font-weight-bold mb-1">배송지 관리</h2>
+          <p class="text-body-2 text-grey">기본 배송지는 결제 시 자동으로 채워집니다. 여러 곳을 등록해두고 필요할 때 기본으로 바꿔 쓸 수 있어요.</p>
+        </div>
+        <v-btn v-if="!addrFormOpen" color="#111" @click="openAddAddressForm">+ 새 배송지</v-btn>
+      </div>
+
+      <!-- 배송지 목록 -->
+      <div v-if="!addrFormOpen">
+        <div v-if="addressesLoading" class="text-center py-8">
+          <v-progress-circular indeterminate color="#111" />
+        </div>
+        <div v-else-if="addresses.length === 0" class="text-center py-8 text-grey">
+          등록된 배송지가 없습니다
+        </div>
+        <div v-else class="addr-list">
+          <div v-for="a in addresses" :key="a.id" class="addr-card" :class="{ 'is-default': a.is_default }">
+            <div class="addr-card-head">
+              <span v-if="a.is_default" class="addr-default-badge">기본 배송지</span>
+              <span class="addr-recipient">{{ a.recipient }}</span>
+              <span v-if="a.phone" class="addr-phone">· {{ a.phone }}</span>
+            </div>
+            <p class="addr-line">({{ a.zip }}) {{ a.address }} {{ a.address_detail }}</p>
+            <p v-if="a.memo" class="addr-memo">{{ a.memo }}</p>
+            <div class="addr-actions">
+              <button v-if="!a.is_default" class="addr-action-btn" @click="setDefaultAddress(a)">기본으로 설정</button>
+              <button class="addr-action-btn" @click="openEditAddressForm(a)">수정</button>
+              <button class="addr-action-btn addr-action-danger" @click="deleteAddressCard(a)">삭제</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 배송지 추가/수정 폼 -->
+      <v-form v-else @submit.prevent="saveAddress">
         <v-text-field
           v-model="addr.recipient"
           label="받는 사람"
@@ -179,10 +212,21 @@
           label="배송 메모 (선택)"
           variant="outlined"
           density="comfortable"
+          class="mb-2"
+        />
+        <v-checkbox
+          v-if="editingAddrId === null && addresses.length > 0"
+          v-model="addr.isDefault"
+          label="기본 배송지로 설정"
+          density="compact"
+          hide-details
           class="mb-4"
         />
         <v-alert v-if="addrMsg" :type="addrMsgType" variant="tonal" density="compact" class="mb-4">{{ addrMsg }}</v-alert>
-        <v-btn type="submit" color="#111" size="large" :loading="addrLoading">기본 배송지로 저장</v-btn>
+        <div class="d-flex ga-2">
+          <v-btn type="submit" color="#111" size="large" :loading="addrLoading">저장</v-btn>
+          <v-btn variant="outlined" color="#111" size="large" @click="closeAddrForm">취소</v-btn>
+        </div>
       </v-form>
     </v-card>
 
@@ -310,8 +354,12 @@ const profileMsg = ref('');
 const profileMsgType = ref('success');
 const profileLoading = ref(false);
 
-// 기본 배송지
-const addr = reactive({ recipient: '', phone: '', zip: '', address: '', addressDetail: '', memo: '문 앞에 놓아주세요' });
+// 배송지 관리 (여러 개 저장 가능, 기본 배송지는 1곳)
+const addresses = ref([]);
+const addressesLoading = ref(false);
+const addrFormOpen = ref(false);
+const editingAddrId = ref(null);
+const addr = reactive({ recipient: '', phone: '', zip: '', address: '', addressDetail: '', memo: '문 앞에 놓아주세요', isDefault: false });
 const addrMsg = ref('');
 const addrMsgType = ref('success');
 const addrLoading = ref(false);
@@ -390,20 +438,16 @@ watch(activeTab, () => showReveal());
 onMounted(async () => {
   showReveal();
 
-  // 내 정보 + 기본 배송지 로드
+  // 내 정보
   try {
     const res = await axios.get('/api/users/me');
     profile.name = res.data.name;
     profile.email = res.data.email;
     profile.createdAt = res.data.created_at || '';
-
-    addr.recipient = res.data.default_recipient || res.data.name || '';
-    addr.phone = res.data.default_phone || '';
-    addr.zip = res.data.default_zip || '';
-    addr.address = res.data.default_address || '';
-    addr.addressDetail = res.data.default_address_detail || '';
-    addr.memo = res.data.default_memo || addr.memo;
   } catch {}
+
+  // 배송지 목록
+  loadAddresses();
 
   // 주문 로드
   ordersLoading.value = true;
@@ -458,19 +502,91 @@ function searchAddress() {
   });
 }
 
+async function loadAddresses() {
+  addressesLoading.value = true;
+  try {
+    const res = await axios.get('/api/addresses');
+    addresses.value = res.data;
+  } catch {}
+  addressesLoading.value = false;
+}
+
+function resetAddrForm() {
+  addr.recipient = profile.name || '';
+  addr.phone = '';
+  addr.zip = '';
+  addr.address = '';
+  addr.addressDetail = '';
+  addr.memo = '문 앞에 놓아주세요';
+  addr.isDefault = false;
+}
+
+function openAddAddressForm() {
+  editingAddrId.value = null;
+  resetAddrForm();
+  addrMsg.value = '';
+  addrFormOpen.value = true;
+}
+
+function openEditAddressForm(a) {
+  editingAddrId.value = a.id;
+  addr.recipient = a.recipient || '';
+  addr.phone = a.phone || '';
+  addr.zip = a.zip || '';
+  addr.address = a.address || '';
+  addr.addressDetail = a.address_detail || '';
+  addr.memo = a.memo || '문 앞에 놓아주세요';
+  addr.isDefault = !!a.is_default;
+  addrMsg.value = '';
+  addrFormOpen.value = true;
+}
+
+function closeAddrForm() {
+  addrFormOpen.value = false;
+  addrMsg.value = '';
+}
+
 async function saveAddress() {
   addrMsg.value = '';
   addrLoading.value = true;
   try {
-    await axios.put('/api/users/me/address', { ...addr });
-    addrMsgType.value = 'success';
-    addrMsg.value = '기본 배송지가 저장되었습니다';
+    const payload = {
+      recipient: addr.recipient,
+      phone: addr.phone,
+      zip: addr.zip,
+      address: addr.address,
+      addressDetail: addr.addressDetail,
+      memo: addr.memo,
+      isDefault: addr.isDefault
+    };
+    if (editingAddrId.value) {
+      await axios.put(`/api/addresses/${editingAddrId.value}`, payload);
+    } else {
+      await axios.post('/api/addresses', payload);
+    }
+    await loadAddresses();
+    addrFormOpen.value = false;
   } catch (e) {
     addrMsgType.value = 'error';
     addrMsg.value = e.response?.data?.error || '저장에 실패했습니다';
   } finally {
     addrLoading.value = false;
   }
+}
+
+async function setDefaultAddress(a) {
+  try {
+    await axios.patch(`/api/addresses/${a.id}/default`);
+    await loadAddresses();
+  } catch {}
+}
+
+async function deleteAddressCard(a) {
+  if (!confirm('이 배송지를 삭제하시겠습니까?')) return;
+  try {
+    await axios.delete(`/api/addresses/${a.id}`);
+    await loadAddresses();
+  } catch {}
 }
 
 async function changePassword() {
@@ -664,6 +780,59 @@ function statusLabel(s) {
   white-space: nowrap;
 }
 .order-action-btn:hover { background: #111; color: #fff; }
+
+/* 배송지 관리 */
+.addr-tab-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.addr-list { display: flex; flex-direction: column; gap: 14px; }
+.addr-card { border: 1px solid #eee; padding: 18px 20px; }
+.addr-card.is-default { border-color: #111; }
+.addr-card-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.addr-default-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: #111;
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+.addr-recipient { font-size: 14px; font-weight: 600; }
+.addr-phone { font-size: 13px; color: #999; }
+.addr-line { font-size: 13px; color: #333; margin: 0; line-height: 1.6; }
+.addr-memo { font-size: 12px; color: #999; margin: 4px 0 0; }
+.addr-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f2f2f2;
+}
+.addr-action-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.addr-action-btn:hover { border-color: #111; color: #111; }
+.addr-action-danger { color: #c62828; }
+.addr-action-danger:hover { border-color: #c62828; color: #c62828; }
 
 /* 주소 검색 팝업 (체크아웃과 동일한 스타일) */
 .postcode-overlay {

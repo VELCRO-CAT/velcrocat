@@ -212,6 +212,7 @@ export default {
     memo3: '请放入快递柜',
     memo4: '配送前请先联系',
     memo5: '不在家时请放在门口',
+    saveAsDefaultLabel: '将此地址保存为默认收货地址',
     errorName: '请输入姓名',
     errorPhone: '请输入正确的电话号码',
     errorEmail: '请输入正确的邮箱地址',

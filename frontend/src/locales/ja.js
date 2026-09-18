@@ -212,6 +212,7 @@ export default {
     memo3: '宅配ボックスに入れてください',
     memo4: '配送前にご連絡ください',
     memo5: '不在時は玄関前に置いてください',
+    saveAsDefaultLabel: 'この住所を基本配送先として保存する',
     errorName: 'お名前を入力してください',
     errorPhone: '正しい電話番号を入力してください',
     errorEmail: '正しいメールアドレスを入力してください',

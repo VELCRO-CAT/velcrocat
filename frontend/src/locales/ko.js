@@ -212,6 +212,7 @@ export default {
     memo3: '택배함에 넣어주세요',
     memo4: '배송 전 연락 부탁드립니다',
     memo5: '부재시 문 앞에 놓아주세요',
+    saveAsDefaultLabel: '이 배송지를 기본 배송지로 저장',
     errorName: '이름을 입력해주세요',
     errorPhone: '올바른 전화번호를 입력해주세요',
     errorEmail: '올바른 이메일을 입력해주세요',

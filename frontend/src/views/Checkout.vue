@@ -124,6 +124,16 @@
                   :placeholder="t('checkout.memoPlaceholder')"
                 />
               </v-col>
+
+              <v-col v-if="!hasDefaultAddress" cols="12" class="mt-3">
+                <v-checkbox
+                  v-model="saveAsDefaultAddress"
+                  :label="t('checkout.saveAsDefaultLabel')"
+                  density="compact"
+                  hide-details
+                  color="#111"
+                />
+              </v-col>
             </v-row>
           </div>
 
@@ -267,20 +277,28 @@ const form = ref({
 });
 const showPostcode = ref(false);
 const selectedMethod = ref('card');
+const hasDefaultAddress = ref(true); // 로드되기 전까지는 저장 체크박스를 깜빡이지 않도록 true로 시작
+const saveAsDefaultAddress = ref(true);
 
 // 마이페이지에 저장해 둔 기본 배송지가 있으면 불러와 미리 채워준다 (직접 수정 가능)
+// 저장된 배송지가 하나도 없으면(첫 구매 등) 이번 주소를 기본 배송지로 저장할 수 있는 체크박스를 보여준다
 onMounted(async () => {
   try {
-    const { data } = await axios.get('/api/users/me');
-    if (data.default_address) {
-      form.value.name = data.default_recipient || form.value.name;
-      form.value.phone = data.default_phone || form.value.phone;
-      form.value.zip = data.default_zip || '';
-      form.value.address = data.default_address || '';
-      form.value.addressDetail = data.default_address_detail || '';
-      form.value.memo = data.default_memo || form.value.memo;
+    const { data } = await axios.get('/api/addresses');
+    const list = Array.isArray(data) ? data : [];
+    hasDefaultAddress.value = list.length > 0;
+    const def = list.find(a => a.is_default) || list[0];
+    if (def) {
+      form.value.name = def.recipient || form.value.name;
+      form.value.phone = def.phone || form.value.phone;
+      form.value.zip = def.zip || '';
+      form.value.address = def.address || '';
+      form.value.addressDetail = def.address_detail || '';
+      form.value.memo = def.memo || form.value.memo;
     }
-  } catch {}
+  } catch {
+    hasDefaultAddress.value = false;
+  }
 });
 
 // 전화번호 자동 포맷팅
@@ -334,6 +352,24 @@ async function processPayment() {
   if (!form.value.address) { error.value = t('checkout.errorAddress'); return; }
   if (!form.value.addressDetail?.trim()) { error.value = t('checkout.errorAddressDetail'); return; }
   if (cartStore.items.length === 0) { error.value = t('checkout.errorEmptyCart'); return; }
+
+  // 저장된 배송지가 없는 회원이 체크했다면, 결제 진행과 별개로 이 주소를 기본 배송지로 저장
+  if (!hasDefaultAddress.value && saveAsDefaultAddress.value) {
+    try {
+      await axios.post('/api/addresses', {
+        recipient: form.value.name,
+        phone: form.value.phone,
+        zip: form.value.zip,
+        address: form.value.address,
+        addressDetail: form.value.addressDetail,
+        memo: form.value.memo,
+        isDefault: true
+      });
+      hasDefaultAddress.value = true;
+    } catch {
+      // 주소 저장에 실패해도 결제 진행은 막지 않는다
+    }
+  }
 
   loading.value = true;
 
