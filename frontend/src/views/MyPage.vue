@@ -444,6 +444,9 @@ onMounted(async () => {
     profile.name = res.data.name;
     profile.email = res.data.email;
     profile.createdAt = res.data.created_at || '';
+    // 프로필 요약(mypage-hero)은 profile.name이 채워진 뒤에야 v-if로 DOM에 생기므로
+    // 처음 showReveal() 때는 아직 없어 .visible이 붙지 않고 opacity:0으로 남아있었음 — 다시 호출해 반영
+    showReveal();
   } catch {}
 
   // 배송지 목록
@@ -868,5 +871,13 @@ function statusLabel(s) {
   font-size: 20px;
   color: #fff;
   cursor: pointer;
+}
+
+/* 모바일: 상단 로고~탭 사이 여백이 데스크톱 기준(py-16 등)이라 과도하게 비어 보이던 것 축소 */
+@media (max-width: 640px) {
+  .mypage-wrap.py-16 { padding-top: 28px !important; padding-bottom: 32px !important; }
+  .mypage-wrap .mb-10 { margin-bottom: 20px !important; }
+  .mypage-hero { padding-bottom: 14px; margin-bottom: 18px; }
+  .mypage-tabs { margin-bottom: 20px; }
 }
 </style>

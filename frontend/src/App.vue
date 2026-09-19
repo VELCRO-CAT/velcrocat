@@ -773,7 +773,7 @@ function logout() {
     letter-spacing: 6px;
   }
   .logo-sub {
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 12px;
     padding-left: 12px;
   }

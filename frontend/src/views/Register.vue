@@ -265,4 +265,9 @@ async function handleSubmit() {
   height: 1px;
   background: #ddd;
 }
+
+/* 모바일: 데스크톱 기준 py-16(위아래 64px)이 과도하게 커 보이던 것 축소 */
+@media (max-width: 640px) {
+  .v-container.py-16 { padding-top: 32px !important; padding-bottom: 32px !important; }
+}
 </style>
