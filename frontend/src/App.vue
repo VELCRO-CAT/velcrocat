@@ -769,7 +769,7 @@ function logout() {
     margin-bottom: 6px;
   }
   .logo-text {
-    font-size: 34px;
+    font-size: 30px;
     letter-spacing: 6px;
   }
   .logo-sub {
