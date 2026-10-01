@@ -198,7 +198,7 @@ onUnmounted(() => {
 const selectedCategory = ref(route.query.category || null);
 const selectedGender = ref(route.query.gender || null);
 const sortBy = ref(null);
-const searchQuery = ref('');
+const searchQuery = ref(route.query.search || '');
 const allCategories = ref([]);
 
 // 현재 성별에 맞는 카테고리만 표시
@@ -253,6 +253,7 @@ function initReveal() {
 watch(() => route.query, (q) => {
   selectedGender.value = q.gender || null;
   selectedCategory.value = q.category || null;
+  searchQuery.value = q.search || '';
   fetchProducts();
 });
 

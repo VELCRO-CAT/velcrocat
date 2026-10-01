@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin-login
+Disallow: /cart
+Disallow: /checkout
+Disallow: /mypage
+Disallow: /order-complete
+
+Sitemap: https://vcat.kr/sitemap.xml
