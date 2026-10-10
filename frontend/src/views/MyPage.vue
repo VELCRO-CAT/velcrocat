@@ -79,6 +79,7 @@
               </div>
             </div>
 
+            <p class="order-section-label">{{ t('mypage.sectionItems') }}</p>
             <div class="order-items">
               <div v-for="(item, i) in order.items" :key="i" class="order-item">
                 <img :src="item.image" :alt="item.name" class="order-item-img" />
@@ -93,20 +94,37 @@
               </div>
             </div>
 
-            <!-- 주문한 배송지 -->
-            <div v-if="order.shippingAddress?.address" class="order-shipping">
-              <v-icon size="14" color="#999" class="mr-1">mdi-map-marker-outline</v-icon>
-              <span class="order-shipping-text">
-                {{ order.shippingAddress.name }}
-                <span v-if="order.shippingAddress.phone">· {{ order.shippingAddress.phone }}</span>
-                · {{ order.shippingAddress.address }} {{ order.shippingAddress.addressDetail }}
-              </span>
+            <p class="order-section-label">{{ t('mypage.sectionPayment') }}</p>
+            <div class="order-payment">
+              <div class="order-payment-row">
+                <span>{{ t('mypage.paymentMethodLabel') }}</span>
+                <span>{{ paymentMethodLabel(order.payment_method) }}</span>
+              </div>
+              <div class="order-payment-row">
+                <span>{{ t('mypage.itemsSubtotalLabel') }}</span>
+                <span>₩{{ itemsSubtotal(order).toLocaleString() }}</span>
+              </div>
+              <div class="order-payment-row order-payment-total">
+                <span>{{ t('mypage.orderTotalLabel') }}</span>
+                <span>₩{{ Number(order.total).toLocaleString() }}</span>
+              </div>
             </div>
 
-            <div class="order-footer">
-              <div class="order-total">
-                {{ t('mypage.orderTotalLabel') }}: <strong>₩{{ Number(order.total).toLocaleString() }}</strong>
+            <!-- 주문한 배송지 -->
+            <template v-if="order.shippingAddress?.address">
+              <p class="order-section-label">{{ t('mypage.sectionShipping') }}</p>
+              <div class="order-shipping">
+                <v-icon size="14" color="#999" class="mr-1">mdi-map-marker-outline</v-icon>
+                <span class="order-shipping-text">
+                  {{ order.shippingAddress.name }}
+                  <span v-if="order.shippingAddress.phone">· {{ order.shippingAddress.phone }}</span>
+                  · {{ order.shippingAddress.address }} {{ order.shippingAddress.addressDetail }}
+                  <span v-if="order.shippingAddress.memo"><br>{{ t('mypage.shippingMemoLabel') }}: {{ order.shippingAddress.memo }}</span>
+                </span>
               </div>
+            </template>
+
+            <div class="order-footer">
               <div class="order-actions">
                 <router-link
                   v-if="order.status === 'delivered' && order.items.length === 1"
@@ -661,6 +679,20 @@ function statusLabel(s) {
   };
   return map[s] || s;
 }
+
+function paymentMethodLabel(m) {
+  const map = {
+    card: t('checkout.paymentCard'),
+    kakaopay: 'Kakao Pay',
+    naverpay: 'Naver Pay',
+    tosspay: 'Toss Pay'
+  };
+  return map[m] || m || '-';
+}
+
+function itemsSubtotal(order) {
+  return (order.items || []).reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0);
+}
 </script>
 
 <style scoped>
@@ -759,6 +791,18 @@ function statusLabel(s) {
 .order-stepper-labels span { font-size: 10px; color: #bbb; }
 .order-stepper-labels span.on { color: #111; font-weight: 700; }
 
+/* 주문 상세를 주문상품/결제정보/배송지정보 소단락으로 구분 */
+.order-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #999;
+  letter-spacing: 0.04em;
+  margin: 16px 0 10px;
+  padding-top: 14px;
+  border-top: 1px dashed #eee;
+}
+.order-section-label:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+
 .order-items { display: flex; flex-direction: column; gap: 12px; }
 .order-item { display: flex; gap: 12px; align-items: center; }
 .order-item-img { width: 60px; height: 60px; object-fit: cover; border: 1px solid #eee; }
@@ -767,27 +811,22 @@ function statusLabel(s) {
 .order-item-detail { font-size: 12px; color: #999; margin: 2px 0; }
 .order-item-price { font-size: 13px; font-weight: 600; margin: 0; }
 
-.order-shipping {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px dashed #eee;
-}
+.order-payment { display: flex; flex-direction: column; gap: 6px; }
+.order-payment-row { display: flex; justify-content: space-between; font-size: 13px; color: #666; }
+.order-payment-total { margin-top: 4px; padding-top: 8px; border-top: 1px solid #eee; font-size: 14px; font-weight: 700; color: #111; }
+
+.order-shipping { display: flex; align-items: flex-start; gap: 4px; }
 .order-shipping-text { font-size: 12px; color: #888; line-height: 1.5; }
 
 .order-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 16px;
   padding-top: 12px;
   border-top: 1px solid #eee;
 }
-.order-total { font-size: 14px; color: #333; }
 .order-actions { display: flex; gap: 8px; }
 .order-action-btn {
   font-size: 11px;
