@@ -1,9 +1,8 @@
 <template>
   <v-container class="py-16 d-flex justify-center">
-    <v-card width="440" variant="outlined" class="pa-8 login-card">
-      <div class="text-center mb-8 reveal reveal-1">
-        <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">{{ t('auth.loginTitle') }}</h1>
-        <p class="text-caption text-grey mt-1" style="letter-spacing:4px">LOGIN</p>
+    <div class="login-card">
+      <div class="mb-8 reveal reveal-1">
+        <h1 class="text-h5 font-weight-bold" style="letter-spacing:1px">{{ t('auth.loginTitle') }}</h1>
       </div>
 
       <v-form @submit.prevent="handleLogin" class="reveal reveal-2">
@@ -51,7 +50,7 @@
           <NaverLoginButton />
         </div>
       </div>
-    </v-card>
+    </div>
   </v-container>
 </template>
 
@@ -119,6 +118,8 @@ async function handleLogin() {
   background: #ddd;
 }
 
+.login-card { width: 440px; max-width: 100%; }
+
 /* 필드 라벨 — 플로팅 라벨 대신 입력란 위에 고정 라벨 */
 .field-label {
   display: block;
@@ -129,7 +130,7 @@ async function handleLogin() {
   letter-spacing: -0.2px;
 }
 :deep(.v-field) {
-  border-radius: 8px !important;
+  border-radius: 4px !important;
   font-size: 14px;
 }
 :deep(.v-field__outline__start),

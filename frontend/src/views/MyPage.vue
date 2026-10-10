@@ -5,344 +5,348 @@
       <p class="text-caption text-grey mt-1" style="letter-spacing:4px">MY PAGE</p>
     </div>
 
-    <!-- 프로필 요약 -->
-    <div v-if="profile.name" class="mypage-hero reveal">
-      <div class="mypage-hero-id">
-        <div class="mypage-avatar">{{ avatarInitial }}</div>
-        <div>
-          <p class="mypage-hero-name">{{ profile.name }}</p>
-          <p class="mypage-hero-sub">{{ profile.email }}<span v-if="joinedLabel"> · {{ joinedLabel }}</span></p>
-        </div>
-      </div>
-      <div class="mypage-hero-stats">
-        <div class="mypage-hero-stat">
-          <span class="n">{{ orderStats.total }}</span>
-          <span class="l">{{ t('mypage.statTotalOrders') }}</span>
-        </div>
-        <div class="mypage-hero-stat">
-          <span class="n">{{ orderStats.inProgress }}</span>
-          <span class="l">{{ t('mypage.statInProgress') }}</span>
-        </div>
-        <div class="mypage-hero-stat">
-          <span class="n">₩{{ orderStats.spent.toLocaleString() }}</span>
-          <span class="l">{{ t('mypage.statSpent') }}</span>
-        </div>
-      </div>
-    </div>
+    <div class="mypage-layout reveal">
+      <!-- 사이드바 (데스크톱) -->
+      <aside class="mypage-sidebar">
+        <template v-for="group in sidebarGroups" :key="group.label">
+          <p class="mypage-sidebar-group">{{ group.label }}</p>
+          <button
+            v-for="item in group.items"
+            :key="item.key"
+            class="mypage-sidebar-link"
+            :class="{ active: activeSection === item.key, danger: item.danger }"
+            @click="item.action ? logout() : (activeSection = item.key)"
+          >{{ item.label }}</button>
+        </template>
+      </aside>
 
-    <!-- 빠른 이동 (섹션은 아래에 전부 펼쳐져 있고, 클릭하면 그 자리로 스크롤만 함) -->
-    <div class="mypage-tabs reveal">
-      <a
-        v-for="tab in tabs"
-        :key="tab.key"
-        :href="`#section-${tab.key}`"
-        class="mypage-tab"
-        @click.prevent="scrollTo(`section-${tab.key}`)"
-      >{{ tab.label }}</a>
-    </div>
+      <!-- 사이드바 (모바일: 가로 스크롤) -->
+      <div class="mypage-mobile-nav">
+        <button
+          v-for="item in flatSidebarItems"
+          :key="item.key"
+          class="mypage-mobile-link"
+          :class="{ active: activeSection === item.key, danger: item.danger }"
+          @click="item.action ? logout() : (activeSection = item.key)"
+        >{{ item.label }}</button>
+      </div>
 
-    <!-- 주문 내역 -->
-    <v-card id="section-orders" variant="outlined" class="pa-8 mypage-card mb-6 reveal">
-      <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.tabOrders') }}</h2>
-      <div v-if="ordersLoading" class="text-center py-8">
-        <v-progress-circular indeterminate color="#111" />
-      </div>
-      <div v-else-if="orders.length === 0" class="text-center py-8 text-grey">
-        {{ t('mypage.noOrders') }}
-      </div>
-      <div v-else class="orders-list">
-        <template v-for="group in groupedOrders" :key="group.key">
-          <p class="order-month-head">{{ group.label }}</p>
-          <div
-            v-for="order in group.orders"
-            :key="order.order_no"
-            class="order-card"
-            :class="{ 'is-cancelled': order.status === 'cancelled' }"
-          >
-            <div class="order-header">
-              <div>
-                <span class="order-no">{{ order.order_no }}</span>
-                <span class="order-date">{{ formatDate(order.created_at) }}</span>
-              </div>
-              <span v-if="order.status === 'cancelled'" class="order-cancel-flag">{{ statusLabel('cancelled') }}</span>
+      <!-- 콘텐츠 -->
+      <div class="mypage-content">
+        <!-- 주문 내역 -->
+        <section v-show="activeSection === 'orders'">
+          <div v-if="profile.name" class="mypage-stats">
+            <div class="mypage-stat">
+              <v-icon size="18" color="#999">mdi-receipt-text-outline</v-icon>
+              <span class="n">{{ orderStats.total }}</span>
+              <span class="l">{{ t('mypage.statTotalOrders') }}</span>
             </div>
+            <div class="mypage-stat">
+              <v-icon size="18" color="#999">mdi-progress-clock</v-icon>
+              <span class="n">{{ orderStats.inProgress }}</span>
+              <span class="l">{{ t('mypage.statInProgress') }}</span>
+            </div>
+            <div class="mypage-stat">
+              <v-icon size="18" color="#999">mdi-wallet-outline</v-icon>
+              <span class="n">₩{{ orderStats.spent.toLocaleString() }}</span>
+              <span class="l">{{ t('mypage.statSpent') }}</span>
+            </div>
+          </div>
 
-            <div v-if="order.status !== 'cancelled'" class="order-stepper">
-              <div class="order-stepper-track">
-                <template v-for="(s, idx) in STEP_ORDER" :key="s">
-                  <span class="order-stepper-node" :class="{ done: idx <= stepIndex(order.status) }"></span>
-                  <span v-if="idx < STEP_ORDER.length - 1" class="order-stepper-bar" :class="{ done: idx < stepIndex(order.status) }"></span>
+          <h2 class="mypage-section-title">{{ t('mypage.funnelTitle') }}</h2>
+          <div class="order-funnel">
+            <template v-for="(f, i) in orderFunnel" :key="f.key">
+              <div class="order-funnel-step">
+                <span class="n">{{ f.count }}</span>
+                <span class="l">{{ f.label }}</span>
+              </div>
+              <v-icon v-if="i < orderFunnel.length - 1" size="16" color="#ccc">mdi-chevron-right</v-icon>
+            </template>
+          </div>
+
+          <h2 class="mypage-section-title">{{ t('mypage.tabOrders') }}</h2>
+          <div v-if="ordersLoading" class="text-center py-8">
+            <v-progress-circular indeterminate color="#111" />
+          </div>
+          <div v-else-if="orders.length === 0" class="text-center py-8 text-grey">
+            {{ t('mypage.noOrders') }}
+          </div>
+          <div v-else class="orders-list">
+            <template v-for="group in groupedOrders" :key="group.key">
+              <p class="order-month-head">{{ group.label }}</p>
+              <div
+                v-for="order in group.orders"
+                :key="order.order_no"
+                class="order-card"
+                :class="{ 'is-cancelled': order.status === 'cancelled' }"
+              >
+                <div class="order-header">
+                  <div>
+                    <span class="order-no">{{ order.order_no }}</span>
+                    <span class="order-date">{{ formatDate(order.created_at) }}</span>
+                  </div>
+                  <span v-if="order.status === 'cancelled'" class="order-cancel-flag">{{ statusLabel('cancelled') }}</span>
+                </div>
+
+                <div v-if="order.status !== 'cancelled'" class="order-stepper">
+                  <div class="order-stepper-track">
+                    <template v-for="(s, idx) in STEP_ORDER" :key="s">
+                      <span class="order-stepper-node" :class="{ done: idx <= stepIndex(order.status) }"></span>
+                      <span v-if="idx < STEP_ORDER.length - 1" class="order-stepper-bar" :class="{ done: idx < stepIndex(order.status) }"></span>
+                    </template>
+                  </div>
+                  <div class="order-stepper-labels">
+                    <span v-for="s in STEP_ORDER" :key="s" :class="{ on: s === order.status }">{{ statusLabel(s) }}</span>
+                  </div>
+                </div>
+
+                <p class="order-section-label">{{ t('mypage.sectionItems') }}</p>
+                <div class="order-items">
+                  <div v-for="(item, i) in order.items" :key="i" class="order-item">
+                    <img :src="item.image" :alt="item.name" class="order-item-img" />
+                    <div class="order-item-info">
+                      <p class="order-item-name">{{ item.name }}</p>
+                      <p class="order-item-detail">
+                        {{ item.size ? `${t('detail.sizeLabel')}: ${item.size}` : '' }}
+                        {{ item.quantity ? `/ ${t('mypage.quantityLabel')}: ${item.quantity}` : '' }}
+                      </p>
+                      <p class="order-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="order-section-label">{{ t('mypage.sectionPayment') }}</p>
+                <div class="order-payment">
+                  <div class="order-payment-row">
+                    <span>{{ t('mypage.paymentMethodLabel') }}</span>
+                    <span>{{ paymentMethodLabel(order.payment_method) }}</span>
+                  </div>
+                  <div class="order-payment-row">
+                    <span>{{ t('mypage.itemsSubtotalLabel') }}</span>
+                    <span>₩{{ itemsSubtotal(order).toLocaleString() }}</span>
+                  </div>
+                  <div class="order-payment-row order-payment-total">
+                    <span>{{ t('mypage.orderTotalLabel') }}</span>
+                    <span>₩{{ Number(order.total).toLocaleString() }}</span>
+                  </div>
+                </div>
+
+                <!-- 주문한 배송지 -->
+                <template v-if="order.shippingAddress?.address">
+                  <p class="order-section-label">{{ t('mypage.sectionShipping') }}</p>
+                  <div class="order-shipping">
+                    <v-icon size="14" color="#999" class="mr-1">mdi-map-marker-outline</v-icon>
+                    <span class="order-shipping-text">
+                      {{ order.shippingAddress.name }}
+                      <span v-if="order.shippingAddress.phone">· {{ order.shippingAddress.phone }}</span>
+                      · {{ order.shippingAddress.address }} {{ order.shippingAddress.addressDetail }}
+                      <span v-if="order.shippingAddress.memo"><br>{{ t('mypage.shippingMemoLabel') }}: {{ order.shippingAddress.memo }}</span>
+                    </span>
+                  </div>
                 </template>
-              </div>
-              <div class="order-stepper-labels">
-                <span v-for="s in STEP_ORDER" :key="s" :class="{ on: s === order.status }">{{ statusLabel(s) }}</span>
-              </div>
-            </div>
 
-            <p class="order-section-label">{{ t('mypage.sectionItems') }}</p>
-            <div class="order-items">
-              <div v-for="(item, i) in order.items" :key="i" class="order-item">
-                <img :src="item.image" :alt="item.name" class="order-item-img" />
-                <div class="order-item-info">
-                  <p class="order-item-name">{{ item.name }}</p>
-                  <p class="order-item-detail">
-                    {{ item.size ? `${t('detail.sizeLabel')}: ${item.size}` : '' }}
-                    {{ item.quantity ? `/ ${t('mypage.quantityLabel')}: ${item.quantity}` : '' }}
-                  </p>
-                  <p class="order-item-price">₩{{ Number(item.price).toLocaleString() }}</p>
+                <div class="order-footer">
+                  <div class="order-actions">
+                    <router-link
+                      v-if="order.status === 'delivered' && order.items.length === 1"
+                      :to="`/products/${order.items[0].id}`"
+                      class="order-action-btn"
+                    >{{ t('mypage.rebuyBtn') }}</router-link>
+                    <router-link to="/contact" class="order-action-btn">{{ t('mypage.contactBtn') }}</router-link>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <div v-if="ordersTotalPages > 1" class="pagination">
+            <button class="page-nav-btn" :disabled="ordersPage === 1" @click="goToOrdersPage(ordersPage - 1)">
+              <v-icon size="16">mdi-chevron-left</v-icon>
+            </button>
+            <template v-for="(p, i) in ordersPageNumbers" :key="i">
+              <span v-if="p === '...'" class="page-ellipsis">…</span>
+              <button v-else class="page-num-btn" :class="{ active: p === ordersPage }" @click="goToOrdersPage(p)">{{ p }}</button>
+            </template>
+            <button class="page-nav-btn" :disabled="ordersPage === ordersTotalPages" @click="goToOrdersPage(ordersPage + 1)">
+              <v-icon size="16">mdi-chevron-right</v-icon>
+            </button>
+          </div>
+        </section>
+
+        <!-- 배송지 관리 -->
+        <section v-show="activeSection === 'address'">
+          <div class="addr-section-head">
+            <div>
+              <h2 class="mypage-section-title mb-0">배송지 관리</h2>
+              <p class="text-body-2 text-grey mt-2">기본 배송지는 결제 시 자동으로 채워집니다. 여러 곳을 등록해두고 필요할 때 기본으로 바꿔 쓸 수 있어요.</p>
+            </div>
+            <v-btn v-if="!addrFormOpen" color="#111" @click="openAddAddressForm">+ 새 배송지</v-btn>
+          </div>
+
+          <!-- 배송지 목록 -->
+          <div v-if="!addrFormOpen">
+            <div v-if="addressesLoading" class="text-center py-8">
+              <v-progress-circular indeterminate color="#111" />
+            </div>
+            <div v-else-if="addresses.length === 0" class="text-center py-8 text-grey">
+              등록된 배송지가 없습니다
+            </div>
+            <div v-else class="addr-list">
+              <div v-for="a in addresses" :key="a.id" class="addr-card" :class="{ 'is-default': a.is_default }">
+                <div class="addr-card-head">
+                  <span v-if="a.is_default" class="addr-default-badge">기본 배송지</span>
+                  <span class="addr-recipient">{{ a.recipient }}</span>
+                  <span v-if="a.phone" class="addr-phone">· {{ a.phone }}</span>
+                </div>
+                <p class="addr-line">({{ a.zip }}) {{ a.address }} {{ a.address_detail }}</p>
+                <p v-if="a.memo" class="addr-memo">{{ a.memo }}</p>
+                <div class="addr-actions">
+                  <button v-if="!a.is_default" class="addr-action-btn" @click="setDefaultAddress(a)">기본으로 설정</button>
+                  <button class="addr-action-btn" @click="openEditAddressForm(a)">수정</button>
+                  <button class="addr-action-btn addr-action-danger" @click="deleteAddressCard(a)">삭제</button>
                 </div>
               </div>
             </div>
-
-            <p class="order-section-label">{{ t('mypage.sectionPayment') }}</p>
-            <div class="order-payment">
-              <div class="order-payment-row">
-                <span>{{ t('mypage.paymentMethodLabel') }}</span>
-                <span>{{ paymentMethodLabel(order.payment_method) }}</span>
-              </div>
-              <div class="order-payment-row">
-                <span>{{ t('mypage.itemsSubtotalLabel') }}</span>
-                <span>₩{{ itemsSubtotal(order).toLocaleString() }}</span>
-              </div>
-              <div class="order-payment-row order-payment-total">
-                <span>{{ t('mypage.orderTotalLabel') }}</span>
-                <span>₩{{ Number(order.total).toLocaleString() }}</span>
-              </div>
-            </div>
-
-            <!-- 주문한 배송지 -->
-            <template v-if="order.shippingAddress?.address">
-              <p class="order-section-label">{{ t('mypage.sectionShipping') }}</p>
-              <div class="order-shipping">
-                <v-icon size="14" color="#999" class="mr-1">mdi-map-marker-outline</v-icon>
-                <span class="order-shipping-text">
-                  {{ order.shippingAddress.name }}
-                  <span v-if="order.shippingAddress.phone">· {{ order.shippingAddress.phone }}</span>
-                  · {{ order.shippingAddress.address }} {{ order.shippingAddress.addressDetail }}
-                  <span v-if="order.shippingAddress.memo"><br>{{ t('mypage.shippingMemoLabel') }}: {{ order.shippingAddress.memo }}</span>
-                </span>
-              </div>
-            </template>
-
-            <div class="order-footer">
-              <div class="order-actions">
-                <router-link
-                  v-if="order.status === 'delivered' && order.items.length === 1"
-                  :to="`/products/${order.items[0].id}`"
-                  class="order-action-btn"
-                >{{ t('mypage.rebuyBtn') }}</router-link>
-                <router-link to="/contact" class="order-action-btn">{{ t('mypage.contactBtn') }}</router-link>
-              </div>
-            </div>
           </div>
-        </template>
-      </div>
 
-      <div v-if="ordersTotalPages > 1" class="pagination">
-        <button class="page-nav-btn" :disabled="ordersPage === 1" @click="goToOrdersPage(ordersPage - 1)">
-          <v-icon size="16">mdi-chevron-left</v-icon>
-        </button>
-        <template v-for="(p, i) in ordersPageNumbers" :key="i">
-          <span v-if="p === '...'" class="page-ellipsis">…</span>
-          <button v-else class="page-num-btn" :class="{ active: p === ordersPage }" @click="goToOrdersPage(p)">{{ p }}</button>
-        </template>
-        <button class="page-nav-btn" :disabled="ordersPage === ordersTotalPages" @click="goToOrdersPage(ordersPage + 1)">
-          <v-icon size="16">mdi-chevron-right</v-icon>
-        </button>
-      </div>
-    </v-card>
+          <!-- 배송지 추가/수정 폼 -->
+          <v-form v-else @submit.prevent="saveAddress">
+            <label class="field-label">받는 사람</label>
+            <v-text-field v-model="addr.recipient" variant="outlined" density="comfortable" hide-details class="mb-3" />
 
-    <!-- 배송지 관리 -->
-    <v-card id="section-address" variant="outlined" class="pa-8 mypage-card mb-6 reveal">
-      <div class="addr-tab-head">
-        <div>
-          <h2 class="text-h6 font-weight-bold mb-1">배송지 관리</h2>
-          <p class="text-body-2 text-grey">기본 배송지는 결제 시 자동으로 채워집니다. 여러 곳을 등록해두고 필요할 때 기본으로 바꿔 쓸 수 있어요.</p>
-        </div>
-        <v-btn v-if="!addrFormOpen" color="#111" @click="openAddAddressForm">+ 새 배송지</v-btn>
-      </div>
+            <label class="field-label">전화번호</label>
+            <v-text-field
+              v-model="addr.phone"
+              placeholder="010-0000-0000"
+              maxlength="13"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="mb-3"
+              @input="addr.phone = formatPhone(addr.phone)"
+            />
 
-      <!-- 배송지 목록 -->
-      <div v-if="!addrFormOpen">
-        <div v-if="addressesLoading" class="text-center py-8">
-          <v-progress-circular indeterminate color="#111" />
-        </div>
-        <div v-else-if="addresses.length === 0" class="text-center py-8 text-grey">
-          등록된 배송지가 없습니다
-        </div>
-        <div v-else class="addr-list">
-          <div v-for="a in addresses" :key="a.id" class="addr-card" :class="{ 'is-default': a.is_default }">
-            <div class="addr-card-head">
-              <span v-if="a.is_default" class="addr-default-badge">기본 배송지</span>
-              <span class="addr-recipient">{{ a.recipient }}</span>
-              <span v-if="a.phone" class="addr-phone">· {{ a.phone }}</span>
+            <label class="field-label">우편번호</label>
+            <div class="d-flex ga-2 mb-3">
+              <v-text-field
+                v-model="addr.zip"
+                variant="outlined"
+                density="comfortable"
+                readonly
+                hide-details
+                @click="searchAddress"
+                style="cursor:pointer"
+              />
+              <v-btn color="#111" size="large" height="56" @click="searchAddress">주소 검색</v-btn>
             </div>
-            <p class="addr-line">({{ a.zip }}) {{ a.address }} {{ a.address_detail }}</p>
-            <p v-if="a.memo" class="addr-memo">{{ a.memo }}</p>
-            <div class="addr-actions">
-              <button v-if="!a.is_default" class="addr-action-btn" @click="setDefaultAddress(a)">기본으로 설정</button>
-              <button class="addr-action-btn" @click="openEditAddressForm(a)">수정</button>
-              <button class="addr-action-btn addr-action-danger" @click="deleteAddressCard(a)">삭제</button>
+
+            <label class="field-label">주소</label>
+            <v-text-field
+              v-model="addr.address"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              readonly
+              placeholder="주소 검색 버튼을 클릭하세요"
+              class="mb-3"
+            />
+
+            <label class="field-label">상세주소</label>
+            <v-text-field
+              v-model="addr.addressDetail"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              placeholder="동/호수, 건물명 등"
+              class="mb-3"
+            />
+
+            <label class="field-label">배송 메모 (선택)</label>
+            <v-select v-model="addr.memo" :items="memoOptions" variant="outlined" density="comfortable" hide-details class="mb-2" />
+
+            <v-checkbox
+              v-if="editingAddrId === null && addresses.length > 0"
+              v-model="addr.isDefault"
+              label="기본 배송지로 설정"
+              density="compact"
+              hide-details
+              class="mb-4"
+            />
+            <v-alert v-if="addrMsg" :type="addrMsgType" variant="tonal" density="compact" class="mb-4">{{ addrMsg }}</v-alert>
+            <div class="d-flex ga-2">
+              <v-btn type="submit" color="#111" size="large" :loading="addrLoading">저장</v-btn>
+              <v-btn variant="outlined" color="#111" size="large" @click="closeAddrForm">취소</v-btn>
             </div>
-          </div>
-        </div>
+          </v-form>
+        </section>
+
+        <!-- 내 정보 수정 -->
+        <section v-show="activeSection === 'profile'">
+          <h2 class="mypage-section-title">{{ t('mypage.profileTitle') }}</h2>
+          <v-form @submit.prevent="updateProfile">
+            <label class="field-label">{{ t('auth.nameLabel') }}</label>
+            <v-text-field v-model="profile.name" variant="outlined" density="comfortable" hide-details class="mb-3" />
+
+            <label class="field-label">{{ t('auth.emailLabel') }}</label>
+            <v-text-field v-model="profile.email" type="email" variant="outlined" density="comfortable" hide-details class="mb-4" />
+
+            <v-alert v-if="profileMsg" :type="profileMsgType" variant="tonal" density="compact" class="mb-4">{{ profileMsg }}</v-alert>
+            <v-btn type="submit" color="#111" size="large" :loading="profileLoading">{{ t('common.save') }}</v-btn>
+          </v-form>
+        </section>
+
+        <!-- 비밀번호 변경 -->
+        <section v-show="activeSection === 'password'">
+          <h2 class="mypage-section-title">{{ t('mypage.passwordTitle') }}</h2>
+          <v-form @submit.prevent="changePassword">
+            <label class="field-label">{{ t('mypage.currentPasswordLabel') }}</label>
+            <v-text-field
+              v-model="pw.current"
+              :type="showPw ? 'text' : 'password'"
+              :append-inner-icon="showPw ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPw = !showPw"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="mb-3"
+            />
+            <label class="field-label">{{ t('auth.newPasswordLabel') }}</label>
+            <v-text-field v-model="pw.new" :type="showPw ? 'text' : 'password'" variant="outlined" density="comfortable" hide-details class="mb-3" />
+
+            <label class="field-label">{{ t('auth.newPasswordConfirmLabel') }}</label>
+            <v-text-field v-model="pw.confirm" :type="showPw ? 'text' : 'password'" variant="outlined" density="comfortable" hide-details class="mb-4" />
+
+            <v-alert v-if="pwMsg" :type="pwMsgType" variant="tonal" density="compact" class="mb-4">{{ pwMsg }}</v-alert>
+            <v-btn type="submit" color="#111" size="large" :loading="pwLoading">{{ t('mypage.changeBtn') }}</v-btn>
+          </v-form>
+        </section>
+
+        <!-- 회원 탈퇴 -->
+        <section v-show="activeSection === 'withdraw'">
+          <h2 class="mypage-section-title" style="color:#d32f2f">{{ t('mypage.withdrawTitle') }}</h2>
+          <p class="text-body-2 text-grey-darken-1 mb-6" v-html="t('mypage.withdrawWarning')"></p>
+          <v-form @submit.prevent="withdraw">
+            <p class="text-body-2 text-grey-darken-1 mb-2" v-html="t('mypage.withdrawTypeConfirmLabel', { phrase: WITHDRAW_CONFIRM_PHRASE })"></p>
+            <v-text-field
+              v-model="withdrawConfirmText"
+              :placeholder="WITHDRAW_CONFIRM_PHRASE"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="mb-4"
+            />
+            <v-alert v-if="withdrawMsg" type="error" variant="tonal" density="compact" class="mb-4">{{ withdrawMsg }}</v-alert>
+            <v-btn
+              type="submit"
+              color="error"
+              size="large"
+              :loading="withdrawLoading"
+              :disabled="!withdrawConfirmValid"
+            >{{ t('mypage.withdrawBtn') }}</v-btn>
+          </v-form>
+        </section>
       </div>
-
-      <!-- 배송지 추가/수정 폼 -->
-      <v-form v-else @submit.prevent="saveAddress">
-        <v-text-field
-          v-model="addr.recipient"
-          label="받는 사람"
-          variant="outlined"
-          density="comfortable"
-          class="mb-3"
-        />
-        <v-text-field
-          v-model="addr.phone"
-          label="전화번호"
-          placeholder="010-0000-0000"
-          maxlength="13"
-          variant="outlined"
-          density="comfortable"
-          class="mb-3"
-          @input="addr.phone = formatPhone(addr.phone)"
-        />
-        <div class="d-flex ga-2 mb-3">
-          <v-text-field
-            v-model="addr.zip"
-            label="우편번호"
-            variant="outlined"
-            density="comfortable"
-            readonly
-            hide-details
-            @click="searchAddress"
-            style="cursor:pointer"
-          />
-          <v-btn color="#111" size="large" height="56" @click="searchAddress">주소 검색</v-btn>
-        </div>
-        <v-text-field
-          v-model="addr.address"
-          label="주소"
-          variant="outlined"
-          density="comfortable"
-          readonly
-          placeholder="주소 검색 버튼을 클릭하세요"
-          class="mb-3"
-        />
-        <v-text-field
-          v-model="addr.addressDetail"
-          label="상세주소"
-          variant="outlined"
-          density="comfortable"
-          placeholder="동/호수, 건물명 등"
-          class="mb-3"
-        />
-        <v-select
-          v-model="addr.memo"
-          :items="memoOptions"
-          label="배송 메모 (선택)"
-          variant="outlined"
-          density="comfortable"
-          class="mb-2"
-        />
-        <v-checkbox
-          v-if="editingAddrId === null && addresses.length > 0"
-          v-model="addr.isDefault"
-          label="기본 배송지로 설정"
-          density="compact"
-          hide-details
-          class="mb-4"
-        />
-        <v-alert v-if="addrMsg" :type="addrMsgType" variant="tonal" density="compact" class="mb-4">{{ addrMsg }}</v-alert>
-        <div class="d-flex ga-2">
-          <v-btn type="submit" color="#111" size="large" :loading="addrLoading">저장</v-btn>
-          <v-btn variant="outlined" color="#111" size="large" @click="closeAddrForm">취소</v-btn>
-        </div>
-      </v-form>
-    </v-card>
-
-    <!-- 내 정보 수정 -->
-    <v-card id="section-profile" variant="outlined" class="pa-8 mypage-card mb-6 reveal">
-      <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.profileTitle') }}</h2>
-      <v-form @submit.prevent="updateProfile">
-        <v-text-field
-          v-model="profile.name"
-          :label="t('auth.nameLabel')"
-          variant="outlined"
-          density="comfortable"
-          class="mb-3"
-        />
-        <v-text-field
-          v-model="profile.email"
-          :label="t('auth.emailLabel')"
-          type="email"
-          variant="outlined"
-          density="comfortable"
-          class="mb-4"
-        />
-        <v-alert v-if="profileMsg" :type="profileMsgType" variant="tonal" density="compact" class="mb-4">{{ profileMsg }}</v-alert>
-        <v-btn type="submit" color="#111" size="large" :loading="profileLoading">{{ t('common.save') }}</v-btn>
-      </v-form>
-    </v-card>
-
-    <!-- 비밀번호 변경 -->
-    <v-card id="section-password" variant="outlined" class="pa-8 mypage-card mb-6 reveal">
-      <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.passwordTitle') }}</h2>
-      <v-form @submit.prevent="changePassword">
-        <v-text-field
-          v-model="pw.current"
-          :label="t('mypage.currentPasswordLabel')"
-          :type="showPw ? 'text' : 'password'"
-          :append-inner-icon="showPw ? 'mdi-eye-off' : 'mdi-eye'"
-          @click:append-inner="showPw = !showPw"
-          variant="outlined"
-          density="comfortable"
-          class="mb-3"
-        />
-        <v-text-field
-          v-model="pw.new"
-          :label="t('auth.newPasswordLabel')"
-          :type="showPw ? 'text' : 'password'"
-          variant="outlined"
-          density="comfortable"
-          class="mb-3"
-        />
-        <v-text-field
-          v-model="pw.confirm"
-          :label="t('auth.newPasswordConfirmLabel')"
-          :type="showPw ? 'text' : 'password'"
-          variant="outlined"
-          density="comfortable"
-          class="mb-4"
-        />
-        <v-alert v-if="pwMsg" :type="pwMsgType" variant="tonal" density="compact" class="mb-4">{{ pwMsg }}</v-alert>
-        <v-btn type="submit" color="#111" size="large" :loading="pwLoading">{{ t('mypage.changeBtn') }}</v-btn>
-      </v-form>
-    </v-card>
-
-    <!-- 회원 탈퇴 -->
-    <v-card id="section-withdraw" variant="outlined" class="pa-8 mypage-card reveal">
-      <h2 class="text-h6 font-weight-bold mb-4" style="color:#d32f2f">{{ t('mypage.withdrawTitle') }}</h2>
-      <p class="text-body-2 text-grey-darken-1 mb-6" v-html="t('mypage.withdrawWarning')"></p>
-      <v-form @submit.prevent="withdraw">
-        <p class="text-body-2 text-grey-darken-1 mb-2" v-html="t('mypage.withdrawTypeConfirmLabel', { phrase: WITHDRAW_CONFIRM_PHRASE })"></p>
-        <v-text-field
-          v-model="withdrawConfirmText"
-          :placeholder="WITHDRAW_CONFIRM_PHRASE"
-          variant="outlined"
-          density="comfortable"
-          class="mb-4"
-        />
-        <v-alert v-if="withdrawMsg" type="error" variant="tonal" density="compact" class="mb-4">{{ withdrawMsg }}</v-alert>
-        <v-btn
-          type="submit"
-          color="error"
-          size="large"
-          :loading="withdrawLoading"
-          :disabled="!withdrawConfirmValid"
-        >{{ t('mypage.withdrawBtn') }}</v-btn>
-      </v-form>
-    </v-card>
+    </div>
 
     <!-- 주소 검색 팝업 -->
     <div v-if="showPostcode" class="postcode-overlay" @click.self="showPostcode = false">
@@ -375,18 +379,32 @@ function stepIndex(status) {
   return i === -1 ? 0 : i;
 }
 
-// 탭으로 나눠 숨기던 걸 없애고 전부 한 페이지에 펼쳐서 보여줌 — 이 목록은
-// 상단 빠른 이동 링크(#section-xxx로 스크롤)의 라벨로만 쓰임
-const tabs = computed(() => [
-  { key: 'orders', label: t('mypage.tabOrders') },
-  { key: 'address', label: '배송지 관리' },
-  { key: 'profile', label: t('mypage.tabProfile') },
-  { key: 'password', label: t('mypage.tabPasswordChange') },
-  { key: 'withdraw', label: t('mypage.tabWithdraw') }
+// u-ur의 My Account 좌측 사이드바를 참고한 섹션 전환 — 페이지 이동 없이
+// 같은 /mypage 안에서 클릭한 섹션만 보여줌(v-show)
+const activeSection = ref('orders');
+const sidebarGroups = computed(() => [
+  {
+    label: t('mypage.groupShopping'),
+    items: [
+      { key: 'orders', label: t('mypage.tabOrders') },
+      { key: 'address', label: '배송지 관리' }
+    ]
+  },
+  {
+    label: t('mypage.groupAccount'),
+    items: [
+      { key: 'profile', label: t('mypage.tabProfile') },
+      { key: 'password', label: t('mypage.tabPasswordChange') },
+      { key: 'logout', label: t('nav.signOut'), action: true },
+      { key: 'withdraw', label: t('mypage.tabWithdraw'), danger: true }
+    ]
+  }
 ]);
+const flatSidebarItems = computed(() => sidebarGroups.value.flatMap(g => g.items));
 
-function scrollTo(id) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function logout() {
+  authStore.logout();
+  router.push('/products');
 }
 
 // 내 정보
@@ -452,15 +470,6 @@ function goToOrdersPage(p) {
   ordersPage.value = p;
 }
 
-const avatarInitial = computed(() => (profile.name || '').trim().charAt(0).toUpperCase() || '?');
-
-const joinedLabel = computed(() => {
-  if (!profile.createdAt) return '';
-  const tag = LOCALE_TAGS[locale.value] || 'ko-KR';
-  const formatted = new Intl.DateTimeFormat(tag, { year: 'numeric', month: 'short' }).format(new Date(profile.createdAt));
-  return t('mypage.joinedSince', { date: formatted });
-});
-
 const IN_PROGRESS_STATUSES = ['paid', 'confirmed', 'processing', 'shipped'];
 const orderStats = computed(() => {
   const list = orders.value;
@@ -469,6 +478,18 @@ const orderStats = computed(() => {
     inProgress: list.filter(o => IN_PROGRESS_STATUSES.includes(o.status)).length,
     spent: list.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + Number(o.total || 0), 0)
   };
+});
+
+// u-ur의 "나의 주문처리 현황" 단계별 건수 집계를 참고 — 우리 주문 상태에 맞춰 4단계로 재구성
+const orderFunnel = computed(() => {
+  const list = orders.value.filter(o => o.status !== 'cancelled');
+  const count = pred => list.filter(pred).length;
+  return [
+    { key: 'paid', label: t('mypage.statusPaid'), count: count(o => o.status === 'paid') },
+    { key: 'preparing', label: t('mypage.statusProcessing'), count: count(o => o.status === 'confirmed' || o.status === 'processing') },
+    { key: 'shipped', label: t('mypage.statusShipped'), count: count(o => o.status === 'shipped') },
+    { key: 'delivered', label: t('mypage.statusDelivered'), count: count(o => o.status === 'delivered') }
+  ];
 });
 
 const groupedOrders = computed(() => {
@@ -513,9 +534,6 @@ onMounted(async () => {
     profile.name = res.data.name;
     profile.email = res.data.email;
     profile.createdAt = res.data.created_at || '';
-    // 프로필 요약(mypage-hero)은 profile.name이 채워진 뒤에야 v-if로 DOM에 생기므로
-    // 처음 showReveal() 때는 아직 없어 .visible이 붙지 않고 opacity:0으로 남아있었음 — 다시 호출해 반영
-    showReveal();
   } catch {}
 
   // 배송지 목록
@@ -732,63 +750,110 @@ function itemsSubtotal(order) {
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.5s ease, transform 0.5s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-.mypage-wrap { max-width: 640px; margin: 0 auto; }
+.mypage-wrap { max-width: 960px; margin: 0 auto; }
 
-/* 프로필 요약 */
-.mypage-hero {
+/* 전체 레이아웃: 좌측 사이드바 + 우측 콘텐츠 (u-ur My Account 참고, 카드/박스 없이 플랫하게) */
+.mypage-layout {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding-bottom: 20px;
-  margin-bottom: 28px;
-  border-bottom: 1px solid #eee;
+  align-items: flex-start;
+  gap: 56px;
 }
-.mypage-hero-id { display: flex; align-items: center; gap: 14px; }
-.mypage-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #f5f5f5;
-  border: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 15px;
+
+/* 사이드바 (데스크톱) */
+.mypage-sidebar {
+  width: 180px;
   flex-shrink: 0;
-}
-.mypage-hero-name { font-size: 15px; font-weight: 700; margin: 0; }
-.mypage-hero-sub { font-size: 12px; color: #999; margin: 3px 0 0; }
-.mypage-hero-stats { display: flex; gap: 22px; }
-.mypage-hero-stat { text-align: right; }
-.mypage-hero-stat .n { display: block; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
-.mypage-hero-stat .l { display: block; font-size: 10px; color: #999; letter-spacing: 0.04em; margin-top: 2px; }
-
-/* 탭이 아니라 아래 섹션으로 스크롤만 시켜주는 빠른 이동 링크 */
-.mypage-tabs {
   display: flex;
-  gap: 0;
-  border-bottom: 2px solid #111;
-  margin-bottom: 32px;
-  overflow-x: auto;
+  flex-direction: column;
 }
-.mypage-tab {
-  flex: 1;
-  padding: 12px 8px;
-  text-align: center;
+.mypage-sidebar-group {
+  font-size: 11px;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: 0.06em;
+  margin: 28px 0 10px;
+}
+.mypage-sidebar-group:first-child { margin-top: 0; }
+.mypage-sidebar-link {
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 7px 0;
+  font-size: 13.5px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.mypage-sidebar-link:hover { color: #111; }
+.mypage-sidebar-link.active { color: #111; font-weight: 700; }
+.mypage-sidebar-link.danger { color: #b0433a; }
+.mypage-sidebar-link.danger:hover,
+.mypage-sidebar-link.danger.active { color: #d32f2f; }
+
+/* 사이드바 (모바일: 가로 스크롤 링크) */
+.mypage-mobile-nav {
+  display: none;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #111;
+}
+.mypage-mobile-link {
+  background: none;
+  border: none;
+  padding: 6px 0;
   font-size: 13px;
   color: #999;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.2s;
-  letter-spacing: 0.5px;
   white-space: nowrap;
+  cursor: pointer;
 }
-.mypage-tab:hover { color: #111; }
+.mypage-mobile-link.active { color: #111; font-weight: 700; }
+.mypage-mobile-link.danger { color: #b0433a; }
 
-.mypage-card { border-radius: 0 !important; scroll-margin-top: 90px; }
+.mypage-content { flex: 1; min-width: 0; }
+
+.mypage-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  padding-bottom: 12px;
+  margin: 32px 0 20px;
+  border-bottom: 1px solid #111;
+}
+.mypage-section-title:first-child { margin-top: 0; }
+
+/* 요약 통계 (u-ur 총적립금/쿠폰/총주문 행 참고) */
+.mypage-stats {
+  display: flex;
+  border-top: 1px solid #111;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 24px;
+}
+.mypage-stat {
+  flex: 1;
+  text-align: center;
+  padding: 18px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-left: 1px solid #eee;
+}
+.mypage-stat:first-child { border-left: none; }
+.mypage-stat .n { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+.mypage-stat .l { font-size: 11px; color: #999; }
+
+/* 주문처리 현황 (u-ur 입금전/배송준비중/배송중/배송완료 참고) */
+.order-funnel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 24px;
+}
+.order-funnel-step { text-align: center; flex: 1; }
+.order-funnel-step .n { display: block; font-size: 20px; font-weight: 700; color: #ccc; }
+.order-funnel-step .n:not(:empty) { color: #111; }
+.order-funnel-step .l { display: block; font-size: 11.5px; color: #888; margin-top: 4px; }
 
 /* 주문 내역 */
 .order-month-head {
@@ -796,12 +861,12 @@ function itemsSubtotal(order) {
   font-weight: 700;
   color: #999;
   letter-spacing: 0.04em;
-  margin: 28px 0 12px;
+  margin: 24px 0 12px;
 }
 .order-month-head:first-child { margin-top: 0; }
 
-.orders-list { display: flex; flex-direction: column; gap: 16px; }
-.order-card { border: 1px solid #eee; padding: 20px; }
+.orders-list { display: flex; flex-direction: column; gap: 0; }
+.order-card { border-top: 1px solid #eee; padding: 20px 0; }
 .order-card.is-cancelled { opacity: 0.6; }
 .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
 .order-no { font-weight: 600; font-size: 14px; letter-spacing: 0.5px; }
@@ -899,7 +964,7 @@ function itemsSubtotal(order) {
 .page-ellipsis { color: #bbb; font-size: 12px; padding: 0 2px; }
 
 /* 배송지 관리 */
-.addr-tab-head {
+.addr-section-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -907,9 +972,10 @@ function itemsSubtotal(order) {
   margin-bottom: 24px;
   flex-wrap: wrap;
 }
-.addr-list { display: flex; flex-direction: column; gap: 14px; }
-.addr-card { border: 1px solid #eee; padding: 18px 20px; }
-.addr-card.is-default { border-color: #111; }
+.addr-list { display: flex; flex-direction: column; gap: 0; }
+.addr-card { border-top: 1px solid #eee; padding: 18px 0; }
+.addr-card:first-child { border-top: none; }
+.addr-card.is-default .addr-card-head { color: #111; }
 .addr-card-head {
   display: flex;
   align-items: center;
@@ -933,8 +999,6 @@ function itemsSubtotal(order) {
   display: flex;
   gap: 8px;
   margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid #f2f2f2;
 }
 .addr-action-btn {
   font-size: 12px;
@@ -950,6 +1014,44 @@ function itemsSubtotal(order) {
 .addr-action-btn:hover { border-color: #111; color: #111; }
 .addr-action-danger { color: #c62828; }
 .addr-action-danger:hover { border-color: #c62828; color: #c62828; }
+
+/* 필드 라벨 — 플로팅 라벨 대신 입력란 위에 고정 라벨 (로그인/체크아웃과 동일한 패턴) */
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 6px;
+  letter-spacing: -0.2px;
+}
+:deep(.v-field) {
+  border-radius: 4px !important;
+  font-size: 14px;
+}
+:deep(.v-field__outline__start),
+:deep(.v-field__outline__end) {
+  border-color: #e0e0e0 !important;
+}
+:deep(.v-field__outline__notch) {
+  display: none !important;
+}
+:deep(.v-field__outline__start) { border-right: 0 !important; }
+:deep(.v-field__outline__end) { border-left: 0 !important; }
+:deep(.v-field--variant-outlined .v-field__outline) {
+  --v-field-border-width: 1px;
+}
+:deep(.v-field--variant-outlined .v-field__outline__start),
+:deep(.v-field--variant-outlined .v-field__outline__end) {
+  border-top: 1px solid #e0e0e0 !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+:deep(.v-field--focused .v-field__outline__start),
+:deep(.v-field--focused .v-field__outline__end) {
+  border-color: #111 !important;
+  border-top-color: #111 !important;
+  border-bottom-color: #111 !important;
+  border-width: 1.5px !important;
+}
 
 /* 주소 검색 팝업 (체크아웃과 동일한 스타일) */
 .postcode-overlay {
@@ -987,11 +1089,12 @@ function itemsSubtotal(order) {
   cursor: pointer;
 }
 
-/* 모바일: 상단 로고~탭 사이 여백이 데스크톱 기준(py-16 등)이라 과도하게 비어 보이던 것 축소 */
-@media (max-width: 640px) {
+/* 모바일: 사이드바 대신 가로 스크롤 링크, 여백 축소 */
+@media (max-width: 768px) {
   .mypage-wrap.py-16 { padding-top: 28px !important; padding-bottom: 32px !important; }
   .mypage-wrap .mb-10 { margin-bottom: 20px !important; }
-  .mypage-hero { padding-bottom: 14px; margin-bottom: 18px; }
-  .mypage-tabs { margin-bottom: 20px; }
+  .mypage-layout { flex-direction: column; gap: 0; }
+  .mypage-sidebar { display: none; }
+  .mypage-mobile-nav { display: flex; }
 }
 </style>
