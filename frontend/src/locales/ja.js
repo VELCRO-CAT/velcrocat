@@ -55,6 +55,7 @@ export default {
     menuTitle: 'ショップメニュー',
     menuHome: 'ホーム',
     menuBrand: 'ブランド紹介',
+    menuStory: 'ブランドストーリー',
     menuProducts: '全商品',
     menuContact: 'お問い合わせ',
     copyright: '© 2026 Velcrocat(벨크로캣). All rights reserved.'

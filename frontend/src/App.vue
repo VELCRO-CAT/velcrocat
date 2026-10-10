@@ -226,6 +226,7 @@
             <h4>{{ t('footer.menuTitle') }}</h4>
             <router-link to="/" class="footer-menu-link">{{ t('footer.menuHome') }}</router-link>
             <router-link to="/brand" class="footer-menu-link">{{ t('footer.menuBrand') }}</router-link>
+            <router-link to="/story" class="footer-menu-link">{{ t('footer.menuStory') }}</router-link>
             <router-link to="/products" class="footer-menu-link">{{ t('footer.menuProducts') }}</router-link>
             <router-link to="/contact" class="footer-menu-link">{{ t('footer.menuContact') }}</router-link>
           </div>

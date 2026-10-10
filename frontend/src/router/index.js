@@ -11,6 +11,7 @@ import Checkout from '../views/Checkout.vue';
 import OrderComplete from '../views/OrderComplete.vue';
 import Contact from '../views/Contact.vue';
 import About from '../views/About.vue';
+import Story from '../views/Story.vue';
 import Privacy from '../views/Privacy.vue';
 import AdminLogin from '../views/admin/Login.vue';
 import AdminDashboard from '../views/admin/Dashboard.vue';
@@ -24,6 +25,7 @@ const routes = [
   { path: '/', redirect: '/brand' },
   { path: '/home', redirect: '/products' },
   { path: '/brand', component: About },
+  { path: '/story', component: Story },
   { path: '/products', component: Products },
   { path: '/products/:id', component: ProductDetail },
   { path: '/cart', component: Cart },

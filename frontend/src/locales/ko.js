@@ -55,6 +55,7 @@ export default {
     menuTitle: '상점 메뉴',
     menuHome: '메인페이지',
     menuBrand: '회사소개',
+    menuStory: '브랜드 스토리',
     menuProducts: '전체상품',
     menuContact: '고객문의',
     copyright: '© 2026 벨크로캣(velcrocat). All rights reserved.'

@@ -55,6 +55,7 @@ export default {
     menuTitle: 'Shop Menu',
     menuHome: 'Home',
     menuBrand: 'About Us',
+    menuStory: 'Our Story',
     menuProducts: 'All Products',
     menuContact: 'Contact Us',
     copyright: '© 2026 Velcrocat. All rights reserved.'
