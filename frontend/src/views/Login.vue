@@ -7,50 +7,49 @@
       </div>
 
       <v-form @submit.prevent="handleLogin" class="reveal reveal-2">
+        <label class="field-label">{{ t('auth.emailLabel') }}</label>
         <v-text-field
           v-model="email"
-          :label="t('auth.emailLabel')"
           type="email"
           variant="outlined"
           density="comfortable"
+          hide-details
           class="mb-3"
           required
         />
+        <label class="field-label">{{ t('auth.passwordLabel') }}</label>
         <v-text-field
           v-model="password"
-          :label="t('auth.passwordLabel')"
           :type="showPw ? 'text' : 'password'"
           :append-inner-icon="showPw ? 'mdi-eye-off' : 'mdi-eye'"
           @click:append-inner="showPw = !showPw"
           variant="outlined"
           density="comfortable"
+          hide-details
           class="mb-4"
           required
         />
 
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
 
-        <v-btn type="submit" color="#111" block size="large" :loading="loading">{{ t('auth.loginBtn') }}</v-btn>
+        <div class="login-btn-row">
+          <v-btn type="submit" color="#111" size="large" :loading="loading">{{ t('auth.loginBtn') }}</v-btn>
+          <v-btn to="/register" variant="outlined" color="#111" size="large">{{ t('auth.registerLink') }}</v-btn>
+        </div>
       </v-form>
 
+      <div class="text-center mt-4 reveal reveal-3">
+        <router-link to="/forgot-password" class="login-util-link">{{ t('auth.forgotPasswordLink') }}</router-link>
+      </div>
+
       <!-- 소셜 로그인 -->
-      <div class="reveal reveal-3 mt-6">
+      <div class="reveal reveal-4 mt-6">
         <div class="social-divider">
           <span>{{ t('auth.or') }}</span>
         </div>
         <div class="mt-4">
           <NaverLoginButton />
         </div>
-      </div>
-
-      <div class="text-center mt-4 reveal reveal-4">
-        <p class="text-body-2 mb-1">
-          <router-link to="/forgot-password" style="color:#888;font-weight:500;text-decoration:none">{{ t('auth.forgotPasswordLink') }}</router-link>
-        </p>
-        <p class="text-body-2">
-          {{ t('auth.noAccount') }}
-          <router-link to="/register" style="color:#111;font-weight:600">{{ t('auth.registerLink') }}</router-link>
-        </p>
       </div>
     </v-card>
   </v-container>
@@ -119,6 +118,66 @@ async function handleLogin() {
   height: 1px;
   background: #ddd;
 }
+
+/* 필드 라벨 — 플로팅 라벨 대신 입력란 위에 고정 라벨 */
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 6px;
+  letter-spacing: -0.2px;
+}
+:deep(.v-field) {
+  border-radius: 8px !important;
+  font-size: 14px;
+}
+:deep(.v-field__outline__start),
+:deep(.v-field__outline__end) {
+  border-color: #e0e0e0 !important;
+}
+/* notch(라벨 자리) 완전 숨김 - 라벨을 위에 별도로 두기 때문 */
+:deep(.v-field__outline__notch) {
+  display: none !important;
+}
+:deep(.v-field__outline__start) {
+  border-right: 0 !important;
+}
+:deep(.v-field__outline__end) {
+  border-left: 0 !important;
+}
+:deep(.v-field--variant-outlined .v-field__outline) {
+  --v-field-border-width: 1px;
+}
+:deep(.v-field--variant-outlined .v-field__outline__start),
+:deep(.v-field--variant-outlined .v-field__outline__end) {
+  border-top: 1px solid #e0e0e0 !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+:deep(.v-field--focused .v-field__outline__start),
+:deep(.v-field--focused .v-field__outline__end) {
+  border-color: #111 !important;
+  border-top-color: #111 !important;
+  border-bottom-color: #111 !important;
+  border-width: 1.5px !important;
+}
+
+/* 로그인 / 회원가입 버튼을 나란히 */
+.login-btn-row {
+  display: flex;
+  gap: 8px;
+}
+.login-btn-row .v-btn {
+  flex: 1;
+}
+
+.login-util-link {
+  font-size: 13px;
+  color: #888;
+  font-weight: 500;
+  text-decoration: none;
+}
+.login-util-link:hover { color: #111; }
 
 /* 모바일: 데스크톱 기준 py-16(위아래 64px)이 과도하게 커 보이던 것 축소 */
 @media (max-width: 640px) {
