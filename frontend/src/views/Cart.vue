@@ -3,9 +3,9 @@
     <h1 class="text-h5 font-weight-bold mb-6">{{ t('cart.title') }}</h1>
 
     <div v-if="cartStore.items.length === 0" class="text-center py-16">
-      <v-icon size="80" color="grey-lighten-1">mdi-cart-outline</v-icon>
+      <v-icon size="64" color="#ccc">mdi-cart-outline</v-icon>
       <p class="text-h6 text-grey mt-4 mb-6">{{ t('cart.empty') }}</p>
-      <v-btn color="red-darken-4" variant="elevated" to="/products">{{ t('cart.browseProducts') }}</v-btn>
+      <v-btn color="#111" size="large" to="/products">{{ t('cart.browseProducts') }}</v-btn>
     </div>
 
     <v-row v-else>
@@ -22,7 +22,7 @@
                 <span v-if="item.color && item.size"> / </span>
                 <span v-if="item.size">{{ t('detail.sizeLabel') }}: {{ item.size }}</span>
               </p>
-              <p class="text-body-2 text-red-darken-4 font-weight-bold">₩{{ Number(item.price).toLocaleString() }}</p>
+              <p class="text-body-2 font-weight-bold">₩{{ Number(item.price).toLocaleString() }}</p>
             </div>
             <div class="d-flex align-center">
               <v-btn icon variant="text" size="small" @click="cartStore.updateQty(vk(item), item.qty - 1)">
@@ -61,9 +61,9 @@
           <v-divider class="mb-3" />
           <div class="d-flex justify-space-between font-weight-bold text-h6 mb-4">
             <span>{{ t('cart.total') }}</span>
-            <span class="text-red-darken-4">₩{{ cartStore.total.toLocaleString() }}</span>
+            <span>₩{{ cartStore.total.toLocaleString() }}</span>
           </div>
-          <v-btn color="red-darken-4" block size="large" @click="checkout">{{ t('cart.checkoutBtn') }}</v-btn>
+          <v-btn color="#111" block size="large" @click="checkout">{{ t('cart.checkoutBtn') }}</v-btn>
         </v-card>
       </v-col>
     </v-row>
