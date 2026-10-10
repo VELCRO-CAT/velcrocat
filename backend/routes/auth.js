@@ -115,6 +115,7 @@ router.post('/kakao/callback', async (req, res) => {
     const tokenData = await tokenRes.json();
 
     if (tokenData.error) {
+      console.error('[카카오 로그인] 토큰 교환 실패:', tokenData);
       return res.status(400).json({ error: '카카오 인증에 실패했습니다' });
     }
 
