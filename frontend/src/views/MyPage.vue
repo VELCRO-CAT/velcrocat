@@ -137,6 +137,19 @@
           </div>
         </template>
       </div>
+
+      <div v-if="ordersTotalPages > 1" class="pagination">
+        <button class="page-nav-btn" :disabled="ordersPage === 1" @click="goToOrdersPage(ordersPage - 1)">
+          <v-icon size="16">mdi-chevron-left</v-icon>
+        </button>
+        <template v-for="(p, i) in ordersPageNumbers" :key="i">
+          <span v-if="p === '...'" class="page-ellipsis">…</span>
+          <button v-else class="page-num-btn" :class="{ active: p === ordersPage }" @click="goToOrdersPage(p)">{{ p }}</button>
+        </template>
+        <button class="page-nav-btn" :disabled="ordersPage === ordersTotalPages" @click="goToOrdersPage(ordersPage + 1)">
+          <v-icon size="16">mdi-chevron-right</v-icon>
+        </button>
+      </div>
     </v-card>
 
     <!-- 배송지 관리 -->
@@ -411,6 +424,34 @@ const showPw = ref(false);
 const orders = ref([]);
 const ordersLoading = ref(false);
 
+// 주문내역 페이지네이션 (10건씩)
+const ORDERS_PAGE_SIZE = 10;
+const ordersPage = ref(1);
+const ordersTotalPages = computed(() => Math.max(1, Math.ceil(orders.value.length / ORDERS_PAGE_SIZE)));
+const pagedOrdersList = computed(() => {
+  const start = (ordersPage.value - 1) * ORDERS_PAGE_SIZE;
+  return orders.value.slice(start, start + ORDERS_PAGE_SIZE);
+});
+const ordersPageNumbers = computed(() => {
+  const total = ordersTotalPages.value;
+  const cur = ordersPage.value;
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const keep = new Set([1, 2, total - 1, total, cur - 1, cur, cur + 1]);
+  const sorted = [...keep].filter(p => p >= 1 && p <= total).sort((a, b) => a - b);
+  const result = [];
+  let prev = 0;
+  for (const p of sorted) {
+    if (prev && p - prev > 1) result.push('...');
+    result.push(p);
+    prev = p;
+  }
+  return result;
+});
+function goToOrdersPage(p) {
+  if (p < 1 || p > ordersTotalPages.value) return;
+  ordersPage.value = p;
+}
+
 const avatarInitial = computed(() => (profile.name || '').trim().charAt(0).toUpperCase() || '?');
 
 const joinedLabel = computed(() => {
@@ -435,7 +476,7 @@ const groupedOrders = computed(() => {
   const formatter = new Intl.DateTimeFormat(tag, { year: 'numeric', month: 'long' });
   const groups = [];
   const byKey = new Map();
-  for (const order of orders.value) {
+  for (const order of pagedOrdersList.value) {
     const d = new Date(order.created_at);
     const key = `${d.getFullYear()}-${d.getMonth()}`;
     if (!byKey.has(key)) {
@@ -826,6 +867,36 @@ function itemsSubtotal(order) {
   white-space: nowrap;
 }
 .order-action-btn:hover { background: #111; color: #fff; }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 28px;
+}
+.page-nav-btn,
+.page-num-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.page-nav-btn:hover:not(:disabled),
+.page-num-btn:hover { border-color: #111; color: #111; }
+.page-nav-btn:disabled { opacity: 0.35; cursor: default; }
+.page-num-btn.active { background: #111; border-color: #111; color: #fff; }
+.page-ellipsis { color: #bbb; font-size: 12px; padding: 0 2px; }
 
 /* 배송지 관리 */
 .addr-tab-head {

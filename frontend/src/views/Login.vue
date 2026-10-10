@@ -33,8 +33,8 @@
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
 
         <div class="login-btn-row">
-          <v-btn type="submit" color="#111" size="large" :loading="loading">{{ t('auth.loginBtn') }}</v-btn>
-          <v-btn to="/register" variant="outlined" color="#111" size="large">{{ t('auth.registerLink') }}</v-btn>
+          <v-btn type="submit" color="#111" block size="large" :loading="loading">{{ t('auth.loginBtn') }}</v-btn>
+          <v-btn to="/register" variant="outlined" color="#111" block size="large">{{ t('auth.registerLink') }}</v-btn>
         </div>
       </v-form>
 
@@ -162,13 +162,11 @@ async function handleLogin() {
   border-width: 1.5px !important;
 }
 
-/* 로그인 / 회원가입 버튼을 나란히 */
+/* 로그인 / 회원가입 버튼을 각각 전체 너비로 위아래 배치 */
 .login-btn-row {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-}
-.login-btn-row .v-btn {
-  flex: 1;
 }
 
 .login-util-link {
