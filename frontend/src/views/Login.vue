@@ -48,6 +48,7 @@
         </div>
         <div class="mt-4">
           <NaverLoginButton />
+          <KakaoLoginButton />
         </div>
       </div>
     </div>
@@ -61,6 +62,7 @@ import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 import NaverLoginButton from '../components/NaverLoginButton.vue';
+import KakaoLoginButton from '../components/KakaoLoginButton.vue';
 
 const { t } = useI18n();
 

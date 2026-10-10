@@ -231,6 +231,11 @@ export default {
     loading: '연결 중...',
     connectError: '네이버 로그인 연결에 실패했습니다'
   },
+  kakao: {
+    loginBtn: '카카오 로그인',
+    loading: '연결 중...',
+    connectError: '카카오 로그인 연결에 실패했습니다'
+  },
   auth: {
     loginTitle: '로그인',
     emailLabel: '이메일',
@@ -252,7 +257,7 @@ export default {
     passwordHintLabel: '비밀번호 (6자 이상)',
     confirmPasswordLabel: '비밀번호 확인',
     registerBtn: '회원가입',
-    naverRegisterHint: '네이버 계정으로 간편하게 가입할 수 있습니다',
+    naverRegisterHint: '네이버 또는 카카오 계정으로 간편하게 가입할 수 있습니다',
     alreadyHaveAccount: '이미 계정이 있으신가요?',
     loginLink: '로그인',
     codeSentSuccess: '인증코드가 발송되었습니다',

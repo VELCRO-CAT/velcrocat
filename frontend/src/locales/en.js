@@ -231,6 +231,11 @@ export default {
     loading: 'Connecting...',
     connectError: 'Failed to connect to Naver login'
   },
+  kakao: {
+    loginBtn: 'Log in with Kakao',
+    loading: 'Connecting...',
+    connectError: 'Failed to connect to Kakao login'
+  },
   auth: {
     loginTitle: 'Sign In',
     emailLabel: 'Email',
@@ -252,7 +257,7 @@ export default {
     passwordHintLabel: 'Password (6+ characters)',
     confirmPasswordLabel: 'Confirm Password',
     registerBtn: 'Sign Up',
-    naverRegisterHint: 'Sign up easily with your Naver account',
+    naverRegisterHint: 'Sign up easily with your Naver or Kakao account',
     alreadyHaveAccount: 'Already have an account?',
     loginLink: 'Sign In',
     codeSentSuccess: 'Verification code sent',

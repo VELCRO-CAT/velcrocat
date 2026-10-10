@@ -231,6 +231,11 @@ export default {
     loading: '连接中...',
     connectError: 'Naver 登录连接失败'
   },
+  kakao: {
+    loginBtn: '使用 Kakao 账号登录',
+    loading: '连接中...',
+    connectError: 'Kakao 登录连接失败'
+  },
   auth: {
     loginTitle: '登录',
     emailLabel: '邮箱',
@@ -252,7 +257,7 @@ export default {
     passwordHintLabel: '密码（6位以上）',
     confirmPasswordLabel: '确认密码',
     registerBtn: '注册',
-    naverRegisterHint: '可使用 Naver 账号快速注册',
+    naverRegisterHint: '可使用 Naver 或 Kakao 账号快速注册',
     alreadyHaveAccount: '已经有账号了吗？',
     loginLink: '登录',
     codeSentSuccess: '验证码已发送',

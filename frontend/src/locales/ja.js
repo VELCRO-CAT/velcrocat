@@ -231,6 +231,11 @@ export default {
     loading: '接続中...',
     connectError: 'NAVERログインの連携に失敗しました'
   },
+  kakao: {
+    loginBtn: 'カカオでログイン',
+    loading: '接続中...',
+    connectError: 'カカオログインの連携に失敗しました'
+  },
   auth: {
     loginTitle: 'ログイン',
     emailLabel: 'メールアドレス',
@@ -252,7 +257,7 @@ export default {
     passwordHintLabel: 'パスワード（6文字以上）',
     confirmPasswordLabel: 'パスワード確認',
     registerBtn: '新規登録',
-    naverRegisterHint: 'NAVERアカウントで簡単に登録できます',
+    naverRegisterHint: 'NAVERまたはカカオアカウントで簡単に登録できます',
     alreadyHaveAccount: 'すでにアカウントをお持ちですか？',
     loginLink: 'ログイン',
     codeSentSuccess: '認証コードを送信しました',

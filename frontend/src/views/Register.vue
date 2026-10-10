@@ -85,13 +85,14 @@
         <v-btn type="submit" color="#111" block size="large" :loading="loading" :disabled="!emailVerified">{{ t('auth.registerBtn') }}</v-btn>
       </v-form>
 
-      <!-- 소셜 회원가입 (네이버) -->
+      <!-- 소셜 회원가입 (네이버/카카오) -->
       <div class="reveal mt-6">
         <div class="social-divider">
           <span>{{ t('auth.or') }}</span>
         </div>
         <div class="mt-4">
           <NaverLoginButton />
+          <KakaoLoginButton />
         </div>
         <p class="text-caption text-grey text-center mt-2">
           {{ t('auth.naverRegisterHint') }}
@@ -113,6 +114,7 @@ import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 import NaverLoginButton from '../components/NaverLoginButton.vue';
+import KakaoLoginButton from '../components/KakaoLoginButton.vue';
 
 const { t } = useI18n();
 
