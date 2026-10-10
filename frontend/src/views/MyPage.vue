@@ -30,19 +30,19 @@
       </div>
     </div>
 
-    <!-- 탭 -->
+    <!-- 빠른 이동 (섹션은 아래에 전부 펼쳐져 있고, 클릭하면 그 자리로 스크롤만 함) -->
     <div class="mypage-tabs reveal">
-      <button
+      <a
         v-for="tab in tabs"
         :key="tab.key"
+        :href="`#section-${tab.key}`"
         class="mypage-tab"
-        :class="{ active: activeTab === tab.key }"
-        @click="activeTab = tab.key"
-      >{{ tab.label }}</button>
+        @click.prevent="scrollTo(`section-${tab.key}`)"
+      >{{ tab.label }}</a>
     </div>
 
     <!-- 주문 내역 -->
-    <v-card v-if="activeTab === 'orders'" variant="outlined" class="pa-8 mypage-card reveal">
+    <v-card id="section-orders" variant="outlined" class="pa-8 mypage-card mb-6 reveal">
       <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.tabOrders') }}</h2>
       <div v-if="ordersLoading" class="text-center py-8">
         <v-progress-circular indeterminate color="#111" />
@@ -140,7 +140,7 @@
     </v-card>
 
     <!-- 배송지 관리 -->
-    <v-card v-if="activeTab === 'address'" variant="outlined" class="pa-8 mypage-card reveal">
+    <v-card id="section-address" variant="outlined" class="pa-8 mypage-card mb-6 reveal">
       <div class="addr-tab-head">
         <div>
           <h2 class="text-h6 font-weight-bold mb-1">배송지 관리</h2>
@@ -249,7 +249,7 @@
     </v-card>
 
     <!-- 내 정보 수정 -->
-    <v-card v-if="activeTab === 'profile'" variant="outlined" class="pa-8 mypage-card reveal">
+    <v-card id="section-profile" variant="outlined" class="pa-8 mypage-card mb-6 reveal">
       <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.profileTitle') }}</h2>
       <v-form @submit.prevent="updateProfile">
         <v-text-field
@@ -273,7 +273,7 @@
     </v-card>
 
     <!-- 비밀번호 변경 -->
-    <v-card v-if="activeTab === 'password'" variant="outlined" class="pa-8 mypage-card reveal">
+    <v-card id="section-password" variant="outlined" class="pa-8 mypage-card mb-6 reveal">
       <h2 class="text-h6 font-weight-bold mb-6">{{ t('mypage.passwordTitle') }}</h2>
       <v-form @submit.prevent="changePassword">
         <v-text-field
@@ -308,18 +308,10 @@
     </v-card>
 
     <!-- 회원 탈퇴 -->
-    <v-card v-if="activeTab === 'withdraw'" variant="outlined" class="pa-8 mypage-card reveal">
+    <v-card id="section-withdraw" variant="outlined" class="pa-8 mypage-card reveal">
       <h2 class="text-h6 font-weight-bold mb-4" style="color:#d32f2f">{{ t('mypage.withdrawTitle') }}</h2>
       <p class="text-body-2 text-grey-darken-1 mb-6" v-html="t('mypage.withdrawWarning')"></p>
       <v-form @submit.prevent="withdraw">
-        <v-text-field
-          v-model="withdrawPw"
-          :label="t('mypage.withdrawPasswordLabel')"
-          type="password"
-          variant="outlined"
-          density="comfortable"
-          class="mb-4"
-        />
         <p class="text-body-2 text-grey-darken-1 mb-2" v-html="t('mypage.withdrawTypeConfirmLabel', { phrase: WITHDRAW_CONFIRM_PHRASE })"></p>
         <v-text-field
           v-model="withdrawConfirmText"
@@ -353,7 +345,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, nextTick, computed } from 'vue';
+import { ref, reactive, onMounted, nextTick, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
@@ -370,7 +362,8 @@ function stepIndex(status) {
   return i === -1 ? 0 : i;
 }
 
-// 주문내역을 기본 탭으로 노출 (배송지 관리는 아직 번역 키가 없어 한국어 고정)
+// 탭으로 나눠 숨기던 걸 없애고 전부 한 페이지에 펼쳐서 보여줌 — 이 목록은
+// 상단 빠른 이동 링크(#section-xxx로 스크롤)의 라벨로만 쓰임
 const tabs = computed(() => [
   { key: 'orders', label: t('mypage.tabOrders') },
   { key: 'address', label: '배송지 관리' },
@@ -378,7 +371,10 @@ const tabs = computed(() => [
   { key: 'password', label: t('mypage.tabPasswordChange') },
   { key: 'withdraw', label: t('mypage.tabWithdraw') }
 ]);
-const activeTab = ref('orders');
+
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 // 내 정보
 const profile = reactive({ name: '', email: '', createdAt: '' });
@@ -452,9 +448,8 @@ const groupedOrders = computed(() => {
   return groups;
 });
 
-// 탈퇴 — 비밀번호 + "탈퇴합니다" 문구를 정확히 입력해야만 버튼이 활성화됨
+// 탈퇴 — "탈퇴합니다" 문구를 정확히 입력해야만 버튼이 활성화됨
 const WITHDRAW_CONFIRM_PHRASE = '탈퇴합니다';
-const withdrawPw = ref('');
 const withdrawConfirmText = ref('');
 const withdrawConfirmValid = computed(() => withdrawConfirmText.value.trim() === WITHDRAW_CONFIRM_PHRASE);
 const withdrawMsg = ref('');
@@ -467,8 +462,6 @@ function showReveal() {
     });
   });
 }
-
-watch(activeTab, () => showReveal());
 
 onMounted(async () => {
   showReveal();
@@ -647,11 +640,10 @@ async function changePassword() {
 
 async function withdraw() {
   withdrawMsg.value = '';
-  if (!withdrawPw.value) { withdrawMsg.value = t('mypage.withdrawEnterPassword'); return; }
   if (!withdrawConfirmValid.value) { withdrawMsg.value = t('mypage.withdrawTypeConfirmError', { phrase: WITHDRAW_CONFIRM_PHRASE }); return; }
   withdrawLoading.value = true;
   try {
-    await axios.delete('/api/users/me', { data: { password: withdrawPw.value } });
+    await axios.delete('/api/users/me');
     authStore.logout();
     router.push('/products');
   } catch (e) {
@@ -733,6 +725,7 @@ function itemsSubtotal(order) {
 .mypage-hero-stat .n { display: block; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
 .mypage-hero-stat .l { display: block; font-size: 10px; color: #999; letter-spacing: 0.04em; margin-top: 2px; }
 
+/* 탭이 아니라 아래 섹션으로 스크롤만 시켜주는 빠른 이동 링크 */
 .mypage-tabs {
   display: flex;
   gap: 0;
@@ -743,24 +736,18 @@ function itemsSubtotal(order) {
 .mypage-tab {
   flex: 1;
   padding: 12px 8px;
-  background: none;
-  border: none;
+  text-align: center;
   font-size: 13px;
   color: #999;
+  text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s;
   letter-spacing: 0.5px;
   white-space: nowrap;
 }
-.mypage-tab.active {
-  color: #111;
-  font-weight: 700;
-  border-bottom: 2px solid #111;
-  margin-bottom: -2px;
-}
 .mypage-tab:hover { color: #111; }
 
-.mypage-card { border-radius: 0 !important; }
+.mypage-card { border-radius: 0 !important; scroll-margin-top: 90px; }
 
 /* 주문 내역 */
 .order-month-head {

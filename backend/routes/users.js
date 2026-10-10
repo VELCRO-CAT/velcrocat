@@ -195,13 +195,6 @@ router.put('/me/password', authMiddleware, async (req, res) => {
 
 // 회원 탈퇴
 router.delete('/me', authMiddleware, async (req, res) => {
-  const { password } = req.body;
-  if (!password) return res.status(400).json({ error: '비밀번호를 입력해주세요' });
-
-  const user = await db('users').where('id', req.user.id).first();
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return res.status(400).json({ error: '비밀번호가 올바르지 않습니다' });
-
   await db('users').where('id', req.user.id).del();
   res.json({ message: '회원 탈퇴가 완료되었습니다' });
 });
