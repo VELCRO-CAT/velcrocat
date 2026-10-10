@@ -405,7 +405,7 @@ function logout() {
   right: 16px;
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 14px;
 }
 .nav-wish {
   position: relative;

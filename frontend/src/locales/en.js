@@ -323,6 +323,8 @@ export default {
     withdrawBtn: 'Delete Account',
     withdrawEnterPassword: 'Please enter your password',
     withdrawConfirm: 'Are you sure you want to delete your account? This action cannot be undone.',
+    withdrawTypeConfirmLabel: 'To confirm, please type <strong>{phrase}</strong> below.',
+    withdrawTypeConfirmError: 'Please type "{phrase}" exactly',
     withdrawFailed: 'Failed to delete account'
   },
   contact: {

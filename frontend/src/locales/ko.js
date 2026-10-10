@@ -323,6 +323,8 @@ export default {
     withdrawBtn: '회원 탈퇴',
     withdrawEnterPassword: '비밀번호를 입력해주세요',
     withdrawConfirm: '정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+    withdrawTypeConfirmLabel: '탈퇴하시려면 아래에 <strong>{phrase}</strong> 를 입력해주세요.',
+    withdrawTypeConfirmError: '"{phrase}"를 정확히 입력해주세요',
     withdrawFailed: '탈퇴에 실패했습니다'
   },
   contact: {

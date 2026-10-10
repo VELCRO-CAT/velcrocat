@@ -323,6 +323,8 @@ export default {
     withdrawBtn: '注销账号',
     withdrawEnterPassword: '请输入密码',
     withdrawConfirm: '确定要注销账号吗？此操作无法撤销。',
+    withdrawTypeConfirmLabel: '请在下方输入 <strong>{phrase}</strong> 以确认注销。',
+    withdrawTypeConfirmError: '请准确输入"{phrase}"',
     withdrawFailed: '注销失败'
   },
   contact: {

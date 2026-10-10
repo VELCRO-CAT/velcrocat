@@ -302,8 +302,22 @@
           density="comfortable"
           class="mb-4"
         />
+        <p class="text-body-2 text-grey-darken-1 mb-2" v-html="t('mypage.withdrawTypeConfirmLabel', { phrase: WITHDRAW_CONFIRM_PHRASE })"></p>
+        <v-text-field
+          v-model="withdrawConfirmText"
+          :placeholder="WITHDRAW_CONFIRM_PHRASE"
+          variant="outlined"
+          density="comfortable"
+          class="mb-4"
+        />
         <v-alert v-if="withdrawMsg" type="error" variant="tonal" density="compact" class="mb-4">{{ withdrawMsg }}</v-alert>
-        <v-btn type="submit" color="error" size="large" :loading="withdrawLoading">{{ t('mypage.withdrawBtn') }}</v-btn>
+        <v-btn
+          type="submit"
+          color="error"
+          size="large"
+          :loading="withdrawLoading"
+          :disabled="!withdrawConfirmValid"
+        >{{ t('mypage.withdrawBtn') }}</v-btn>
       </v-form>
     </v-card>
 
@@ -420,8 +434,11 @@ const groupedOrders = computed(() => {
   return groups;
 });
 
-// 탈퇴
+// 탈퇴 — 비밀번호 + "탈퇴합니다" 문구를 정확히 입력해야만 버튼이 활성화됨
+const WITHDRAW_CONFIRM_PHRASE = '탈퇴합니다';
 const withdrawPw = ref('');
+const withdrawConfirmText = ref('');
+const withdrawConfirmValid = computed(() => withdrawConfirmText.value.trim() === WITHDRAW_CONFIRM_PHRASE);
 const withdrawMsg = ref('');
 const withdrawLoading = ref(false);
 
@@ -613,12 +630,12 @@ async function changePassword() {
 async function withdraw() {
   withdrawMsg.value = '';
   if (!withdrawPw.value) { withdrawMsg.value = t('mypage.withdrawEnterPassword'); return; }
-  if (!confirm(t('mypage.withdrawConfirm'))) return;
+  if (!withdrawConfirmValid.value) { withdrawMsg.value = t('mypage.withdrawTypeConfirmError', { phrase: WITHDRAW_CONFIRM_PHRASE }); return; }
   withdrawLoading.value = true;
   try {
     await axios.delete('/api/users/me', { data: { password: withdrawPw.value } });
     authStore.logout();
-    router.push('/');
+    router.push('/products');
   } catch (e) {
     withdrawMsg.value = e.response?.data?.error || t('mypage.withdrawFailed');
   } finally {

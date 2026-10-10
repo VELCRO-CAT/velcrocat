@@ -323,6 +323,8 @@ export default {
     withdrawBtn: '退会する',
     withdrawEnterPassword: 'パスワードを入力してください',
     withdrawConfirm: '本当に退会しますか？この操作は取り消せません。',
+    withdrawTypeConfirmLabel: '退会するには、下に <strong>{phrase}</strong> と入力してください。',
+    withdrawTypeConfirmError: '「{phrase}」を正確に入力してください',
     withdrawFailed: '退会に失敗しました'
   },
   contact: {
