@@ -79,6 +79,15 @@
 
     <!-- 03. 상품과 연결 -->
     <section id="products" class="story-block story-products reveal" ref="productsEl">
+      <div v-if="products.length" class="story-teaser-strip">
+        <div
+          v-for="p in products"
+          :key="`teaser-${p.id}`"
+          class="story-teaser-thumb"
+          :style="{ backgroundImage: `url(${p.image})` }"
+        ></div>
+      </div>
+
       <p class="story-eyebrow">THE COLLECTION</p>
       <p class="story-copy story-copy-muted">
         이곳은 Velcrocat의 작은 세계다. 고양이 한 마리의 취향에서 시작된 옷들.<br />
@@ -272,7 +281,7 @@ onBeforeUnmount(() => observer?.disconnect());
   letter-spacing: -0.01em;
   margin: 0 0 56px;
 }
-.story-headline-tight { margin-bottom: 44px; }
+.story-headline-tight { margin-bottom: 28px; }
 
 /* ===== 02. 이름의 탄생 ===== */
 .story-name-grid {
@@ -321,7 +330,24 @@ onBeforeUnmount(() => observer?.disconnect());
 }
 
 /* ===== 03. 상품과 연결 ===== */
-.story-products { background: #fff; padding-bottom: 140px; }
+.story-products { background: #fff; padding-top: 72px; padding-bottom: 88px; }
+.story-teaser-strip {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+.story-teaser-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: #f5f5f5;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-left: -16px;
+}
+.story-teaser-thumb:first-child { margin-left: 0; }
 .story-product-grid {
   max-width: 920px;
   margin: 0 auto 56px;
