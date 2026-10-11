@@ -89,11 +89,16 @@
       </div>
 
       <p class="story-eyebrow">THE COLLECTION</p>
-      <p class="story-copy story-copy-muted">
-        이곳은 Velcrocat의 작은 세계다. 고양이 한 마리의 취향에서 시작된 옷들.<br />
-        누군가에게는 그저 옷일지 모르지만, 누군가에게는 자신을 표현하는 하나의 방식이 될 것이다.<br />
-        마음에 들었다면, 그냥 가져가도 좋다. 나는 누구의 고양이도 아니니까.
+      <p class="story-copy">
+        이곳은 Velcrocat의 작은 세계다.<br />
+        고양이 한 마리의 취향에서 시작된 옷들.
       </p>
+      <p class="story-copy story-copy-muted">
+        누군가에게는 그저 옷일지 모르지만,<br />
+        누군가에게는 자신을 표현하는 하나의 방식이 될 것이다.<br />
+        마음에 들었다면, 그냥 가져가도 좋다.
+      </p>
+      <p class="story-copy story-emphasis">나는 누구의 고양이도 아니니까.</p>
       <h2 class="story-headline-sm story-headline-tight">STICK TO<br />YOURSELF.</h2>
 
       <div v-if="products.length" class="story-product-grid">
@@ -264,7 +269,7 @@ onBeforeUnmount(() => observer?.disconnect());
 
 .story-copy {
   max-width: 560px;
-  margin: 0 auto 10px;
+  margin: 0 auto 14px;
   font-size: 18px;
   line-height: 1.9;
   color: #222;
@@ -272,6 +277,12 @@ onBeforeUnmount(() => observer?.disconnect());
 .story-copy-muted { color: #888; font-size: 15px; }
 .story-copy-light { color: #fff; }
 .story-copy-muted-light { color: rgba(255, 255, 255, 0.55); font-size: 15px; }
+.story-emphasis {
+  font-weight: 800;
+  font-size: 18px;
+  color: #111;
+  margin: 22px auto 40px;
+}
 
 .story-headline-sm {
   font-family: 'Arial Black', 'Helvetica Neue', sans-serif;

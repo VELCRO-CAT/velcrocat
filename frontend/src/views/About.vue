@@ -11,6 +11,7 @@
         <router-link to="/home">HOME</router-link>
         <a href="#concept" @click.prevent="scrollTo('concept')">CONCEPT</a>
         <a href="#pickup" @click.prevent="scrollTo('pickup')">PICK UP</a>
+        <router-link to="/story">STORY</router-link>
         <router-link to="/products">SHOP</router-link>
         <router-link to="/contact">CONTACT</router-link>
       </div>
@@ -36,6 +37,7 @@
       <router-link to="/home" @click="mobileMenuOpen = false">HOME</router-link>
       <a href="#concept" @click.prevent="scrollTo('concept'); mobileMenuOpen = false">CONCEPT</a>
       <a href="#pickup" @click.prevent="scrollTo('pickup'); mobileMenuOpen = false">PICK UP</a>
+      <router-link to="/story" @click="mobileMenuOpen = false">STORY</router-link>
       <router-link to="/products" @click="mobileMenuOpen = false">SHOP</router-link>
       <router-link to="/contact" @click="mobileMenuOpen = false">CONTACT</router-link>
       <router-link to="/products" class="mobile-menu-shop" @click="mobileMenuOpen = false">ONLINE SHOP</router-link>
@@ -273,6 +275,7 @@
         </div>
         <div class="footer-nav">
           <router-link to="/home">HOME</router-link>
+          <router-link to="/story">STORY</router-link>
           <router-link to="/products">SHOP</router-link>
           <router-link to="/contact">CONTACT</router-link>
           <router-link to="/brand">BRAND</router-link>
