@@ -71,9 +71,6 @@
               <v-icon size="18">{{ wishlistStore.isWished(product.id) ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
             </button>
             <span v-if="product.stock === 0" class="sold-out-badge">SOLD OUT</span>
-            <button v-else class="product-cart-btn hvr-grow" @click.prevent="addToCart(product)">
-              <v-icon size="18">mdi-cart-plus</v-icon>
-            </button>
             <!-- 색상 스와치 (hover 시 아래에서 위로 등장) -->
             <div v-if="getColors(product).length" class="swatch-row">
               <span
@@ -116,14 +113,12 @@ import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import axios from 'axios';
-import { useCartStore } from '../stores/cart';
 import { useWishlistStore } from '../stores/wishlist';
 import { useLocalized } from '../composables/useLocalized';
 
 const { t } = useI18n();
 const { lf, colorName } = useLocalized();
 const route = useRoute();
-const cartStore = useCartStore();
 const wishlistStore = useWishlistStore();
 const products = ref([]);
 const total = ref(0);
@@ -262,12 +257,6 @@ onMounted(async () => {
   allCategories.value = catRes.data;
   await fetchProducts();
 });
-
-function addToCart(product) {
-  cartStore.addItem(product);
-  snackMsg.value = t('products.addedToCart');
-  snackbar.value = true;
-}
 
 function toggleWish(product) {
   wishlistStore.toggle(product);
@@ -435,23 +424,6 @@ function toggleWish(product) {
 .product-wish-btn:hover {
   color: #f59e0b;
 }
-.product-cart-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: rgba(255,255,255,0.92);
-  border: none;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
-  color: #111;
-}
-.product-item:hover .product-cart-btn { opacity: 1; }
 .sold-out-badge {
   position: absolute;
   inset: 0;
