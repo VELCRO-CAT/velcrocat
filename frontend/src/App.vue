@@ -74,6 +74,7 @@
           <template v-else>
             <router-link to="/login" class="nav-link hvr-underline-from-center">{{ t('nav.signIn') }}</router-link>
             <router-link to="/register" class="nav-link hvr-underline-from-center">{{ t('nav.signUp') }}</router-link>
+            <router-link to="/order-lookup" class="nav-link hvr-underline-from-center">{{ t('orderLookup.title') }}</router-link>
           </template>
         </div>
 
@@ -175,6 +176,7 @@
           <template v-else>
             <router-link to="/login" class="drawer-link" @click="menuOpen = false">{{ t('nav.signIn') }}</router-link>
             <router-link to="/register" class="drawer-link" @click="menuOpen = false">{{ t('nav.signUp') }}</router-link>
+            <router-link to="/order-lookup" class="drawer-link" @click="menuOpen = false">{{ t('orderLookup.title') }}</router-link>
           </template>
           <div class="drawer-divider" />
           <div class="drawer-lang">
