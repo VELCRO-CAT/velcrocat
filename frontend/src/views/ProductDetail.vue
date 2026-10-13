@@ -1345,6 +1345,20 @@ function buyNow() {
 .added-btn-primary { background: #111; color: #fff; }
 .added-btn-primary:hover { background: #333; }
 
+/* 모바일에서는 작은 팝업 대신 화면을 꽉 채우는 풀스크린 시트로, 버튼은 하단에 고정 */
+@media (max-width: 600px) {
+  .added-overlay { padding: 0; }
+  .added-modal {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .added-actions { margin-top: auto; }
+}
+
 @media (max-width: 768px) {
   .guide-table th {
     width: 100px;
