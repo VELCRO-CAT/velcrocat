@@ -164,21 +164,9 @@
             <div class="care-guide">
               <h4 class="care-title">{{ t('detail.careTitle') }}</h4>
               <div class="care-items">
-                <div class="care-item">
-                  <v-icon size="20" color="#555">mdi-washing-machine</v-icon>
-                  <span>{{ t('detail.care1') }}</span>
-                </div>
-                <div class="care-item">
-                  <v-icon size="20" color="#555">mdi-iron</v-icon>
-                  <span>{{ t('detail.care2') }}</span>
-                </div>
-                <div class="care-item">
-                  <v-icon size="20" color="#555">mdi-tumble-dryer-off</v-icon>
-                  <span>{{ t('detail.care3') }}</span>
-                </div>
-                <div class="care-item">
-                  <v-icon size="20" color="#555">mdi-hanger</v-icon>
-                  <span>{{ t('detail.care4') }}</span>
+                <div v-for="item in careItems" :key="item.icon" class="care-item">
+                  <v-icon size="20" color="#555">{{ item.icon }}</v-icon>
+                  <span>{{ item.label }}</span>
                 </div>
               </div>
             </div>
@@ -360,6 +348,15 @@ const availableColors = computed(() => {
 });
 const availableSizes = computed(() => {
   try { return JSON.parse(product.value?.sizes || '[]'); } catch { return []; }
+});
+
+const careItems = computed(() => {
+  const isGeneral = product.value?.care_type === 'general';
+  const prefix = isGeneral ? 'careGeneral' : 'careWool';
+  const icons = isGeneral
+    ? ['mdi-washing-machine', 'mdi-flask-off-outline', 'mdi-iron', 'mdi-tumble-dryer']
+    : ['mdi-hand-wash', 'mdi-flask-outline', 'mdi-hand-back-right-off', 'mdi-tumble-dryer-off'];
+  return icons.map((icon, i) => ({ icon, label: t(`detail.${prefix}${i + 1}`) }));
 });
 
 const allImages = computed(() => {
