@@ -256,6 +256,11 @@
                 <v-icon size="16">mdi-image-plus</v-icon>
                 이미지 추가
               </button>
+              <label class="blog-add-btn">
+                <v-icon size="16">mdi-image-multiple</v-icon>
+                이미지 여러 장 추가
+                <input type="file" accept="image/*" multiple style="display:none" @change="addMultipleImageBlocks" />
+              </label>
             </div>
           </div>
 
@@ -416,6 +421,22 @@ function addBlock(type) {
 
 function removeBlock(i) {
   detailBlocks.value.splice(i, 1);
+}
+
+async function addMultipleImageBlocks(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  const startIndex = detailBlocks.value.length;
+  files.forEach(() => detailBlocks.value.push({ type: 'image', content: '' }));
+  for (let i = 0; i < files.length; i++) {
+    try {
+      const fd = new FormData();
+      fd.append('image', files[i]);
+      const res = await axios.post('/api/upload', fd);
+      detailBlocks.value[startIndex + i].content = res.data.url;
+    } catch { /* skip failed */ }
+  }
+  event.target.value = '';
 }
 
 function moveBlock(i, dir) {
