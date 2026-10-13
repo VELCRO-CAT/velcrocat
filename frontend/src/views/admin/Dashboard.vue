@@ -64,7 +64,7 @@
             <span>문의 관리</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>
           </router-link>
-          <router-link to="/admin/naver" class="quick-card">
+          <router-link v-if="false" to="/admin/naver" class="quick-card">
             <v-icon size="20" color="#111">mdi-store-outline</v-icon>
             <span>네이버 스마트스토어</span>
             <v-icon size="16" color="#ccc">mdi-chevron-right</v-icon>

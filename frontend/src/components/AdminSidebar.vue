@@ -28,7 +28,7 @@
           <v-icon size="16">mdi-email-outline</v-icon>
           문의 관리
         </router-link>
-        <router-link to="/admin/naver" class="admin-nav-item" active-class="active">
+        <router-link v-if="false" to="/admin/naver" class="admin-nav-item" active-class="active">
           <v-icon size="16">mdi-store-outline</v-icon>
           스마트스토어
         </router-link>
@@ -70,7 +70,7 @@
           <v-icon size="18">mdi-email-outline</v-icon>
           문의 관리
         </router-link>
-        <router-link to="/admin/naver" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
+        <router-link v-if="false" to="/admin/naver" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
           <v-icon size="18">mdi-store-outline</v-icon>
           스마트스토어
         </router-link>
