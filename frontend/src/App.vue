@@ -27,7 +27,6 @@
 
         <!-- PC 네비 -->
         <div class="nav-desktop">
-          <router-link to="/" class="nav-link hvr-underline-from-center">{{ t('nav.home') }}</router-link>
           <router-link to="/products" class="nav-link hvr-underline-from-center">{{ t('nav.shop') }}</router-link>
           <!-- CATEGORY 드롭다운 -->
           <div class="nav-category" @mouseenter="catOpen = true" @mouseleave="catOpen = false; activeGender = null">
@@ -138,7 +137,6 @@
           <button class="drawer-close" @click="menuOpen = false">✕</button>
         </div>
         <nav class="drawer-nav">
-          <router-link to="/" class="drawer-link" @click="menuOpen = false">{{ t('nav.home') }}</router-link>
           <router-link to="/products" class="drawer-link" @click="menuOpen = false">{{ t('nav.shop') }}</router-link>
           <!-- 모바일 카테고리 -->
           <button class="drawer-link drawer-cat-toggle" @click="drawerCatOpen = !drawerCatOpen">
