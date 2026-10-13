@@ -95,7 +95,11 @@ function checkout() {
   align-items: center;
   gap: 16px;
 }
-.cart-item-img { flex-shrink: 0; }
+.cart-item-img {
+  flex: 0 0 80px !important;
+  width: 80px !important;
+  max-width: 80px !important;
+}
 .cart-item-info { flex: 1 1 auto; min-width: 0; }
 .cart-item-info p { overflow-wrap: break-word; }
 .cart-item-actions {
