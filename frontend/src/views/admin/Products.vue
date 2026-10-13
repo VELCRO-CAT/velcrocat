@@ -252,13 +252,9 @@
                 <v-icon size="16">mdi-text</v-icon>
                 텍스트 추가
               </button>
-              <button class="blog-add-btn" @click.prevent="addBlock('image')">
+              <label class="blog-add-btn">
                 <v-icon size="16">mdi-image-plus</v-icon>
                 이미지 추가
-              </button>
-              <label class="blog-add-btn">
-                <v-icon size="16">mdi-image-multiple</v-icon>
-                이미지 여러 장 추가
                 <input type="file" accept="image/*" multiple style="display:none" @change="addMultipleImageBlocks" />
               </label>
             </div>
