@@ -162,7 +162,10 @@
 
             <!-- 소재/관리 가이드 -->
             <div class="care-guide">
-              <h4 class="care-title">{{ t('detail.careTitle') }}</h4>
+              <div class="care-title-row">
+                <h4 class="care-title">{{ t('detail.careTitle') }}</h4>
+                <span class="care-type-badge">{{ careLabel }}</span>
+              </div>
               <div class="care-items">
                 <div v-for="item in careItems" :key="item.icon" class="care-item">
                   <v-icon size="20" color="#555">{{ item.icon }}</v-icon>
@@ -350,13 +353,16 @@ const availableSizes = computed(() => {
   try { return JSON.parse(product.value?.sizes || '[]'); } catch { return []; }
 });
 
+const CARE_ICON_SETS = {
+  hand: ['mdi-hand-wash', 'mdi-hand-back-right-off', 'mdi-autorenew', 'mdi-tumble-dryer-off'],
+  wool: ['mdi-washing-machine', 'mdi-flask-outline', 'mdi-tshirt-crew-outline', 'mdi-tumble-dryer-off'],
+  general: ['mdi-washing-machine', 'mdi-flask-off-outline', 'mdi-iron', 'mdi-tumble-dryer']
+};
+const careType = computed(() => CARE_ICON_SETS[product.value?.care_type] ? product.value.care_type : 'wool');
+const careLabel = computed(() => t(`detail.careLabel${{ hand: 'Hand', wool: 'Wool', general: 'General' }[careType.value]}`));
 const careItems = computed(() => {
-  const isGeneral = product.value?.care_type === 'general';
-  const prefix = isGeneral ? 'careGeneral' : 'careWool';
-  const icons = isGeneral
-    ? ['mdi-washing-machine', 'mdi-flask-off-outline', 'mdi-iron', 'mdi-tumble-dryer']
-    : ['mdi-hand-wash', 'mdi-flask-outline', 'mdi-hand-back-right-off', 'mdi-tumble-dryer-off'];
-  return icons.map((icon, i) => ({ icon, label: t(`detail.${prefix}${i + 1}`) }));
+  const prefix = { hand: 'careHand', wool: 'careWool', general: 'careGeneral' }[careType.value];
+  return CARE_ICON_SETS[careType.value].map((icon, i) => ({ icon, label: t(`detail.${prefix}${i + 1}`) }));
 });
 
 const allImages = computed(() => {
@@ -1063,13 +1069,28 @@ function buyNow() {
   border: 1px solid #eee;
   padding: 32px;
 }
+.care-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
 .care-title {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 3px;
   color: #111;
   text-align: center;
-  margin-bottom: 24px;
+}
+.care-type-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #555;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 2px 8px;
 }
 .care-items {
   display: grid;

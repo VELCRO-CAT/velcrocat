@@ -155,8 +155,9 @@
 
           <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">세탁 방법 (상세페이지 CARE GUIDE)</p>
           <v-btn-toggle v-model="form.care_type" mandatory density="compact" color="grey-darken-4" class="mb-3" variant="outlined">
-            <v-btn value="wool" size="small">울 소재 / 손세탁</v-btn>
-            <v-btn value="general" size="small">일반 세탁 (반팔·후드집업 등)</v-btn>
+            <v-btn value="hand" size="small">손세탁</v-btn>
+            <v-btn value="wool" size="small">울세탁</v-btn>
+            <v-btn value="general" size="small">일반세탁 (반팔·후드집업 등)</v-btn>
           </v-btn-toggle>
           <v-row dense>
             <v-col cols="6">
