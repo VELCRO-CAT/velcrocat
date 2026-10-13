@@ -79,7 +79,7 @@
               @click:append-inner="addUrlImage"
               @keyup.enter="addUrlImage"
             />
-            <p class="text-caption text-grey mt-1">JPG, PNG (최대 5MB / 장), 파일 업로드 또는 URL 입력</p>
+            <p class="text-caption text-grey mt-1">JPG, PNG (최대 5MB / 장) — 파일 선택 창에서 Ctrl(Shift)로 여러 장을 한 번에 선택하면 순서대로 자동 업로드됩니다. URL 직접 입력도 가능</p>
           </div>
 
           <v-divider class="mb-4" />
