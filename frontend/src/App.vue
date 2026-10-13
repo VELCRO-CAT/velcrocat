@@ -134,7 +134,7 @@
     <transition name="slide">
       <div v-if="menuOpen" class="drawer">
         <div class="drawer-header">
-          <img src="./image/osakamarketLOGO5.png" alt="오사카마켓" class="drawer-logo" />
+          <img src="./image/osakamarketLOGO5.png" alt="Velcro Cat" class="drawer-logo" />
           <button class="drawer-close" @click="menuOpen = false">✕</button>
         </div>
         <nav class="drawer-nav">

@@ -88,7 +88,7 @@ app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
-  res.json({ message: '오사카마켓 API v2.0', db: process.env.DATABASE_URL ? 'PostgreSQL' : 'JSON 파일' });
+  res.json({ message: '벨크로캣 API v2.0', db: process.env.DATABASE_URL ? 'PostgreSQL' : 'JSON 파일' });
 });
 
 // 전역 에러 핸들러 — 상세 오류는 서버 로그에만 남기고 클라이언트엔 일반 메시지만 반환

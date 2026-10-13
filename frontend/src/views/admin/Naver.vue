@@ -98,7 +98,7 @@
         <v-divider />
         <v-card-text class="pa-4">
           <p class="text-body-2 text-grey mb-3">
-            오사카마켓 상품을 네이버 스마트스토어에 자동 등록합니다. API 연동이 완료된 상태에서만 사용 가능합니다.
+            벨크로캣 상품을 네이버 스마트스토어에 자동 등록합니다. API 연동이 완료된 상태에서만 사용 가능합니다.
           </p>
           <div class="d-flex align-center gap-3">
             <v-btn color="grey-darken-4" prepend-icon="mdi-cloud-upload" @click="syncProducts" :loading="syncing" :disabled="!apiConnected">
@@ -215,7 +215,7 @@
             <v-timeline-item dot-color="grey-darken-3" size="small">
               <div>
                 <p class="text-body-2 font-weight-bold mb-1">5단계 — 주문 통합 관리</p>
-                <p class="text-caption text-grey">네이버 스마트스토어와 오사카마켓 두 채널의 주문을 통합 관리할 수 있게 됩니다.</p>
+                <p class="text-caption text-grey">네이버 스마트스토어와 벨크로캣 두 채널의 주문을 통합 관리할 수 있게 됩니다.</p>
               </div>
             </v-timeline-item>
           </v-timeline>
@@ -375,7 +375,7 @@ function exportCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `osakamarket_products_${new Date().toISOString().slice(0,10)}.csv`;
+  a.download = `velcrocat_products_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
   exporting.value = false;

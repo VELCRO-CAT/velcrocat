@@ -80,7 +80,7 @@ router.post('/test', adminMiddleware, async (req, res) => {
   }
 });
 
-// 상품 동기화 (오사카마켓 → 네이버)
+// 상품 동기화 (벨크로캣 → 네이버)
 router.post('/sync/products', adminMiddleware, async (req, res) => {
   try {
     const tokenData = await getNaverToken();
@@ -144,7 +144,7 @@ router.post('/sync/products', adminMiddleware, async (req, res) => {
   }
 });
 
-// 주문 조회 (네이버 → 오사카마켓)
+// 주문 조회 (네이버 → 벨크로캣)
 router.get('/orders', adminMiddleware, async (req, res) => {
   try {
     const tokenData = await getNaverToken();

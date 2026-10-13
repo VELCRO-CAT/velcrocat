@@ -4,7 +4,7 @@
   <v-main class="bg-grey-lighten-4 admin-page">
     <v-container class="admin-container">
       <h1 class="dash-title">대시보드</h1>
-      <p class="dash-sub">오사카마켓 관리자 페이지</p>
+      <p class="dash-sub">벨크로캣 관리자 페이지</p>
 
       <v-progress-circular v-if="loading" indeterminate color="grey-darken-3" class="d-block mx-auto my-12" />
 
