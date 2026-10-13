@@ -122,6 +122,8 @@ export default {
     addToCartBtn: '장바구니',
     buyNowBtn: '바로 구매하기',
     soldOutBtn: '품절된 상품입니다',
+    addedModalTitle: '장바구니에 담았습니다',
+    goToCartBtn: '장바구니 보기',
     notFound: '상품을 찾을 수 없습니다',
     tabInfo: '상품 상세정보',
     tabGuide: '배송/교환/반품',

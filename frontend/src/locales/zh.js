@@ -122,6 +122,8 @@ export default {
     addToCartBtn: '加入购物车',
     buyNowBtn: '立即购买',
     soldOutBtn: '该商品已售罄',
+    addedModalTitle: '已加入购物车',
+    goToCartBtn: '查看购物车',
     notFound: '未找到该商品',
     tabInfo: '商品详情',
     tabGuide: '配送/换货/退货',

@@ -300,6 +300,35 @@
       <v-icon start color="white">mdi-check-circle</v-icon>
       <span style="color:#fff">{{ snackMsg }}</span>
     </v-snackbar>
+
+    <!-- 장바구니 담기 확인 모달 -->
+    <div v-if="addedModal" class="added-overlay" @click.self="addedModal = false">
+      <div class="added-modal">
+        <div class="added-header">
+          <h3 class="added-title">{{ t('detail.addedModalTitle') }}</h3>
+          <button class="added-close" @click="addedModal = false">
+            <v-icon size="20">mdi-close</v-icon>
+          </button>
+        </div>
+        <div v-if="addedSnapshot" class="added-item">
+          <img :src="addedSnapshot.image" :alt="addedSnapshot.name" class="added-item-img" />
+          <div class="added-item-info">
+            <p class="added-item-name">{{ addedSnapshot.name }}</p>
+            <p v-if="addedSnapshot.color || addedSnapshot.size" class="added-item-opt">
+              <span v-if="addedSnapshot.color">{{ t('detail.colorLabel') }}: {{ colorName(addedSnapshot.color) }}</span>
+              <span v-if="addedSnapshot.color && addedSnapshot.size"> / </span>
+              <span v-if="addedSnapshot.size">{{ t('detail.sizeLabel') }}: {{ addedSnapshot.size }}</span>
+            </p>
+            <p class="added-item-qty">{{ t('detail.qtyUnit', { count: addedSnapshot.qty }) }}</p>
+            <p class="added-item-price">₩{{ (addedSnapshot.price * addedSnapshot.qty).toLocaleString() }}</p>
+          </div>
+        </div>
+        <div class="added-actions">
+          <router-link to="/cart" class="added-btn" @click="addedModal = false">{{ t('detail.goToCartBtn') }}</router-link>
+          <button class="added-btn added-btn-primary" @click="goToCheckoutFromModal">{{ t('detail.buyNowBtn') }}</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -462,12 +491,27 @@ function validateOptions() {
   return true;
 }
 
+const addedModal = ref(false);
+const addedSnapshot = ref(null);
+
 function addToCart() {
   if (!validateOptions()) return;
   const opts = { color: selectedColor.value || null, size: selectedSize.value || null };
   for (let i = 0; i < qty.value; i++) cartStore.addItem(product.value, opts);
-  snackMsg.value = t('products.addedToCart');
-  snackbar.value = true;
+  addedSnapshot.value = {
+    image: product.value.image,
+    name: lf(product.value, 'name'),
+    color: selectedColor.value || null,
+    size: selectedSize.value || null,
+    qty: qty.value,
+    price: product.value.price
+  };
+  addedModal.value = true;
+}
+
+function goToCheckoutFromModal() {
+  addedModal.value = false;
+  router.push('/checkout');
 }
 
 function toggleWish() {
@@ -1200,6 +1244,106 @@ function buyNow() {
   color: #777;
   line-height: 2;
 }
+
+/* 장바구니 담기 확인 모달 */
+.added-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.added-modal {
+  background: #fff;
+  width: 400px;
+  max-width: 100%;
+  border-radius: 4px;
+}
+.added-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+}
+.added-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+.added-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+}
+.added-close:hover { color: #111; }
+.added-item {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 20px;
+  border-bottom: 1px solid #eee;
+}
+.added-item-img {
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  object-fit: cover;
+  background: #f5f5f5;
+  border: 1px solid #eee;
+}
+.added-item-info { flex: 1; min-width: 0; }
+.added-item-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #111;
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+.added-item-opt {
+  font-size: 12px;
+  color: #999;
+  margin: 0 0 4px;
+}
+.added-item-qty {
+  font-size: 12px;
+  color: #999;
+  margin: 0 0 4px;
+}
+.added-item-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+.added-actions {
+  display: flex;
+  gap: 8px;
+  padding: 20px;
+}
+.added-btn {
+  flex: 1;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #111;
+  background: #fff;
+  color: #111;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.added-btn:hover { background: #f5f5f5; }
+.added-btn-primary { background: #111; color: #fff; }
+.added-btn-primary:hover { background: #333; }
 
 @media (max-width: 768px) {
   .guide-table th {

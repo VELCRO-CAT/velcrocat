@@ -122,6 +122,8 @@ export default {
     addToCartBtn: 'Add to Cart',
     buyNowBtn: 'Buy Now',
     soldOutBtn: 'Sold Out',
+    addedModalTitle: 'Added to Cart',
+    goToCartBtn: 'View Cart',
     notFound: 'Product not found',
     tabInfo: 'Product Details',
     tabGuide: 'Shipping/Returns',

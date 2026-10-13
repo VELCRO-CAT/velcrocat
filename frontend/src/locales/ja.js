@@ -122,6 +122,8 @@ export default {
     addToCartBtn: 'カートに入れる',
     buyNowBtn: 'すぐに購入',
     soldOutBtn: '売り切れ商品です',
+    addedModalTitle: 'カートに追加しました',
+    goToCartBtn: 'カートを見る',
     notFound: '商品が見つかりません',
     tabInfo: '商品詳細情報',
     tabGuide: '配送/交換/返品',
