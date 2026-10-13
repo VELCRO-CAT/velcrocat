@@ -58,6 +58,7 @@ export default {
     menuStory: '品牌故事',
     menuProducts: '全部商品',
     menuContact: '客户咨询',
+    menuOrderLookup: '非会员订单查询',
     copyright: '© 2026 Velcrocat(벨크로캣). All rights reserved.'
   },
   about: {
@@ -236,7 +237,14 @@ export default {
     errorEmptyCart: '购物车是空的',
     errorNoPayUrl: '无法打开支付窗口',
     errorPopupBlocked: '弹窗已被拦截，请解除拦截后重试',
-    errorPaymentFailed: '支付处理失败'
+    errorPaymentFailed: '支付处理失败',
+    gateDesc: '登录后可更便捷地下单，无需账号也可直接购买。',
+    guestBtn: '以非会员身份下单',
+    guestHint: '请设置之后查询该订单时使用的密码。',
+    guestPasswordLabel: '订单查询密码',
+    guestPasswordConfirmLabel: '确认密码',
+    errorGuestPassword: '请输入4位以上的查询密码',
+    errorGuestPasswordMismatch: '密码不一致'
   },
   naver: {
     loginBtn: '使用 Naver 账号登录',
@@ -301,6 +309,16 @@ export default {
     resendFailed: '重新发送失败',
     passwordTooShort: '密码需至少6位',
     passwordChangeFailed: '密码修改失败'
+  },
+  orderLookup: {
+    title: '非会员订单查询',
+    desc: '请输入下单时的订单号和密码以查询订单详情。',
+    orderNoLabel: '订单号',
+    passwordLabel: '密码',
+    submitBtn: '查询',
+    backBtn: '重新查询',
+    errorEmpty: '请输入订单号和密码',
+    errorFailed: '未找到订单信息'
   },
   mypage: {
     title: '我的页面',

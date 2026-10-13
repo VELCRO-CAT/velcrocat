@@ -38,7 +38,7 @@
         주문번호 {{ order.orderNo }} · ₩{{ Number(order.total).toLocaleString() }}
       </p>
       <div class="d-flex flex-column flex-sm-row justify-center ga-3 mt-4">
-        <v-btn color="#111" size="large" to="/mypage">주문 내역 확인</v-btn>
+        <v-btn color="#111" size="large" :to="order?.isGuest ? '/order-lookup' : '/mypage'">주문 내역 확인</v-btn>
         <v-btn variant="outlined" color="#111" size="large" to="/products">쇼핑 계속하기</v-btn>
       </div>
     </div>

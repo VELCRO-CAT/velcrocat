@@ -73,7 +73,6 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import { useCartStore, variantKey } from '../stores/cart';
-import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
 import { useLocalized } from '../composables/useLocalized';
 
@@ -81,11 +80,9 @@ const { t } = useI18n();
 const { lf, colorName } = useLocalized();
 const cartStore = useCartStore();
 const vk = variantKey;
-const authStore = useAuthStore();
 const router = useRouter();
 
 function checkout() {
-  if (!authStore.isLoggedIn) router.push('/login');
-  else router.push('/checkout');
+  router.push('/checkout');
 }
 </script>

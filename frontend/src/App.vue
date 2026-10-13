@@ -227,6 +227,7 @@
             <router-link to="/story" class="footer-menu-link">{{ t('footer.menuStory') }}</router-link>
             <router-link to="/products" class="footer-menu-link">{{ t('footer.menuProducts') }}</router-link>
             <router-link to="/contact" class="footer-menu-link">{{ t('footer.menuContact') }}</router-link>
+            <router-link to="/order-lookup" class="footer-menu-link">{{ t('footer.menuOrderLookup') }}</router-link>
           </div>
         </div>
         <!-- 하단 -->

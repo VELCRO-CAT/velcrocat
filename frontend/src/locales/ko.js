@@ -58,6 +58,7 @@ export default {
     menuStory: '브랜드 스토리',
     menuProducts: '전체상품',
     menuContact: '고객문의',
+    menuOrderLookup: '비회원 주문조회',
     copyright: '© 2026 벨크로캣(velcrocat). All rights reserved.'
   },
   about: {
@@ -236,7 +237,14 @@ export default {
     errorEmptyCart: '장바구니가 비어있습니다',
     errorNoPayUrl: '결제창을 호출할 수 없습니다',
     errorPopupBlocked: '팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요',
-    errorPaymentFailed: '결제 처리에 실패했습니다'
+    errorPaymentFailed: '결제 처리에 실패했습니다',
+    gateDesc: '로그인하면 더 편하게 주문할 수 있어요. 계정 없이도 바로 주문할 수 있습니다.',
+    guestBtn: '비회원으로 주문하기',
+    guestHint: '나중에 비회원 주문조회에 사용할 비밀번호를 입력해주세요.',
+    guestPasswordLabel: '주문조회 비밀번호',
+    guestPasswordConfirmLabel: '비밀번호 확인',
+    errorGuestPassword: '주문조회 비밀번호를 4자 이상 입력해주세요',
+    errorGuestPasswordMismatch: '비밀번호가 일치하지 않습니다'
   },
   naver: {
     loginBtn: '네이버 아이디로 로그인',
@@ -301,6 +309,16 @@ export default {
     resendFailed: '재발송에 실패했습니다',
     passwordTooShort: '비밀번호는 6자 이상이어야 합니다',
     passwordChangeFailed: '비밀번호 변경에 실패했습니다'
+  },
+  orderLookup: {
+    title: '비회원 주문조회',
+    desc: '주문 시 입력한 주문번호와 비밀번호로 주문 내역을 확인할 수 있습니다.',
+    orderNoLabel: '주문번호',
+    passwordLabel: '비밀번호',
+    submitBtn: '조회하기',
+    backBtn: '다시 조회하기',
+    errorEmpty: '주문번호와 비밀번호를 입력해주세요',
+    errorFailed: '주문 정보를 찾을 수 없습니다'
   },
   mypage: {
     title: '마이페이지',

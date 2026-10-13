@@ -58,6 +58,7 @@ export default {
     menuStory: 'ブランドストーリー',
     menuProducts: '全商品',
     menuContact: 'お問い合わせ',
+    menuOrderLookup: 'ゲスト注文照会',
     copyright: '© 2026 Velcrocat(벨크로캣). All rights reserved.'
   },
   about: {
@@ -236,7 +237,14 @@ export default {
     errorEmptyCart: 'カートが空です',
     errorNoPayUrl: '決済画面を呼び出せません',
     errorPopupBlocked: 'ポップアップがブロックされました。ブロックを解除して再度お試しください',
-    errorPaymentFailed: '決済処理に失敗しました'
+    errorPaymentFailed: '決済処理に失敗しました',
+    gateDesc: 'ログインするとより便利にご注文いただけます。アカウントがなくてもすぐにご注文可能です。',
+    guestBtn: 'ゲストとして注文する',
+    guestHint: '後で注文照会に使用するパスワードを入力してください。',
+    guestPasswordLabel: '注文照会パスワード',
+    guestPasswordConfirmLabel: 'パスワード確認',
+    errorGuestPassword: '注文照会パスワードを4文字以上入力してください',
+    errorGuestPasswordMismatch: 'パスワードが一致しません'
   },
   naver: {
     loginBtn: 'NAVER IDでログイン',
@@ -301,6 +309,16 @@ export default {
     resendFailed: '再送信に失敗しました',
     passwordTooShort: 'パスワードは6文字以上で入力してください',
     passwordChangeFailed: 'パスワードの変更に失敗しました'
+  },
+  orderLookup: {
+    title: 'ゲスト注文照会',
+    desc: 'ご注文時に設定した注文番号とパスワードで注文内容を確認できます。',
+    orderNoLabel: '注文番号',
+    passwordLabel: 'パスワード',
+    submitBtn: '照会する',
+    backBtn: 'もう一度照会する',
+    errorEmpty: '注文番号とパスワードを入力してください',
+    errorFailed: '注文情報が見つかりません'
   },
   mypage: {
     title: 'マイページ',

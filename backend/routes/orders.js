@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { authMiddleware } = require('../middleware/auth');
 
@@ -78,6 +79,37 @@ router.get('/my', authMiddleware, async (req, res) => {
   } catch (e) {
     console.error('주문 조회 실패:', e);
     res.status(500).json({ error: '주문 내역을 불러오지 못했습니다' });
+  }
+});
+
+// 비회원 주문조회 (주문번호 + 주문 시 설정한 비밀번호)
+router.post('/guest-lookup', async (req, res) => {
+  try {
+    const { orderNo, password } = req.body;
+    if (!orderNo || !password) {
+      return res.status(400).json({ error: '주문번호와 비밀번호를 입력해주세요' });
+    }
+    const order = await db('orders')
+      .where('order_no', orderNo)
+      .whereNull('user_id')
+      .whereNot('status', 'pending')
+      .first();
+    if (!order || !order.guest_password) {
+      return res.status(404).json({ error: '주문 정보를 찾을 수 없습니다' });
+    }
+    const valid = await bcrypt.compare(String(password), order.guest_password);
+    if (!valid) {
+      return res.status(401).json({ error: '주문번호 또는 비밀번호가 일치하지 않습니다' });
+    }
+    const { guest_password, ...safeOrder } = order;
+    res.json({
+      ...safeOrder,
+      items: safeParse(order.items_json, []),
+      shippingAddress: safeParse(order.shipping_address_json, null)
+    });
+  } catch (e) {
+    console.error('비회원 주문조회 실패:', e);
+    res.status(500).json({ error: '주문 조회 중 오류가 발생했습니다' });
   }
 });
 

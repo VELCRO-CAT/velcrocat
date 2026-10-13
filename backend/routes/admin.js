@@ -62,7 +62,7 @@ router.patch('/inquiries/:id/read', adminMiddleware, async (req, res) => {
 
 router.get('/orders', adminMiddleware, async (req, res) => {
   const orders = await db('orders').orderBy('created_at', 'desc');
-  res.json(orders.map(o => ({
+  res.json(orders.map(({ guest_password, ...o }) => ({
     ...o,
     items: JSON.parse(o.items_json),
     shippingAddress: o.shipping_address_json ? JSON.parse(o.shipping_address_json) : null

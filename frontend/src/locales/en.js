@@ -58,6 +58,7 @@ export default {
     menuStory: 'Our Story',
     menuProducts: 'All Products',
     menuContact: 'Contact Us',
+    menuOrderLookup: 'Guest Order Lookup',
     copyright: '© 2026 Velcrocat. All rights reserved.'
   },
   about: {
@@ -236,7 +237,14 @@ export default {
     errorEmptyCart: 'Your cart is empty',
     errorNoPayUrl: 'Unable to open the payment window',
     errorPopupBlocked: 'The popup was blocked. Please allow popups and try again',
-    errorPaymentFailed: 'Payment processing failed'
+    errorPaymentFailed: 'Payment processing failed',
+    gateDesc: 'Log in for a faster checkout, or place your order right away without an account.',
+    guestBtn: 'Checkout as Guest',
+    guestHint: 'Set a password you\'ll use later to look up this order.',
+    guestPasswordLabel: 'Order Lookup Password',
+    guestPasswordConfirmLabel: 'Confirm Password',
+    errorGuestPassword: 'Please enter a lookup password of at least 4 characters',
+    errorGuestPasswordMismatch: 'Passwords do not match'
   },
   naver: {
     loginBtn: 'Log in with Naver',
@@ -301,6 +309,16 @@ export default {
     resendFailed: 'Failed to resend',
     passwordTooShort: 'Password must be at least 6 characters',
     passwordChangeFailed: 'Failed to change password'
+  },
+  orderLookup: {
+    title: 'Guest Order Lookup',
+    desc: 'Enter the order number and password you set when placing the order to view its details.',
+    orderNoLabel: 'Order Number',
+    passwordLabel: 'Password',
+    submitBtn: 'Look Up',
+    backBtn: 'Look Up Another Order',
+    errorEmpty: 'Please enter both the order number and password',
+    errorFailed: 'Order not found'
   },
   mypage: {
     title: 'My Page',

@@ -5,8 +5,9 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
 const db = require('../db');
-const { authMiddleware } = require('../middleware/auth');
+const { optionalAuthMiddleware } = require('../middleware/auth');
 
 // 네이버 SMTP (users.js/newsletter.js와 동일 설정 — MAIL_USER/MAIL_PASS .env)
 const transporter = nodemailer.createTransport({
@@ -155,12 +156,29 @@ function closeAndRedirectHtml(redirectUrl, message = '결제 처리 중...') {
 }
 
 // 1. 결제 준비 (READY)
-router.post('/ready', authMiddleware, async (req, res) => {
+router.post('/ready', optionalAuthMiddleware, async (req, res) => {
   try {
-    const { items, amount, shippingAddress, paymethod = 'CARD' } = req.body;
+    const { items, amount, shippingAddress, paymethod = 'CARD', guestInfo } = req.body;
 
     if (!items?.length || !amount) {
       return res.status(400).json({ error: '주문 정보가 부족합니다' });
+    }
+
+    // 비회원 주문: 로그인 정보 대신 주문자 정보 + 주문조회용 비밀번호를 받는다
+    let buyerName, buyerEmail, guestPasswordHash = null;
+    if (req.user) {
+      buyerName = req.user.name;
+      buyerEmail = req.user.email;
+    } else {
+      if (!guestInfo?.name || !guestInfo?.email || !guestInfo?.password) {
+        return res.status(400).json({ error: '비회원 주문자 정보가 부족합니다' });
+      }
+      if (String(guestInfo.password).length < 4) {
+        return res.status(400).json({ error: '주문조회 비밀번호는 4자 이상 입력해주세요' });
+      }
+      buyerName = guestInfo.name;
+      buyerEmail = guestInfo.email;
+      guestPasswordHash = await bcrypt.hash(String(guestInfo.password), 10);
     }
 
     const orderNo = generateOrderNo();
@@ -171,9 +189,10 @@ router.post('/ready', authMiddleware, async (req, res) => {
 
     await db('orders').insert({
       order_no: orderNo,
-      user_id: req.user.id,
-      user_name: req.user.name,
-      user_email: req.user.email,
+      user_id: req.user ? req.user.id : null,
+      user_name: buyerName,
+      user_email: buyerEmail,
+      guest_password: guestPasswordHash,
       items_json: JSON.stringify(items),
       total: amount,
       payment_method: 'mpc',
@@ -191,8 +210,8 @@ router.post('/ready', authMiddleware, async (req, res) => {
       paymethod,
       amount: String(amount),
       goodsName,
-      customerName: req.user.name || '',
-      customerEmail: req.user.email || '',
+      customerName: buyerName || '',
+      customerEmail: buyerEmail || '',
       merchantData: orderNo,
       timestamp,
       signature,
@@ -241,12 +260,13 @@ router.post('/ready', authMiddleware, async (req, res) => {
 });
 
 // 1-1. 주문 상태 확인 (프론트가 결제창을 닫은 후 실제 결제 완료 여부를 확인할 때 사용)
-router.get('/status/:orderNo', authMiddleware, async (req, res) => {
+router.get('/status/:orderNo', optionalAuthMiddleware, async (req, res) => {
   try {
-    const order = await db('orders')
-      .where('order_no', req.params.orderNo)
-      .where('user_id', req.user.id)
-      .first();
+    const query = db('orders').where('order_no', req.params.orderNo);
+    // 비회원 주문은 user_id가 없으므로, 주문번호(추측 불가능한 랜덤 값) 자체로만 식별한다
+    if (req.user) query.where('user_id', req.user.id);
+    else query.whereNull('user_id');
+    const order = await query.first();
 
     if (!order) {
       // 이미 취소/정리되어 삭제된 주문(=결제 미완료)일 수 있음
@@ -256,7 +276,8 @@ router.get('/status/:orderNo', authMiddleware, async (req, res) => {
     res.json({
       orderNo: order.order_no,
       status: order.status,
-      total: order.total
+      total: order.total,
+      isGuest: !order.user_id
     });
   } catch (e) {
     console.error('[MPC status 오류]', e);
@@ -266,16 +287,15 @@ router.get('/status/:orderNo', authMiddleware, async (req, res) => {
 
 // 1-2. 결제 포기 처리 (결제창을 열지 못했거나, 결제 완료를 확인하지 못한 채 이탈한 경우)
 // 실제 결제(paid)로 확정된 주문은 절대 건드리지 않는다 — status가 여전히 'pending'일 때만 제거.
-router.post('/abandon', authMiddleware, async (req, res) => {
+router.post('/abandon', optionalAuthMiddleware, async (req, res) => {
   try {
     const { orderNo } = req.body;
     if (!orderNo) return res.status(400).json({ error: '주문번호가 없습니다' });
 
-    const deleted = await db('orders')
-      .where('order_no', orderNo)
-      .where('user_id', req.user.id)
-      .where('status', 'pending')
-      .del();
+    const query = db('orders').where('order_no', orderNo).where('status', 'pending');
+    if (req.user) query.where('user_id', req.user.id);
+    else query.whereNull('user_id');
+    const deleted = await query.del();
 
     res.json({ success: true, removed: deleted > 0 });
   } catch (e) {

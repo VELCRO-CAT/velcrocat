@@ -1,6 +1,19 @@
 <template>
   <div class="checkout-page">
-    <v-container style="max-width:1180px" class="py-10">
+    <!-- 로그인/비회원 선택 게이트 (로그인 상태가 아니고 아직 진행 방식을 고르지 않았을 때) -->
+    <v-container v-if="!authStore.user && !checkoutMode" style="max-width:420px" class="py-16">
+      <div class="gate-card">
+        <h1 class="gate-title">{{ t('checkout.title') }}</h1>
+        <p class="gate-desc">{{ t('checkout.gateDesc') }}</p>
+        <div class="gate-actions">
+          <button class="gate-btn gate-btn-primary" @click="goLogin">{{ t('auth.loginBtn') }}</button>
+          <button class="gate-btn" @click="goRegister">{{ t('auth.registerBtn') }}</button>
+          <button class="gate-btn gate-btn-guest" @click="checkoutMode = 'guest'">{{ t('checkout.guestBtn') }}</button>
+        </div>
+      </div>
+    </v-container>
+
+    <v-container v-else style="max-width:1180px" class="py-10">
       <!-- 상단 헤더 -->
       <div class="checkout-header">
         <h1 class="checkout-title">{{ t('checkout.title') }}</h1>
@@ -96,6 +109,33 @@
                   :placeholder="t('checkout.emailPlaceholder')"
                 />
               </v-col>
+
+              <!-- 비회원 주문: 나중에 주문조회에 쓸 비밀번호 -->
+              <template v-if="checkoutMode === 'guest'">
+                <v-col cols="12" class="mt-3">
+                  <p class="guest-hint">{{ t('checkout.guestHint') }}</p>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <label class="field-label">{{ t('checkout.guestPasswordLabel') }} <span class="required">*</span></label>
+                  <v-text-field
+                    v-model="guestPassword"
+                    type="password"
+                    variant="outlined"
+                    density="comfortable"
+                    hide-details
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <label class="field-label">{{ t('checkout.guestPasswordConfirmLabel') }} <span class="required">*</span></label>
+                  <v-text-field
+                    v-model="guestPasswordConfirm"
+                    type="password"
+                    variant="outlined"
+                    density="comfortable"
+                    hide-details
+                  />
+                </v-col>
+              </template>
 
               <v-col cols="12" sm="4" class="mt-3">
                 <label class="field-label">{{ t('checkout.zipLabel') }}</label>
@@ -294,6 +334,18 @@ const router = useRouter();
 const error = ref('');
 const loading = ref(false);
 
+// 로그인 상태면 바로 'member', 아니면 게이트 화면에서 '비회원으로 주문하기'를 눌러야 'guest'가 됨
+const checkoutMode = ref(authStore.user ? 'member' : null);
+const guestPassword = ref('');
+const guestPasswordConfirm = ref('');
+
+function goLogin() {
+  router.push({ path: '/login', query: { redirect: '/checkout' } });
+}
+function goRegister() {
+  router.push('/register');
+}
+
 const form = ref({
   name: authStore.user?.name || '',
   phone: '',
@@ -309,8 +361,9 @@ const addresses = ref([]);
 const selectedAddressId = ref('new');
 const saveAsDefaultAddress = ref(true);
 
-// 마이페이지에 저장해 둔 배송지 목록을 불러와 선택할 수 있게 하고, 기본 배송지는 자동으로 채워준다
+// 마이페이지에 저장해 둔 배송지 목록을 불러와 선택할 수 있게 하고, 기본 배송지는 자동으로 채워준다 (회원만)
 onMounted(async () => {
+  if (!authStore.user) return;
   try {
     const { data } = await axios.get('/api/addresses');
     const list = Array.isArray(data) ? data : [];
@@ -399,8 +452,13 @@ async function processPayment() {
   if (!form.value.addressDetail?.trim()) { error.value = t('checkout.errorAddressDetail'); return; }
   if (cartStore.items.length === 0) { error.value = t('checkout.errorEmptyCart'); return; }
 
-  // 새 배송지를 직접 입력했고 저장하기로 체크했다면, 결제 진행과 별개로 기본 배송지로 저장
-  if (selectedAddressId.value === 'new' && saveAsDefaultAddress.value) {
+  if (checkoutMode.value === 'guest') {
+    if (!guestPassword.value || guestPassword.value.length < 4) { error.value = t('checkout.errorGuestPassword'); return; }
+    if (guestPassword.value !== guestPasswordConfirm.value) { error.value = t('checkout.errorGuestPasswordMismatch'); return; }
+  }
+
+  // 새 배송지를 직접 입력했고 저장하기로 체크했다면, 결제 진행과 별개로 기본 배송지로 저장 (회원만)
+  if (authStore.user && selectedAddressId.value === 'new' && saveAsDefaultAddress.value) {
     try {
       await axios.post('/api/addresses', {
         recipient: form.value.name,
@@ -431,7 +489,10 @@ async function processPayment() {
       })),
       amount: cartStore.total,
       shippingAddress: form.value,
-      paymethod: 'CARD'
+      paymethod: 'CARD',
+      guestInfo: checkoutMode.value === 'guest'
+        ? { name: form.value.name, email: form.value.email, password: guestPassword.value }
+        : undefined
     });
 
     if (!data?.nextPcUrl) {
@@ -487,6 +548,55 @@ function abandonOrder(orderNo) {
 .checkout-page {
   background: #fafafa;
   min-height: 100vh;
+}
+
+/* 로그인/비회원 선택 게이트 */
+.gate-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.gate-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -0.5px;
+  margin: 0 0 10px;
+}
+.gate-desc {
+  font-size: 13px;
+  color: #888;
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+.gate-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gate-btn {
+  height: 50px;
+  border-radius: 8px;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.gate-btn:hover { border-color: #111; color: #111; }
+.gate-btn-primary { background: #111; border-color: #111; color: #fff; }
+.gate-btn-primary:hover { background: #333; }
+.gate-btn-guest { color: #777; border-style: dashed; }
+
+.guest-hint {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* 상단 헤더 */

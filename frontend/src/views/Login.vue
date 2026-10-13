@@ -37,8 +37,10 @@
         </div>
       </v-form>
 
-      <div class="text-center mt-4 reveal reveal-3">
+      <div class="text-center mt-4 reveal reveal-3 login-util-row">
         <router-link to="/forgot-password" class="login-util-link">{{ t('auth.forgotPasswordLink') }}</router-link>
+        <span class="login-util-divider">·</span>
+        <router-link to="/order-lookup" class="login-util-link">{{ t('orderLookup.title') }}</router-link>
       </div>
 
       <!-- 소셜 로그인 -->
@@ -172,6 +174,12 @@ async function handleLogin() {
   gap: 8px;
 }
 
+.login-util-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 .login-util-link {
   font-size: 13px;
   color: #888;
@@ -179,6 +187,7 @@ async function handleLogin() {
   text-decoration: none;
 }
 .login-util-link:hover { color: #111; }
+.login-util-divider { color: #ddd; font-size: 12px; }
 
 /* 모바일: 데스크톱 기준 py-16(위아래 64px)이 과도하게 커 보이던 것 축소 */
 @media (max-width: 640px) {

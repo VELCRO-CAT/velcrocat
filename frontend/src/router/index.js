@@ -9,6 +9,7 @@ import MyPage from '../views/MyPage.vue';
 import AuthCallback from '../views/AuthCallback.vue';
 import Checkout from '../views/Checkout.vue';
 import OrderComplete from '../views/OrderComplete.vue';
+import GuestOrderLookup from '../views/GuestOrderLookup.vue';
 import Contact from '../views/Contact.vue';
 import About from '../views/About.vue';
 import Story from '../views/Story.vue';
@@ -34,8 +35,9 @@ const routes = [
   { path: '/forgot-password', component: ForgotPassword, meta: { guestOnly: true } },
   { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },
   { path: '/auth/:provider/callback', component: AuthCallback },
-  { path: '/checkout', component: Checkout, meta: { requiresAuth: true } },
+  { path: '/checkout', component: Checkout },
   { path: '/order-complete', component: OrderComplete },
+  { path: '/order-lookup', component: GuestOrderLookup },
   { path: '/contact', component: Contact },
   { path: '/about', redirect: '/brand' },
   { path: '/privacy', component: Privacy },
