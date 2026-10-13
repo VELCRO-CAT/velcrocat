@@ -432,6 +432,7 @@ function logout() {
   top: 100%;
   right: -10px;
   width: 320px;
+  max-width: calc(100vw - 24px);
   background: #fff;
   border: 1.5px solid #111;
   z-index: 150;

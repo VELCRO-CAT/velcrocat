@@ -12,9 +12,9 @@
       <!-- 장바구니 아이템 -->
       <v-col cols="12" md="8">
         <v-card variant="outlined" v-for="item in cartStore.items" :key="vk(item)" class="mb-3">
-          <div class="d-flex align-center pa-4 gap-4">
-            <v-img :src="item.image" width="80" height="80" rounded="lg" style="flex-shrink:0; background:#f5f5f5" />
-            <div class="flex-grow-1">
+          <div class="cart-item-row pa-4">
+            <v-img :src="item.image" width="80" height="80" rounded="lg" class="cart-item-img" style="background:#f5f5f5" />
+            <div class="cart-item-info">
               <p class="text-caption text-grey">{{ item.seller }}</p>
               <p class="font-weight-medium">{{ lf(item, 'name') }}</p>
               <p v-if="item.color || item.size" class="text-caption text-grey">
@@ -24,20 +24,22 @@
               </p>
               <p class="text-body-2 font-weight-bold">₩{{ Number(item.price).toLocaleString() }}</p>
             </div>
-            <div class="d-flex align-center">
-              <v-btn icon variant="text" size="small" @click="cartStore.updateQty(vk(item), item.qty - 1)">
-                <v-icon>mdi-minus</v-icon>
-              </v-btn>
-              <span class="mx-3 font-weight-bold">{{ item.qty }}</span>
-              <v-btn icon variant="text" size="small" @click="cartStore.updateQty(vk(item), item.qty + 1)">
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </div>
-            <div class="text-right" style="min-width:80px">
-              <p class="font-weight-bold">₩{{ (item.price * item.qty).toLocaleString() }}</p>
-              <v-btn icon variant="text" size="x-small" color="grey" @click="cartStore.removeItem(vk(item))">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
+            <div class="cart-item-actions">
+              <div class="d-flex align-center">
+                <v-btn icon variant="text" size="small" @click="cartStore.updateQty(vk(item), item.qty - 1)">
+                  <v-icon>mdi-minus</v-icon>
+                </v-btn>
+                <span class="mx-3 font-weight-bold">{{ item.qty }}</span>
+                <v-btn icon variant="text" size="small" @click="cartStore.updateQty(vk(item), item.qty + 1)">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </div>
+              <div class="text-right cart-item-total">
+                <p class="font-weight-bold">₩{{ (item.price * item.qty).toLocaleString() }}</p>
+                <v-btn icon variant="text" size="x-small" color="grey" @click="cartStore.removeItem(vk(item))">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </div>
             </div>
           </div>
         </v-card>
@@ -86,3 +88,31 @@ function checkout() {
   router.push('/checkout');
 }
 </script>
+
+<style scoped>
+.cart-item-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.cart-item-img { flex-shrink: 0; }
+.cart-item-info { flex: 1 1 auto; min-width: 0; }
+.cart-item-info p { overflow-wrap: break-word; }
+.cart-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.cart-item-total { min-width: 72px; }
+
+/* 좁은 화면에서는 이미지/이름 아래로 수량·가격을 한 줄 전체로 내려서 잘림 방지 */
+@media (max-width: 600px) {
+  .cart-item-row { flex-wrap: wrap; }
+  .cart-item-actions {
+    flex-basis: 100%;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+}
+</style>
