@@ -184,6 +184,8 @@ export default {
     empty: '购物车是空的',
     browseProducts: '去逛逛商品',
     clearCart: '清空购物车',
+    selectAll: '全选',
+    deleteSelected: '删除所选',
     summaryTitle: '订单摘要',
     itemCount: '商品数量',
     subtotal: '小计',

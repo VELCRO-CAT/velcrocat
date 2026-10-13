@@ -184,6 +184,8 @@ export default {
     empty: 'カートが空です',
     browseProducts: '商品を見る',
     clearCart: 'カートを空にする',
+    selectAll: 'すべて選択',
+    deleteSelected: '選択削除',
     summaryTitle: '注文概要',
     itemCount: '商品数',
     subtotal: '小計',

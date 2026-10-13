@@ -184,6 +184,8 @@ export default {
     empty: 'Your cart is empty',
     browseProducts: 'Browse Products',
     clearCart: 'Clear Cart',
+    selectAll: 'Select All',
+    deleteSelected: 'Delete Selected',
     summaryTitle: 'Order Summary',
     itemCount: 'Items',
     subtotal: 'Subtotal',
