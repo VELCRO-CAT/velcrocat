@@ -17,6 +17,8 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
+import { useWishlistStore } from '../stores/wishlist';
+import { useCartStore } from '../stores/cart';
 import axios from 'axios';
 
 const { t } = useI18n();
@@ -42,6 +44,8 @@ onMounted(async () => {
     localStorage.setItem('token', res.data.token);
     localStorage.setItem('user', JSON.stringify(res.data.user));
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+    useWishlistStore().load();
+    useCartStore().load();
     router.push('/products');
   } catch (e) {
     error.value = e.response?.data?.error || t('auth.loginFailed');

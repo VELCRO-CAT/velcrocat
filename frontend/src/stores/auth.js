@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useWishlistStore } from './wishlist';
+import { useCartStore } from './cart';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -20,6 +21,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('user', JSON.stringify(this.user));
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
       useWishlistStore().load();
+      useCartStore().load();
     },
     async register(name, email, password) {
       const res = await axios.post('/api/users/register', { name, email, password });
@@ -29,6 +31,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('user', JSON.stringify(this.user));
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
       useWishlistStore().load();
+      useCartStore().load();
     },
     logout() {
       this.token = null;
@@ -37,6 +40,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('user');
       delete axios.defaults.headers.common['Authorization'];
       useWishlistStore().load();
+      useCartStore().load();
     },
     initAuth() {
       if (this.token) {
