@@ -55,11 +55,23 @@
 
           <!-- 이미지 섹션 (최대 10장) -->
           <p class="text-caption font-weight-bold text-grey mb-2" style="letter-spacing:1px">상품 이미지 (최대 10장)</p>
-          <div class="images-grid mb-3">
-            <div v-for="(img, i) in imageList" :key="i" class="img-thumb">
-              <img :src="img" class="img-thumb-pic" />
+          <div class="images-grid mb-2">
+            <div
+              v-for="(img, i) in imageList"
+              :key="img"
+              class="img-thumb"
+              :class="{ 'is-dragging': dragIndex === i, 'is-dragover': dragOverIndex === i }"
+              draggable="true"
+              @dragstart="onImgDragStart(i)"
+              @dragover.prevent="dragOverIndex = i"
+              @dragleave="dragOverIndex === i && (dragOverIndex = null)"
+              @drop.prevent="onImgDrop(i)"
+              @dragend="onImgDragEnd"
+            >
+              <img :src="img" class="img-thumb-pic" draggable="false" />
               <button class="img-thumb-remove" @click.prevent="removeImage(i)">&times;</button>
               <span v-if="i === 0" class="img-thumb-main">대표</span>
+              <button v-else class="img-thumb-setmain" @click.prevent="setMainImage(i)">대표로 설정</button>
             </div>
             <label v-if="imageList.length < 10" class="img-thumb img-thumb-add">
               <v-icon size="28" color="grey-lighten-1">mdi-plus</v-icon>
@@ -67,6 +79,7 @@
               <input type="file" accept="image/*" multiple style="display:none" @change="handleMultiUpload" />
             </label>
           </div>
+          <p class="text-caption text-grey mb-3">이미지를 드래그해서 순서를 바꾸거나, "대표로 설정"으로 대표 이미지를 바로 지정할 수 있어요.</p>
           <div class="mb-4">
             <v-text-field
               v-model="urlInput"
@@ -460,6 +473,29 @@ function removeImage(i) {
   imageList.value.splice(i, 1);
 }
 
+function setMainImage(i) {
+  const [img] = imageList.value.splice(i, 1);
+  imageList.value.unshift(img);
+}
+
+// 이미지 순서 드래그 변경
+const dragIndex = ref(null);
+const dragOverIndex = ref(null);
+function onImgDragStart(i) {
+  dragIndex.value = i;
+}
+function onImgDrop(i) {
+  if (dragIndex.value === null || dragIndex.value === i) return;
+  const [moved] = imageList.value.splice(dragIndex.value, 1);
+  imageList.value.splice(i, 0, moved);
+  dragIndex.value = null;
+  dragOverIndex.value = null;
+}
+function onImgDragEnd() {
+  dragIndex.value = null;
+  dragOverIndex.value = null;
+}
+
 function addUrlImage() {
   const url = urlInput.value.trim();
   if (!url) return;
@@ -611,7 +647,11 @@ async function confirmDelete(p) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  cursor: grab;
+  transition: box-shadow 0.15s, opacity 0.15s;
 }
+.img-thumb.is-dragging { opacity: 0.35; cursor: grabbing; }
+.img-thumb.is-dragover { box-shadow: inset 0 0 0 2px #111; }
 .img-thumb-pic {
   width: 100%;
   height: 100%;
@@ -644,6 +684,23 @@ async function confirmDelete(p) {
   padding: 1px 0;
   letter-spacing: 1px;
 }
+.img-thumb-setmain {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  font-size: 8.5px;
+  letter-spacing: 0.3px;
+  text-align: center;
+  padding: 3px 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.img-thumb:hover .img-thumb-setmain { opacity: 1; }
 /* 블로그 에디터 */
 .blog-editor {
   margin-bottom: 16px;
