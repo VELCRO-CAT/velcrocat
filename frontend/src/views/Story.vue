@@ -235,8 +235,8 @@ onBeforeUnmount(() => observer?.disconnect());
 }
 .story-cta-light { background: #fff; color: #111; border-color: #fff; }
 .story-cta-light:hover { background: transparent; color: #fff; }
-.story-cta-dark { background: #111; color: #fff; border-color: #111; }
-.story-cta-dark:hover { background: transparent; color: #111; }
+.story-cta-dark { background: #fff; color: #111; border-color: #111; }
+.story-cta-dark:hover { background: #111; color: #fff; }
 
 .story-scroll-hint {
   position: absolute;
