@@ -1,4 +1,5 @@
 <template>
+  <CanonicalLink />
   <v-app style="background:#fff" :class="{ 'about-active': isBrandPage }">
     <!-- 로고 영역 (Brand 페이지에서는 숨김) -->
     <div v-if="!isBrandPage && !isAdminPage" class="logo-section">
@@ -265,6 +266,7 @@ import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import AdminNotification from './components/AdminNotification.vue';
 import LanguageSwitcher from './components/LanguageSwitcher.vue';
+import CanonicalLink from './components/CanonicalLink.vue';
 import { useWishlistStore } from './stores/wishlist';
 import { useLocalized } from './composables/useLocalized';
 
