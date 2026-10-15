@@ -112,7 +112,7 @@
         </router-link>
       </div>
 
-      <router-link to="/products" class="story-cta story-cta-dark">EXPLORE THE COLLECTION</router-link>
+      <router-link to="/products" class="story-cta story-cta-dark hvr-sweep-to-right">EXPLORE THE COLLECTION</router-link>
     </section>
   </div>
 </template>
@@ -236,7 +236,6 @@ onBeforeUnmount(() => observer?.disconnect());
 .story-cta-light { background: #fff; color: #111; border-color: #fff; }
 .story-cta-light:hover { background: transparent; color: #fff; }
 .story-cta-dark { background: #fff; color: #111; border-color: #111; }
-.story-cta-dark:hover { background: #111; color: #fff; }
 
 .story-scroll-hint {
   position: absolute;
