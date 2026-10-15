@@ -82,7 +82,7 @@
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
         <v-alert v-if="success" type="success" variant="tonal" density="compact" class="mb-4">{{ success }}</v-alert>
 
-        <v-btn type="submit" color="#111" block size="large" :loading="loading" :disabled="!emailVerified">{{ t('auth.registerBtn') }}</v-btn>
+        <v-btn type="submit" variant="outlined" color="#111" block size="large" :loading="loading" :disabled="!emailVerified">{{ t('auth.registerBtn') }}</v-btn>
       </v-form>
 
       <!-- 소셜 회원가입 (네이버/카카오) -->

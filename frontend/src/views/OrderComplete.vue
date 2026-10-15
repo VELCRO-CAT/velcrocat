@@ -38,7 +38,7 @@
         주문번호 {{ order.orderNo }} · ₩{{ Number(order.total).toLocaleString() }}
       </p>
       <div class="d-flex flex-column flex-sm-row justify-center ga-3 mt-4">
-        <v-btn color="#111" size="large" :to="order?.isGuest ? '/order-lookup' : '/mypage'">주문 내역 확인</v-btn>
+        <v-btn variant="outlined" color="#111" size="large" :to="order?.isGuest ? '/order-lookup' : '/mypage'">주문 내역 확인</v-btn>
         <v-btn variant="outlined" color="#111" size="large" to="/products">쇼핑 계속하기</v-btn>
       </div>
     </div>
@@ -52,7 +52,7 @@
         장바구니는 그대로 남아있으니 다시 시도해 주세요.
       </p>
       <div class="d-flex flex-column flex-sm-row justify-center ga-3 mt-4">
-        <v-btn color="#111" size="large" to="/checkout">다시 결제하기</v-btn>
+        <v-btn variant="outlined" color="#111" size="large" to="/checkout">다시 결제하기</v-btn>
         <v-btn variant="outlined" color="#111" size="large" to="/cart">장바구니로 이동</v-btn>
       </div>
     </div>
@@ -67,7 +67,7 @@
         고객센터로 주문번호({{ route.query.orderNo }})를 문의해 주세요.
       </p>
       <div class="d-flex flex-column flex-sm-row justify-center ga-3 mt-4">
-        <v-btn color="#111" size="large" to="/mypage">마이페이지 확인</v-btn>
+        <v-btn variant="outlined" color="#111" size="large" to="/mypage">마이페이지 확인</v-btn>
         <v-btn variant="outlined" color="#111" size="large" to="/contact">고객센터 문의</v-btn>
       </div>
     </div>

@@ -821,19 +821,20 @@ function buyNow() {
 
 .buy-btn {
   flex: 1.2;
-  background: #111;
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: #111;
+  border: 1px solid #111;
   padding: 0 16px;
   height: 52px;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 .buy-btn:hover {
-  background: #333;
+  background: #111;
+  color: #fff;
 }
 
 .cart-btn-disabled {
@@ -1342,8 +1343,7 @@ function buyNow() {
   transition: background 0.2s, color 0.2s;
 }
 .added-btn:hover { background: #f5f5f5; }
-.added-btn-primary { background: #111; color: #fff; }
-.added-btn-primary:hover { background: #333; }
+.added-btn-primary:hover { background: #111; color: #fff; }
 
 /* 모바일에서는 작은 팝업 대신 화면을 꽉 채우는 풀스크린 시트로, 버튼은 하단에 고정 */
 @media (max-width: 600px) {

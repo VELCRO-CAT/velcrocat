@@ -180,7 +180,7 @@
               <h2 class="mypage-section-title mb-0">배송지 관리</h2>
               <p class="text-body-2 text-grey mt-2">기본 배송지는 결제 시 자동으로 채워집니다. 여러 곳을 등록해두고 필요할 때 기본으로 바꿔 쓸 수 있어요.</p>
             </div>
-            <v-btn v-if="!addrFormOpen" color="#111" @click="openAddAddressForm">+ 새 배송지</v-btn>
+            <v-btn v-if="!addrFormOpen" variant="outlined" color="#111" @click="openAddAddressForm">+ 새 배송지</v-btn>
           </div>
 
           <!-- 배송지 목록 -->
@@ -237,7 +237,7 @@
                 @click="searchAddress"
                 style="cursor:pointer"
               />
-              <v-btn color="#111" size="large" height="56" @click="searchAddress">주소 검색</v-btn>
+              <v-btn variant="outlined" color="#111" size="large" height="56" @click="searchAddress">주소 검색</v-btn>
             </div>
 
             <label class="field-label">주소</label>
@@ -274,7 +274,7 @@
             />
             <v-alert v-if="addrMsg" :type="addrMsgType" variant="tonal" density="compact" class="mb-4">{{ addrMsg }}</v-alert>
             <div class="d-flex ga-2">
-              <v-btn type="submit" color="#111" size="large" :loading="addrLoading">저장</v-btn>
+              <v-btn type="submit" variant="outlined" color="#111" size="large" :loading="addrLoading">저장</v-btn>
               <v-btn variant="outlined" color="#111" size="large" @click="closeAddrForm">취소</v-btn>
             </div>
           </v-form>
@@ -291,7 +291,7 @@
             <v-text-field v-model="profile.email" type="email" variant="outlined" density="comfortable" hide-details class="mb-4" />
 
             <v-alert v-if="profileMsg" :type="profileMsgType" variant="tonal" density="compact" class="mb-4">{{ profileMsg }}</v-alert>
-            <v-btn type="submit" color="#111" size="large" :loading="profileLoading">{{ t('common.save') }}</v-btn>
+            <v-btn type="submit" variant="outlined" color="#111" size="large" :loading="profileLoading">{{ t('common.save') }}</v-btn>
           </v-form>
         </section>
 
@@ -317,7 +317,7 @@
             <v-text-field v-model="pw.confirm" :type="showPw ? 'text' : 'password'" variant="outlined" density="comfortable" hide-details class="mb-4" />
 
             <v-alert v-if="pwMsg" :type="pwMsgType" variant="tonal" density="compact" class="mb-4">{{ pwMsg }}</v-alert>
-            <v-btn type="submit" color="#111" size="large" :loading="pwLoading">{{ t('mypage.changeBtn') }}</v-btn>
+            <v-btn type="submit" variant="outlined" color="#111" size="large" :loading="pwLoading">{{ t('mypage.changeBtn') }}</v-btn>
           </v-form>
         </section>
 

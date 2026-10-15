@@ -5,7 +5,7 @@
     <div v-if="cartStore.items.length === 0" class="text-center py-16">
       <v-icon size="64" color="#ccc">mdi-cart-outline</v-icon>
       <p class="text-h6 text-grey mt-4 mb-6">{{ t('cart.empty') }}</p>
-      <v-btn color="#111" size="large" to="/products">{{ t('cart.browseProducts') }}</v-btn>
+      <v-btn variant="outlined" color="#111" size="large" to="/products">{{ t('cart.browseProducts') }}</v-btn>
     </div>
 
     <v-row v-else>
@@ -264,16 +264,16 @@ function checkout() {
 .cart-checkout-btn {
   width: 100%;
   height: 52px;
-  background: #111;
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: #111;
+  border: 1px solid #111;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.3px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
-.cart-checkout-btn:hover { background: #333; }
+.cart-checkout-btn:hover { background: #111; color: #fff; }
 
 /* 좁은 화면에서는 이미지/이름 아래로 수량·가격을 한 줄 전체로 내려서 잘림 방지 */
 @media (max-width: 600px) {

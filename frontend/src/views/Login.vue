@@ -32,7 +32,7 @@
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
 
         <div class="login-btn-row">
-          <v-btn type="submit" color="#111" block size="large" :loading="loading">{{ t('auth.loginBtn') }}</v-btn>
+          <v-btn type="submit" variant="outlined" color="#111" block size="large" :loading="loading">{{ t('auth.loginBtn') }}</v-btn>
           <v-btn to="/register" variant="outlined" color="#111" block size="large">{{ t('auth.registerLink') }}</v-btn>
         </div>
       </v-form>

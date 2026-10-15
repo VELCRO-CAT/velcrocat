@@ -588,8 +588,8 @@ function abandonOrder(orderNo) {
   transition: all 0.15s;
 }
 .gate-btn:hover { border-color: #111; color: #111; }
-.gate-btn-primary { background: #111; border-color: #111; color: #fff; }
-.gate-btn-primary:hover { background: #333; }
+.gate-btn-primary { background: #fff; border-color: #111; color: #111; }
+.gate-btn-primary:hover { background: #111; color: #fff; }
 .gate-btn-guest { color: #777; border-style: dashed; }
 
 .guest-hint {
@@ -778,9 +778,9 @@ function abandonOrder(orderNo) {
 .addr-search-btn {
   width: 100%;
   height: 44px;
-  background: #111;
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: #111;
+  border: 1px solid #111;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
@@ -790,9 +790,9 @@ function abandonOrder(orderNo) {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
-.addr-search-btn:hover { background: #333; }
+.addr-search-btn:hover { background: #111; color: #fff; }
 
 /* 결제 수단 */
 .pay-methods {
@@ -1007,9 +1007,9 @@ function abandonOrder(orderNo) {
 .checkout-btn {
   width: 100%;
   height: 54px;
-  background: #111;
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: #111;
+  border: 1px solid #111;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 700;
@@ -1018,10 +1018,11 @@ function abandonOrder(orderNo) {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 .checkout-btn:hover:not(:disabled) {
-  background: #000;
+  background: #111;
+  color: #fff;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }

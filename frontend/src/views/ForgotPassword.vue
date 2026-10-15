@@ -19,7 +19,7 @@
           required
         />
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
-        <v-btn type="submit" color="#111" block size="large" :loading="loading">{{ t('auth.sendCodeFullBtn') }}</v-btn>
+        <v-btn type="submit" variant="outlined" color="#111" block size="large" :loading="loading">{{ t('auth.sendCodeFullBtn') }}</v-btn>
       </v-form>
 
       <!-- Step 2: 인증코드 입력 -->
@@ -36,7 +36,7 @@
         />
         <p class="text-caption text-grey mb-4">{{ timerText }}</p>
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
-        <v-btn type="submit" color="#111" block size="large" :loading="loading">{{ t('auth.confirmBtn') }}</v-btn>
+        <v-btn type="submit" variant="outlined" color="#111" block size="large" :loading="loading">{{ t('auth.confirmBtn') }}</v-btn>
         <v-btn variant="text" block class="mt-2" @click="resendCode" :disabled="resendCooldown > 0">
           {{ resendCooldown > 0 ? t('auth.resendWithCooldown', { count: resendCooldown }) : t('auth.resendCodeBtn') }}
         </v-btn>
@@ -66,7 +66,7 @@
           required
         />
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
-        <v-btn type="submit" color="#111" block size="large" :loading="loading">{{ t('auth.changePasswordBtn') }}</v-btn>
+        <v-btn type="submit" variant="outlined" color="#111" block size="large" :loading="loading">{{ t('auth.changePasswordBtn') }}</v-btn>
       </v-form>
 
       <!-- Step 4: 완료 -->
@@ -74,7 +74,7 @@
         <v-icon size="64" color="success" class="mb-4">mdi-check-circle-outline</v-icon>
         <h2 class="text-h6 mb-2">{{ t('auth.step4Title') }}</h2>
         <p class="text-body-2 text-grey-darken-1 mb-6">{{ t('auth.step4Desc') }}</p>
-        <v-btn color="#111" block size="large" @click="$router.push('/login')">{{ t('auth.goToLoginBtn') }}</v-btn>
+        <v-btn variant="outlined" color="#111" block size="large" @click="$router.push('/login')">{{ t('auth.goToLoginBtn') }}</v-btn>
       </div>
 
       <p v-if="step < 4" class="text-center text-body-2 mt-4 reveal" :class="{ visible: step > 1 }">

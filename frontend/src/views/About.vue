@@ -1538,10 +1538,10 @@ onUnmounted(() => {
 .mobile-menu-shop {
   margin-top: 24px;
   text-align: center;
-  background: #111;
-  color: #fff !important;
+  background: #fff;
+  color: #111 !important;
   padding: 14px 0 !important;
-  border: none !important;
+  border: 1px solid #111 !important;
   border-radius: 4px;
   font-size: 13px !important;
   letter-spacing: 3px !important;

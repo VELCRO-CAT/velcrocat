@@ -279,19 +279,19 @@ async function submit() {
   margin: 0;
 }
 .submit-btn {
-  background: #111;
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: #111;
+  border: 1px solid #111;
   padding: 15px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
   margin-top: 4px;
 }
-.submit-btn:hover:not(:disabled) { background: #333; }
-.submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+.submit-btn:hover:not(:disabled) { background: #111; color: #fff; }
+.submit-btn:disabled { background: #fff; color: #aaa; border-color: #ddd; cursor: not-allowed; }
 
 /* 스크롤 등장 애니메이션 */
 .reveal {

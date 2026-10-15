@@ -6,7 +6,7 @@
       <div v-else>
         <v-icon size="48" color="error" class="mb-4">mdi-alert-circle-outline</v-icon>
         <p class="text-body-1 mb-4">{{ error }}</p>
-        <v-btn color="#111" @click="$router.push('/login')">{{ t('auth.backToLogin') }}</v-btn>
+        <v-btn variant="outlined" color="#111" @click="$router.push('/login')">{{ t('auth.backToLogin') }}</v-btn>
       </div>
     </div>
   </v-container>

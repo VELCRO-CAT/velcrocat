@@ -16,7 +16,7 @@
         <v-text-field v-model="password" type="password" variant="outlined" density="comfortable" hide-details class="mb-4" />
 
         <v-alert v-if="errorMsg" type="error" variant="tonal" density="compact" class="mb-4">{{ errorMsg }}</v-alert>
-        <v-btn type="submit" color="#111" size="large" block :loading="loading">{{ t('orderLookup.submitBtn') }}</v-btn>
+        <v-btn type="submit" variant="outlined" color="#111" size="large" block :loading="loading">{{ t('orderLookup.submitBtn') }}</v-btn>
       </v-form>
     </div>
 
