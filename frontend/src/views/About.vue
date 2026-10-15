@@ -63,7 +63,6 @@
         <div class="hero-video-overlay"></div>
       </div>
       <div class="hero-content">
-        <span class="hero-label hero-reveal">Brand Concept</span>
         <img src="../image/osakamarketLOGO6.png" alt="Velcro Cat" class="hero-main-logo hero-reveal hero-reveal-2" />
         <p class="hero-desc hero-reveal hero-reveal-3" v-html="t('about.heroDesc')"></p>
         <div class="hero-btns hero-reveal hero-reveal-4">
@@ -133,17 +132,14 @@
       <div class="parallax-content">
         <!-- 설명 블록들이 먼저 보임 -->
         <div class="parallax-card parallax-card-1">
-          <p class="parallax-label">ABOUT US</p>
           <h2 class="parallax-title" v-html="t('about.card1Title')"></h2>
           <p class="parallax-desc" v-html="t('about.card1Desc')"></p>
         </div>
         <div class="parallax-card parallax-card-2">
-          <p class="parallax-label">PHILOSOPHY</p>
           <h2 class="parallax-title" v-html="t('about.card2Title')"></h2>
           <p class="parallax-desc" v-html="t('about.card2Desc')"></p>
         </div>
         <div class="parallax-card parallax-card-3">
-          <p class="parallax-label">ORIGIN</p>
           <h2 class="parallax-title" v-html="t('about.card3Title')"></h2>
           <p class="parallax-desc" v-html="t('about.card3Desc')"></p>
         </div>
@@ -157,10 +153,8 @@
       <div class="story-layout">
         <div class="story-visual">
           <img src="../image/video3.gif" alt="Velcro Cat Lookbook" class="story-gif" />
-          <div class="visual-label">EST. 2026 — SEOUL</div>
         </div>
         <div class="story-text">
-          <p class="section-label">Our Story</p>
           <h2 class="section-title" v-html="t('about.storyTitle')"></h2>
           <p class="story-desc">{{ t('about.storyDesc1') }}</p>
           <p class="story-desc">{{ t('about.storyDesc2') }}</p>
@@ -171,27 +165,22 @@
     <!-- 브랜드 가치 -->
     <section class="section values">
       <div class="values-header">
-        <p class="section-label">Values</p>
         <h2 class="section-title" v-html="t('about.valuesTitle')"></h2>
       </div>
       <div class="values-grid">
         <div class="value-card">
-          <div class="value-number">01</div>
           <h3>Comfort First</h3>
           <p>{{ t('about.value1') }}</p>
         </div>
         <div class="value-card">
-          <div class="value-number">02</div>
           <h3>Minimal Design</h3>
           <p>{{ t('about.value2') }}</p>
         </div>
         <div class="value-card">
-          <div class="value-number">03</div>
           <h3>Quality Material</h3>
           <p>{{ t('about.value3') }}</p>
         </div>
         <div class="value-card">
-          <div class="value-number">04</div>
           <h3>Everyday Style</h3>
           <p>{{ t('about.value4') }}</p>
         </div>
@@ -203,7 +192,6 @@
       <div class="features-layout">
         <div class="features-visual">
           <img src="../image/osakamarketLOGO5.png" alt="Velcro Cat" class="features-gif" />
-          <div class="visual-label-dark">Velcro Cat Collection</div>
         </div>
         <div class="features-list">
           <div class="feature-item">
@@ -229,7 +217,6 @@
     <!-- PICK UP 섹션 -->
     <section id="pickup" class="section pickup">
       <div class="pickup-header">
-        <p class="section-label">Pick Up</p>
         <h2 class="section-title">{{ t('about.pickupTitle') }}</h2>
         <p class="pickup-sub">{{ t('about.pickupSub') }}</p>
       </div>
@@ -256,7 +243,6 @@
     <section class="second-hero">
       <video src="../image/video3.mp4" class="second-hero-bg" autoplay muted loop playsinline />
       <div class="second-hero-content">
-        <p class="second-hero-label">Shop Now</p>
         <h2 class="second-hero-title" v-html="t('about.ctaTitle')"></h2>
         <p class="second-hero-desc" v-html="t('about.ctaDesc')"></p>
         <div class="second-hero-actions">
@@ -607,7 +593,7 @@ onUnmounted(() => {
   padding-left: 16px;
 }
 .sub-link {
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(255,255,255,0.4);
   text-decoration: none;
   transition: color 0.2s;
@@ -650,15 +636,13 @@ onUnmounted(() => {
   cursor: pointer;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  transition: all 0.2s;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: transform 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
 }
 .hero-sound-btn:hover {
   background: #fff;
   color: #111;
   border-color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
 .hero-sound-btn.muted {
   background: rgba(0,0,0,0.6);
@@ -674,7 +658,7 @@ onUnmounted(() => {
     bottom: 24px;
     left: 20px;
     padding: 12px 18px 12px 14px;
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 1px;
   }
   .hero-sound-btn svg { width: 24px; height: 24px; }
@@ -683,7 +667,7 @@ onUnmounted(() => {
 .nav-btn {
   display: inline-block;
   padding: 10px 24px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
   text-decoration: none;
@@ -1032,7 +1016,7 @@ onUnmounted(() => {
 .parallax-desc {
   font-size: 16px;
   line-height: 2;
-  color: #666;
+  color: #333;
 }
 
 /* 브랜드 스토리 */
@@ -1057,18 +1041,6 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-.visual-label {
-  position: absolute;
-  bottom: 16px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 13px;
-  letter-spacing: 3px;
-  color: #999;
-  font-weight: 600;
-  z-index: 1;
 }
 .story-text { flex: 1; }
 .story-desc {
@@ -1152,15 +1124,6 @@ onUnmounted(() => {
   top: 0;
   left: 0;
 }
-.visual-label-dark {
-  position: relative;
-  z-index: 1;
-  font-size: 13px;
-  letter-spacing: 3px;
-  color: #999;
-  font-weight: 600;
-  padding: 16px 0;
-}
 .features-list { flex: 1; }
 .feature-item {
   padding: 32px 0;
@@ -1218,13 +1181,6 @@ onUnmounted(() => {
   text-align: center;
   padding: 0 24px;
 }
-.second-hero-label {
-  font-size: 11px;
-  letter-spacing: 6px;
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 20px;
-  font-weight: 500;
-}
 .second-hero-title {
   font-size: 52px;
   font-weight: 300;
@@ -1244,7 +1200,7 @@ onUnmounted(() => {
   padding: 14px 40px;
   border: 1px solid #fff;
   color: #fff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 3px;
   text-decoration: none;
@@ -1274,9 +1230,8 @@ onUnmounted(() => {
   .second-hero { height: 75vh; min-height: 450px; }
   .second-hero-bg { object-fit: contain; }
   .second-hero-title { font-size: 28px; margin-bottom: 14px; }
-  .second-hero-label { font-size: 10px; letter-spacing: 4px; margin-bottom: 14px; }
   .second-hero-desc { font-size: 13px; margin-bottom: 24px; }
-  .second-hero-btn { padding: 12px 28px; font-size: 11px; }
+  .second-hero-btn { padding: 12px 28px; font-size: 13px; }
   .second-hero-actions { gap: 10px; }
 }
 
@@ -1321,7 +1276,7 @@ onUnmounted(() => {
 }
 .pickup-card:hover .pickup-img-wrap img { transform: scale(1.04); }
 .pickup-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   margin-bottom: 4px;
   line-height: 1.4;
@@ -1339,7 +1294,7 @@ onUnmounted(() => {
   padding: 14px 40px;
   border: 1px solid #111;
   color: #111;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
   text-decoration: none;
@@ -1381,7 +1336,7 @@ onUnmounted(() => {
   margin-bottom: 16px;
 }
 .footer-nav a {
-  font-size: 11px;
+  font-size: 13px;
   color: #666;
   text-decoration: none;
   letter-spacing: 1px;
@@ -1399,13 +1354,13 @@ onUnmounted(() => {
   margin-bottom: 20px;
 }
 .footer-biz p {
-  font-size: 11px;
+  font-size: 13px;
   color: #555;
   line-height: 1.9;
   margin: 0;
 }
 .footer-copy {
-  font-size: 11px;
+  font-size: 13px;
   color: #444;
 }
 
@@ -1418,7 +1373,7 @@ onUnmounted(() => {
   }
   .parallax-logo { height: 50vh; }
   .parallax-title { font-size: 28px; }
-  .parallax-desc { font-size: 14px; }
+  .parallax-desc { font-size: 16px; }
   .parallax-card { padding: 60px 20px; }
   .parallax-spacer { height: 80vh; }
   .brand-nav {
@@ -1430,7 +1385,7 @@ onUnmounted(() => {
     gap: 6px;
   }
   .brand-nav-logo img { height: 22px; }
-  .brand-nav-name { font-size: 12px; letter-spacing: 1px; }
+  .brand-nav-name { font-size: 13px; letter-spacing: 1px; }
   .brand-nav-main { display: none; }
   .brand-nav-sub { display: none; }
   .brand-nav-btns { display: none; }
@@ -1456,7 +1411,7 @@ onUnmounted(() => {
   .story-gif {
     object-fit: cover;
   }
-  .story-desc { font-size: 14px; }
+  .story-desc { font-size: 16px; }
   .section { padding: 60px 16px; }
   .values-grid {
     grid-template-columns: 1fr;

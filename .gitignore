@@ -11,3 +11,6 @@ frontend/.env.local
 # OS
 .DS_Store
 Thumbs.db
+
+# design-taste-frontend skill working files
+.taste-skill/

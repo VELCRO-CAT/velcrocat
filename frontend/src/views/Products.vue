@@ -3,7 +3,6 @@
 
     <!-- 페이지 헤더 -->
     <div class="page-header">
-      <span class="page-label">SHOP</span>
       <h1 class="page-title">{{ pageTitle }}</h1>
     </div>
 
@@ -274,14 +273,6 @@ function toggleWish(product) {
   padding: 56px 24px 40px;
   border-bottom: 1px solid #e0e0e0;
 }
-.page-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  color: #999;
-  display: block;
-  margin-bottom: 8px;
-}
 .page-title {
   font-size: 24px;
   font-weight: 800;
@@ -333,8 +324,8 @@ function toggleWish(product) {
   background: transparent;
 }
 .result-count {
-  font-size: 11px;
-  color: #999;
+  font-size: 13px;
+  color: #767676;
   margin-top: 10px;
   letter-spacing: 0.5px;
 }

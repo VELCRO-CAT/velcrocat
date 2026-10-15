@@ -344,7 +344,7 @@ function logout() {
   margin-bottom: -10px;
 }
 .logo-text {
-  font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+  font-family: 'Archivo Black', 'Noto Sans KR', 'Helvetica Neue', sans-serif;
   font-size: 56px;
   font-weight: 900;
   letter-spacing: 8px;
@@ -891,8 +891,8 @@ function logout() {
   line-height: 28px;
 }
 .footer-copy {
-  color: #999;
-  font-size: 11px;
+  color: #767676;
+  font-size: 13px;
   margin: 0;
 }
 .footer-social {

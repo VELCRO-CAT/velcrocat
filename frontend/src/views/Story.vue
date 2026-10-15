@@ -4,11 +4,11 @@
     <section class="story-hero">
       <div class="story-hero-inner reveal-in" ref="heroEl">
         <img src="../image/osakamarketLOGO2.png" alt="Velcrocat" class="story-hero-cat" />
+        <h1 class="story-headline">I belong to<br />no one.</h1>
         <p class="story-kicker">
           나는 누구의 고양이도 아니었다.<br />
           <em>But somehow, I always stuck around.</em>
         </p>
-        <h1 class="story-headline">I belong to<br />no one.</h1>
         <button type="button" class="story-cta story-cta-light" @click="scrollTo('origin')">MEET VELCROCAT</button>
       </div>
       <div class="story-scroll-hint">
@@ -19,7 +19,6 @@
 
     <!-- 출생 -->
     <section id="origin" class="story-block story-block-light reveal" ref="originEl">
-      <p class="story-eyebrow">ORIGIN</p>
       <p class="story-copy">
         나는 일본의 어느 작은 골목에서 태어났다.
       </p>
@@ -31,7 +30,6 @@
 
     <!-- 02. 이름의 탄생 -->
     <section class="story-block story-block-warm reveal" ref="nameEl">
-      <p class="story-eyebrow">THE NAME</p>
       <h2 class="story-headline-sm">A little cat<br />that sticks around.</h2>
       <div class="story-name-grid">
         <div class="story-name-media">
@@ -62,7 +60,6 @@
 
     <!-- 태도 / 철학 -->
     <section class="story-block story-block-dark reveal" ref="philosophyEl">
-      <p class="story-eyebrow story-eyebrow-light">ATTITUDE</p>
       <p class="story-copy story-copy-light">
         나는 여전히 길고양이다. 누군가의 것이 되기 위해 살아가지 않는다.<br />
         내가 좋아하는 것을 고르고, 나만의 방식으로 살아간다.
@@ -88,7 +85,6 @@
         ></div>
       </div>
 
-      <p class="story-eyebrow">THE COLLECTION</p>
       <p class="story-copy">
         이곳은 Velcrocat의 작은 세계다.<br />
         고양이 한 마리의 취향에서 시작된 옷들.
@@ -98,8 +94,8 @@
         누군가에게는 자신을 표현하는 하나의 방식이 될 것이다.<br />
         마음에 들었다면, 그냥 가져가도 좋다.
       </p>
-      <p class="story-copy story-emphasis">나는 누구의 고양이도 아니니까.</p>
       <h2 class="story-headline-sm story-headline-tight">STICK TO<br />YOURSELF.</h2>
+      <p class="story-headline-lead">나는 누구의 고양이도 아니니까.</p>
 
       <div v-if="products.length" class="story-product-grid">
         <router-link
@@ -193,25 +189,25 @@ onBeforeUnmount(() => observer?.disconnect());
   filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.5));
 }
 .story-kicker {
-  font-size: 13px;
-  line-height: 1.9;
-  color: rgba(255, 255, 255, 0.55);
-  letter-spacing: 0.02em;
-  margin: 0 0 22px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.01em;
+  margin: 0 0 32px;
 }
 .story-kicker em { font-style: italic; color: rgba(255, 255, 255, 0.8); }
 .story-headline {
-  font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+  font-family: 'Archivo Black', 'Noto Sans KR', 'Helvetica Neue', sans-serif;
   font-weight: 900;
   font-size: clamp(38px, 7vw, 64px);
   line-height: 1.08;
   letter-spacing: -0.01em;
-  margin: 0 0 36px;
+  margin: 0 0 20px;
   text-wrap: balance;
 }
 .story-cta {
   display: inline-block;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.18em;
   padding: 15px 30px;
@@ -255,17 +251,8 @@ onBeforeUnmount(() => observer?.disconnect());
   text-align: center;
 }
 .story-block-light { background: #fff; }
-.story-block-warm { background: #faf7f2; }
+.story-block-warm { background: #f4f3f0; }
 .story-block-dark { background: #0a0a0a; color: #fff; }
-
-.story-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.32em;
-  color: #999;
-  margin: 0 0 28px;
-}
-.story-eyebrow-light { color: rgba(255, 255, 255, 0.45); }
 
 .story-copy {
   max-width: 560px;
@@ -274,25 +261,26 @@ onBeforeUnmount(() => observer?.disconnect());
   line-height: 1.9;
   color: #222;
 }
-.story-copy-muted { color: #888; font-size: 15px; }
+.story-copy-muted { color: #707070; font-size: 15px; }
 .story-copy-light { color: #fff; }
 .story-copy-muted-light { color: rgba(255, 255, 255, 0.55); font-size: 15px; }
-.story-emphasis {
-  font-weight: 800;
-  font-size: 18px;
-  color: #111;
-  margin: 22px auto 40px;
-}
-
 .story-headline-sm {
-  font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+  font-family: 'Archivo Black', 'Noto Sans KR', 'Helvetica Neue', sans-serif;
   font-weight: 900;
   font-size: clamp(28px, 5vw, 46px);
   line-height: 1.15;
   letter-spacing: -0.01em;
   margin: 0 0 56px;
 }
-.story-headline-tight { margin-bottom: 28px; }
+.story-headline-tight { margin-bottom: 16px; }
+.story-headline-lead {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: #666;
+  margin: 0 0 40px;
+}
 
 /* ===== 02. 이름의 탄생 ===== */
 .story-name-grid {
@@ -321,7 +309,7 @@ onBeforeUnmount(() => observer?.disconnect());
   margin: 0 0 18px;
 }
 .story-quote {
-  font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+  font-family: 'Archivo Black', 'Noto Sans KR', 'Helvetica Neue', sans-serif;
   font-weight: 900;
   font-size: 24px !important;
   color: #111 !important;
@@ -332,7 +320,7 @@ onBeforeUnmount(() => observer?.disconnect());
 .story-pullquote {
   max-width: 520px;
   margin: 48px auto 0;
-  font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+  font-family: 'Archivo Black', 'Noto Sans KR', 'Helvetica Neue', sans-serif;
   font-weight: 900;
   font-size: clamp(22px, 3.6vw, 32px);
   line-height: 1.4;
@@ -355,7 +343,6 @@ onBeforeUnmount(() => observer?.disconnect());
   background-position: center;
   background-color: #f5f5f5;
   border: 3px solid #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-left: -16px;
 }
 .story-teaser-thumb:first-child { margin-left: 0; }
