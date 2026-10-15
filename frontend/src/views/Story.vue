@@ -2,6 +2,8 @@
   <div class="story-page">
     <!-- 01. 정체성 -->
     <section class="story-hero">
+      <video src="../image/video3.mp4" class="story-hero-bg" autoplay muted loop playsinline></video>
+      <div class="story-hero-overlay"></div>
       <div class="story-hero-inner reveal-in" ref="heroEl">
         <img src="../image/osakamarketLOGO2.png" alt="Velcrocat" class="story-hero-cat" />
         <h1 class="story-headline">I belong to<br />no one.</h1>
@@ -180,8 +182,23 @@ onBeforeUnmount(() => observer?.disconnect());
   justify-content: center;
   text-align: center;
   padding: 80px 20px;
+  overflow: hidden;
 }
-.story-hero-inner { max-width: 560px; display: flex; flex-direction: column; align-items: center; }
+.story-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.story-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.55);
+  z-index: 1;
+}
+.story-hero-inner { position: relative; z-index: 2; max-width: 560px; display: flex; flex-direction: column; align-items: center; }
 .story-hero-cat {
   width: 116px;
   height: auto;
@@ -223,6 +240,7 @@ onBeforeUnmount(() => observer?.disconnect());
 
 .story-scroll-hint {
   position: absolute;
+  z-index: 2;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
