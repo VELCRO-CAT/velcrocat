@@ -169,7 +169,7 @@ onBeforeUnmount(() => observer?.disconnect());
 /* ===== 01. 정체성 ===== */
 .story-hero {
   position: relative;
-  min-height: 92vh;
+  min-height: 70vh;
   background: #0a0a0a;
   color: #fff;
   display: flex;
@@ -364,7 +364,7 @@ onBeforeUnmount(() => observer?.disconnect());
 
 /* ===== 반응형 ===== */
 @media (max-width: 640px) {
-  .story-hero { min-height: 100vh; padding: 60px 20px; }
+  .story-hero { min-height: 80vh; padding: 60px 20px; }
   .story-block { padding: 80px 20px; }
   .story-name-grid { grid-template-columns: 1fr; gap: 28px; text-align: center; }
   .story-name-copy { text-align: left; }
