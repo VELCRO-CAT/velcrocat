@@ -13,10 +13,6 @@
         </p>
         <button type="button" class="story-cta story-cta-light" @click="scrollTo('origin')">MEET VELCROCAT</button>
       </div>
-      <div class="story-scroll-hint">
-        <span>SCROLL</span>
-        <span class="story-scroll-line"></span>
-      </div>
     </section>
 
     <!-- 출생 -->
@@ -236,31 +232,6 @@ onBeforeUnmount(() => observer?.disconnect());
 .story-cta-light { background: #fff; color: #111; border-color: #fff; }
 .story-cta-light:hover { background: transparent; color: #fff; }
 .story-cta-dark { background: #fff; color: #111; border-color: #111; }
-
-.story-scroll-hint {
-  position: absolute;
-  z-index: 2;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 10px;
-  letter-spacing: 0.3em;
-}
-.story-scroll-line {
-  width: 1px;
-  height: 36px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), transparent);
-  animation: storyScrollPulse 1.8s ease-in-out infinite;
-}
-@keyframes storyScrollPulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
-}
 
 /* ===== 공통 섹션 ===== */
 .story-block {

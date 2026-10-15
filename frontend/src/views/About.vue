@@ -86,22 +86,6 @@
         </svg>
         <span class="hero-sound-label">{{ isMuted ? t('about.soundTurnOn') : t('about.soundTurnOff') }}</span>
       </button>
-
-      <!-- 스크롤 인디케이터 (우측 하단, 원형 회전 텍스트) -->
-      <div class="scroll-indicator">
-        <svg class="scroll-circle-svg" viewBox="0 0 200 200">
-          <defs>
-            <path id="circlePath" d="M 100,100 m -70,0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0"/>
-          </defs>
-          <text class="scroll-circle-text">
-            <textPath href="#circlePath">SCROLL DOWN · SCROLL DOWN · SCROLL DOWN ·</textPath>
-          </text>
-        </svg>
-        <svg class="scroll-arrow" viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <line x1="12" y1="0" x2="12" y2="40" stroke="#e53935" stroke-width="5" stroke-linecap="round"/>
-          <polyline points="4,32 12,43 20,32" stroke="#e53935" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
     </section>
 
     <!-- 마키 텍스트 -->
@@ -827,46 +811,6 @@ onUnmounted(() => {
 .hero-reveal-4 {
   transition-delay: 1.2s;
 }
-/* 스크롤 인디케이터 (우측 하단) */
-.scroll-indicator {
-  position: absolute;
-  bottom: 36px;
-  right: 60px;
-  width: 120px;
-  height: 120px;
-  z-index: 3;
-}
-.scroll-circle-svg {
-  width: 100%;
-  height: 100%;
-  animation: spinCircle 12s linear infinite;
-}
-.scroll-circle-text {
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  fill: rgba(255,255,255,0.85);
-  text-transform: uppercase;
-}
-.scroll-arrow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 44px;
-  opacity: 0.9;
-  animation: bounceArrow 1.6s ease-in-out infinite;
-}
-@keyframes spinCircle {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-@keyframes bounceArrow {
-  0%, 100% { transform: translate(-50%, -50%); }
-  50% { transform: translate(-50%, -40%); }
-}
-
 /* 마키 텍스트 */
 .marquee-section {
   background: #fff;
@@ -1366,11 +1310,6 @@ onUnmounted(() => {
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
-  .scroll-indicator {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
   .parallax-logo { height: 50vh; }
   .parallax-title { font-size: 28px; }
   .parallax-desc { font-size: 16px; }
