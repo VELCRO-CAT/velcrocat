@@ -1,10 +1,5 @@
 <template>
   <v-container class="py-16 mypage-wrap">
-    <div class="text-center mb-10 reveal">
-      <h1 class="text-h5 font-weight-bold" style="letter-spacing:2px">{{ t('mypage.title') }}</h1>
-      <p class="text-caption text-grey mt-1" style="letter-spacing:4px">MY PAGE</p>
-    </div>
-
     <div class="mypage-layout reveal">
       <!-- 사이드바 (데스크톱) -->
       <aside class="mypage-sidebar">
@@ -810,7 +805,7 @@ function itemsSubtotal(order) {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  margin-bottom: 8px;
+  margin-top: 36px;
 }
 .mypage-mobile-group {
   margin: 0;
@@ -1120,10 +1115,10 @@ function itemsSubtotal(order) {
 /* 모바일: 사이드바 대신 세로 리스트 메뉴, 여백 축소 */
 @media (max-width: 768px) {
   .mypage-wrap.py-16 { padding-top: 28px !important; padding-bottom: 32px !important; }
-  .mypage-wrap .mb-10 { margin-bottom: 20px !important; }
   .mypage-layout { flex-direction: column; gap: 0; }
   .mypage-sidebar { display: none; }
   .mypage-mobile-nav { display: block; }
+  .mypage-content { order: -1; }
   .mypage-stat .v-icon {
     width: 30px;
     height: 30px;
