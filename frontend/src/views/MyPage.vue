@@ -1115,7 +1115,7 @@ function itemsSubtotal(order) {
 /* 모바일: 사이드바 대신 세로 리스트 메뉴, 여백 축소 */
 @media (max-width: 768px) {
   .mypage-wrap.py-16 { padding-top: 28px !important; padding-bottom: 32px !important; }
-  .mypage-layout { flex-direction: column; gap: 0; }
+  .mypage-layout { flex-direction: column; align-items: stretch; gap: 0; }
   .mypage-sidebar { display: none; }
   .mypage-mobile-nav { display: block; }
   .mypage-content { order: -1; }
