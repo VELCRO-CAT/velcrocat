@@ -793,6 +793,9 @@ function itemsSubtotal(order) {
 /* 사이드바 (모바일: 가로 스크롤 링크) */
 .mypage-mobile-nav {
   display: none;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   gap: 18px;
   overflow-x: auto;
   padding-bottom: 12px;
@@ -807,6 +810,7 @@ function itemsSubtotal(order) {
   color: #999;
   white-space: nowrap;
   cursor: pointer;
+  flex-shrink: 0;
 }
 .mypage-mobile-link.active { color: #111; font-weight: 700; }
 .mypage-mobile-link.danger { color: #b0433a; }
