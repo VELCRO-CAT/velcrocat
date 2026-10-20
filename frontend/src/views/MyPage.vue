@@ -20,15 +20,21 @@
         </template>
       </aside>
 
-      <!-- 사이드바 (모바일: 가로 스크롤) -->
+      <!-- 사이드바 (모바일: 세로 리스트, u-ur 마이쇼핑 메뉴 참고) -->
       <div class="mypage-mobile-nav">
-        <button
-          v-for="item in flatSidebarItems"
-          :key="item.key"
-          class="mypage-mobile-link"
-          :class="{ active: activeSection === item.key, danger: item.danger }"
-          @click="item.action ? logout() : (activeSection = item.key)"
-        >{{ item.label }}</button>
+        <template v-for="group in sidebarGroups" :key="group.label">
+          <p class="mypage-mobile-group">{{ group.label }}</p>
+          <button
+            v-for="item in group.items"
+            :key="item.key"
+            class="mypage-mobile-link"
+            :class="{ active: activeSection === item.key, danger: item.danger }"
+            @click="selectMobileSection(item)"
+          >
+            <span>{{ item.label }}</span>
+            <v-icon size="18" color="#bbb">mdi-chevron-right</v-icon>
+          </button>
+        </template>
       </div>
 
       <!-- 콘텐츠 -->
@@ -400,7 +406,15 @@ const sidebarGroups = computed(() => [
     ]
   }
 ]);
-const flatSidebarItems = computed(() => sidebarGroups.value.flatMap(g => g.items));
+function selectMobileSection(item) {
+  if (item.action) { logout(); return; }
+  activeSection.value = item.key;
+  if (window.innerWidth <= 768) {
+    nextTick(() => {
+      document.querySelector('.mypage-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}
 
 function logout() {
   authStore.logout();
@@ -790,27 +804,37 @@ function itemsSubtotal(order) {
 .mypage-sidebar-link.danger:hover,
 .mypage-sidebar-link.danger.active { color: #d32f2f; }
 
-/* 사이드바 (모바일: 가로 스크롤 링크) */
+/* 사이드바 (모바일: 세로 리스트, u-ur 마이쇼핑 메뉴 참고) */
 .mypage-mobile-nav {
   display: none;
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  gap: 18px;
-  overflow-x: auto;
-  padding-bottom: 12px;
   margin-bottom: 8px;
-  border-bottom: 1px solid #111;
+}
+.mypage-mobile-group {
+  margin: 0;
+  padding: 10px 14px;
+  background: #f7f7f5;
+  font-size: 12px;
+  font-weight: 700;
+  color: #777;
+  letter-spacing: 0.3px;
 }
 .mypage-mobile-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   background: none;
   border: none;
-  padding: 6px 0;
-  font-size: 13px;
-  color: #999;
-  white-space: nowrap;
+  border-bottom: 1px solid #eee;
+  padding: 15px 14px;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
   cursor: pointer;
-  flex-shrink: 0;
 }
 .mypage-mobile-link.active { color: #111; font-weight: 700; }
 .mypage-mobile-link.danger { color: #b0433a; }
@@ -1093,12 +1117,21 @@ function itemsSubtotal(order) {
   cursor: pointer;
 }
 
-/* 모바일: 사이드바 대신 가로 스크롤 링크, 여백 축소 */
+/* 모바일: 사이드바 대신 세로 리스트 메뉴, 여백 축소 */
 @media (max-width: 768px) {
   .mypage-wrap.py-16 { padding-top: 28px !important; padding-bottom: 32px !important; }
   .mypage-wrap .mb-10 { margin-bottom: 20px !important; }
   .mypage-layout { flex-direction: column; gap: 0; }
   .mypage-sidebar { display: none; }
-  .mypage-mobile-nav { display: flex; }
+  .mypage-mobile-nav { display: block; }
+  .mypage-stat .v-icon {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    margin-bottom: 2px;
+  }
+  .mypage-stat .n { white-space: nowrap; }
+  .mypage-content { scroll-margin-top: 58px; }
 }
 </style>
