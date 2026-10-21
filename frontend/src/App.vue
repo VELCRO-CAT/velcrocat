@@ -929,6 +929,11 @@ function logout() {
   background: #111 !important;
 }
 /* Brand 페이지: 외부 스크롤 숨김 (이중 스크롤 방지) */
+/* Vuetify(ress.css)가 html에 overflow-y:scroll을 기본으로 깔아둬서
+   .about-page 자체 스크롤과 겹쳐 스크롤바가 2개로 보이던 문제 */
+html:has(.about-active) {
+  overflow-y: hidden;
+}
 .about-active .v-application__wrap {
   overflow: hidden;
   height: 100vh;
