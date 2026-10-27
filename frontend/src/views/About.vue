@@ -258,6 +258,8 @@
           <p>{{ t('about.bizLine2') }}</p>
           <p>{{ t('about.bizLine3') }}</p>
           <p>{{ t('footer.companyEmail') }}</p>
+          <p>{{ t('footer.companyJapanBranch') }}</p>
+          <p>{{ t('footer.companyJapanAddress') }}</p>
         </div>
         <p class="footer-copy">{{ t('footer.copyright') }}</p>
       </div>
