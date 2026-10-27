@@ -48,6 +48,8 @@ export default {
     companyBiz: '業態 : 卸小売 / 種目 : 電子商取引小売業',
     companyAddress: '住所 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)、韓国',
     companyEmail: "E-MAIL : velcrocat{'@'}velcrocat.com",
+    companyJapanBranch: '日本支店 : (주) A-ble',
+    companyJapanAddress: '住所 : 東京都渋谷区本町1-20-2-506 (〒151-0071)',
     returnTitle: '交換 / 返品',
     returnAddressLabel: '交換/返品先住所 :',
     returnAddress: '경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)、韓国',

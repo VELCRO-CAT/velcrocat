@@ -214,6 +214,8 @@
             <p class="footer-info">{{ t('footer.companyBiz') }}</p>
             <p class="footer-info">{{ t('footer.companyAddress') }}</p>
             <p class="footer-info">{{ t('footer.companyEmail') }}</p>
+            <p class="footer-info" style="margin-top:8px">{{ t('footer.companyJapanBranch') }}</p>
+            <p class="footer-info">{{ t('footer.companyJapanAddress') }}</p>
           </div>
           <!-- 교환/반품 -->
           <div class="footer-col">
