@@ -107,7 +107,7 @@ router.patch('/notifications/:id/read', adminMiddleware, async (req, res) => {
 });
 
 router.get('/users', adminMiddleware, async (req, res) => {
-  const users = await db('users').select('id', 'name', 'email', 'role', 'created_at');
+  const users = await db('users').select('id', 'name', 'email', 'role', 'created_at', 'kakao_id', 'naver_id');
   res.json(users);
 });
 

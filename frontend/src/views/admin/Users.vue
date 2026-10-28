@@ -21,7 +21,10 @@
             <v-icon size="20" color="#999">mdi-account</v-icon>
           </div>
           <div class="user-info">
-            <div class="user-name">{{ user.name }}</div>
+            <div class="user-name">
+              {{ user.name }}
+              <span class="signup-badge" :class="signupType(user).cls">{{ signupType(user).label }}</span>
+            </div>
             <div class="user-email">{{ user.email }}</div>
           </div>
           <div class="user-date">{{ formatDate(user.created_at) }}</div>
@@ -193,6 +196,12 @@ onMounted(async () => {
   loading.value = false;
 });
 
+function signupType(user) {
+  if (user.kakao_id) return { label: '카카오', cls: 'badge-kakao' };
+  if (user.naver_id) return { label: '네이버', cls: 'badge-naver' };
+  return { label: '일반', cls: 'badge-normal' };
+}
+
 function formatDate(str) {
   if (!str) return '-';
   return new Date(str).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -328,7 +337,19 @@ async function sendMail() {
   font-size: 13px;
   font-weight: 700;
   color: #111;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
+.signup-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.badge-kakao { background: #fee500; color: #3c1e1e; }
+.badge-naver { background: #03c75a; color: #fff; }
+.badge-normal { background: #f0f0f0; color: #888; }
 .user-email {
   font-size: 12px;
   color: #888;
