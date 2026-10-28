@@ -87,7 +87,7 @@ router.get('/kakao', (req, res) => {
     client_id: process.env.KAKAO_CLIENT_ID,
     redirect_uri: process.env.KAKAO_CALLBACK_URL,
     response_type: 'code',
-    scope: 'account_email'
+    scope: 'account_email profile_nickname profile_image'
   });
   res.json({ url: `https://kauth.kakao.com/oauth/authorize?${params.toString()}` });
 });
@@ -133,6 +133,7 @@ router.post('/kakao/callback', async (req, res) => {
     const kakaoId = String(profileData.id);
     const email = profileData.kakao_account?.email;
     const name = profileData.kakao_account?.profile?.nickname;
+    const avatarUrl = profileData.kakao_account?.profile?.profile_image_url;
 
     if (!email) {
       // 카카오 동의항목에서 "카카오계정(이메일)"이 필수 동의로 설정돼 있지 않거나
@@ -144,10 +145,11 @@ router.post('/kakao/callback', async (req, res) => {
     let user = await db('users').where('email', email).first();
 
     if (user) {
-      // 기존 유저 - 카카오 ID 연동 (아직 안 되어있으면)
-      if (!user.kakao_id) {
-        await db('users').where('id', user.id).update({ kakao_id: kakaoId });
-      }
+      // 기존 유저 - 카카오 ID 연동 (아직 안 되어있으면) + 프로필 사진 동기화
+      const updates = { avatar_url: avatarUrl };
+      if (!user.kakao_id) updates.kakao_id = kakaoId;
+      await db('users').where('id', user.id).update(updates);
+      user.avatar_url = avatarUrl;
     } else {
       // 신규 유저 - 자동 회원가입
       const [{ id }] = await db('users').insert({
@@ -155,9 +157,10 @@ router.post('/kakao/callback', async (req, res) => {
         email,
         password: '',
         role: 'user',
-        kakao_id: kakaoId
+        kakao_id: kakaoId,
+        avatar_url: avatarUrl
       }).returning('id');
-      user = { id, name: name || '카카오 사용자', email, role: 'user' };
+      user = { id, name: name || '카카오 사용자', email, role: 'user', avatar_url: avatarUrl };
 
       // 관리자 알림
       await db('notifications').insert({

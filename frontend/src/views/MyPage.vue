@@ -36,6 +36,10 @@
       <div class="mypage-content">
         <!-- 주문 내역 -->
         <section v-show="activeSection === 'orders'">
+          <div v-if="profile.avatar" class="mypage-profile-header">
+            <img :src="profile.avatar" alt="" class="mypage-avatar" />
+            <span>{{ profile.name }}</span>
+          </div>
           <div v-if="profile.name" class="mypage-stats">
             <div class="mypage-stat">
               <v-icon size="18" color="#999">mdi-receipt-text-outline</v-icon>
@@ -417,7 +421,7 @@ function logout() {
 }
 
 // 내 정보
-const profile = reactive({ name: '', email: '', createdAt: '' });
+const profile = reactive({ name: '', email: '', createdAt: '', avatar: '' });
 const profileMsg = ref('');
 const profileMsgType = ref('success');
 const profileLoading = ref(false);
@@ -543,6 +547,7 @@ onMounted(async () => {
     profile.name = res.data.name;
     profile.email = res.data.email;
     profile.createdAt = res.data.created_at || '';
+    profile.avatar = res.data.avatar_url || '';
   } catch {}
 
   // 배송지 목록
@@ -844,6 +849,22 @@ function itemsSubtotal(order) {
   border-bottom: 1px solid #111;
 }
 .mypage-section-title:first-child { margin-top: 0; }
+
+/* 카카오 프로필 사진 */
+.mypage-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.mypage-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
 /* 요약 통계 (u-ur 총적립금/쿠폰/총주문 행 참고) */
 .mypage-stats {
