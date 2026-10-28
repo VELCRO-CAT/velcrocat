@@ -86,7 +86,8 @@ router.get('/kakao', (req, res) => {
   const params = new URLSearchParams({
     client_id: process.env.KAKAO_CLIENT_ID,
     redirect_uri: process.env.KAKAO_CALLBACK_URL,
-    response_type: 'code'
+    response_type: 'code',
+    scope: 'account_email'
   });
   res.json({ url: `https://kauth.kakao.com/oauth/authorize?${params.toString()}` });
 });
