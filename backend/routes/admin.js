@@ -4,14 +4,18 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { adminMiddleware, superAdminMiddleware, SUPER_ADMIN_EMAIL } = require('../middleware/auth');
 
-// 최고 관리자 전용 로그인 (아이디/비밀번호 방식) — 이 계정(SUPER_ADMIN_EMAIL)만 다른 회원에게
-// 관리자 권한을 주고 뺏을 수 있음. 승격된 일반/카카오/네이버 회원은 각자 평소 로그인으로 /admin 접근.
-// 아이디/비밀번호는 .env에 설정 (SUPER_ADMIN_USERNAME / SUPER_ADMIN_PASSWORD)
+// 최고 관리자 전용 로그인 (아이디/비밀번호 방식) — 이 계정(SUPER_ADMIN_EMAIL) 하나에 로그인
+// 수단이 2개 있는 것. 이 계정만 다른 회원에게 관리자 권한을 주고 뺏을 수 있음
+// (승격된 회원은 role=admin이어도 superAdminMiddleware에서 이메일이 안 맞아 거부됨).
+// 승격된 일반/카카오/네이버 회원은 각자 평소 로그인으로 /admin 접근.
+// 아이디/비밀번호는 .env에 설정 (SUPER_ADMIN_USERNAME / SUPER_ADMIN_PASSWORD, _2)
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-  if (username !== process.env.SUPER_ADMIN_USERNAME || password !== process.env.SUPER_ADMIN_PASSWORD) {
+  const matchesAccount1 = username === process.env.SUPER_ADMIN_USERNAME && password === process.env.SUPER_ADMIN_PASSWORD;
+  const matchesAccount2 = username === process.env.SUPER_ADMIN_USERNAME2 && password === process.env.SUPER_ADMIN_PASSWORD2;
+  if (!matchesAccount1 && !matchesAccount2) {
     return res.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다' });
   }
 
@@ -23,7 +27,7 @@ router.post('/login', async (req, res) => {
     process.env.JWT_SECRET || 'osakamarket_secret',
     { expiresIn: '7d' }
   );
-  res.json({ token, user: { id: admin.id, name: admin.name, email: admin.email, role: admin.role, username: process.env.SUPER_ADMIN_USERNAME } });
+  res.json({ token, user: { id: admin.id, name: admin.name, email: admin.email, role: admin.role, username } });
 });
 
 // 회원 관리자 권한 부여/해제 — 최고 관리자만 가능
