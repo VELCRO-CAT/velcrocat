@@ -43,7 +43,6 @@ async function login() {
     });
     localStorage.setItem('token', res.data.token);
     localStorage.setItem('user', JSON.stringify(res.data.user));
-    sessionStorage.setItem('__osaka_admin', '1');
     window.location.href = '/admin';
   } catch (e) {
     error.value = e.response?.data?.error || '아이디 또는 비밀번호가 올바르지 않습니다';

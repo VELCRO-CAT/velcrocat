@@ -29,10 +29,20 @@
             <div class="user-name">
               {{ user.name }}
               <span class="signup-badge" :class="signupType(user).cls">{{ signupType(user).label }}</span>
+              <span v-if="user.role === 'admin'" class="signup-badge badge-admin">관리자</span>
             </div>
             <div class="user-email">{{ user.email }}</div>
           </div>
           <div class="user-date">{{ formatDate(user.created_at) }}</div>
+          <v-btn
+            v-if="isSuperAdmin"
+            size="small"
+            variant="outlined"
+            :color="user.role === 'admin' ? 'error' : 'grey-darken-3'"
+            class="ml-3"
+            :loading="roleUpdating === user.id"
+            @click="toggleAdminRole(user)"
+          >{{ user.role === 'admin' ? '관리자 해제' : '관리자 지정' }}</v-btn>
           <v-btn
             size="small"
             variant="outlined"
@@ -161,6 +171,26 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import axios from 'axios';
 import AdminSidebar from '../../components/AdminSidebar.vue';
+import { useAuthStore } from '../../stores/auth';
+
+const authStore = useAuthStore();
+const isSuperAdmin = computed(() => authStore.user?.email === 'osakamarket0316@osakamarket.kr');
+const roleUpdating = ref(null);
+
+async function toggleAdminRole(user) {
+  const nextRole = user.role === 'admin' ? 'user' : 'admin';
+  const label = nextRole === 'admin' ? '관리자로 지정' : '관리자 권한 해제';
+  if (!confirm(`${user.name}님을 ${label}하시겠습니까?`)) return;
+  roleUpdating.value = user.id;
+  try {
+    await axios.patch(`/api/admin/users/${user.id}/role`, { role: nextRole });
+    user.role = nextRole;
+  } catch (e) {
+    alert(e.response?.data?.error || '권한 변경에 실패했습니다');
+  } finally {
+    roleUpdating.value = null;
+  }
+}
 
 const users = ref([]);
 const loading = ref(true);
@@ -388,6 +418,7 @@ async function sendMail() {
 .signup-badge.badge-kakao { background: #fee500; color: #3c1e1e; }
 .signup-badge.badge-naver { background: #03c75a; color: #fff; }
 .signup-badge.badge-normal { background: #f0f0f0; color: #888; }
+.signup-badge.badge-admin { background: #111; color: #fff; }
 .user-email {
   font-size: 12px;
   color: #888;

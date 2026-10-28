@@ -27,6 +27,18 @@ async function adminMiddleware(req, res, next) {
   });
 }
 
+// 다른 회원에게 관리자 권한을 주고 뺏을 수 있는 건 이 계정 하나뿐
+const SUPER_ADMIN_EMAIL = 'osakamarket0316@osakamarket.kr';
+
+async function superAdminMiddleware(req, res, next) {
+  await adminMiddleware(req, res, () => {
+    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+      return res.status(403).json({ error: '최고 관리자만 할 수 있습니다' });
+    }
+    next();
+  });
+}
+
 // 로그인 여부와 무관하게 통과시키되, 유효한 토큰이 있으면 req.user를 채워준다 (비회원 주문용)
 async function optionalAuthMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -40,4 +52,4 @@ async function optionalAuthMiddleware(req, res, next) {
   next();
 }
 
-module.exports = { authMiddleware, adminMiddleware, optionalAuthMiddleware };
+module.exports = { authMiddleware, adminMiddleware, superAdminMiddleware, optionalAuthMiddleware, SUPER_ADMIN_EMAIL };

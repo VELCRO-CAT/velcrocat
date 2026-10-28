@@ -2,23 +2,20 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const db = require('../db');
-const { adminMiddleware } = require('../middleware/auth');
+const { adminMiddleware, superAdminMiddleware, SUPER_ADMIN_EMAIL } = require('../middleware/auth');
 
-// 관리자 전용 로그인 (아이디/비밀번호 방식)
-const ADMIN_ACCOUNTS = [
-  { username: 'velcrocat7', password: 'kim@6521' },
-  { username: 'wnwlgh0719', password: 'wnwlgh0719' }
-];
+// 최고 관리자 전용 로그인 (아이디/비밀번호 방식) — 이 계정(SUPER_ADMIN_EMAIL)만 다른 회원에게
+// 관리자 권한을 주고 뺏을 수 있음. 승격된 일반/카카오/네이버 회원은 각자 평소 로그인으로 /admin 접근.
+// 아이디/비밀번호는 .env에 설정 (SUPER_ADMIN_USERNAME / SUPER_ADMIN_PASSWORD)
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-  const account = ADMIN_ACCOUNTS.find(a => a.username === username && a.password === password);
-  if (!account) {
+  if (username !== process.env.SUPER_ADMIN_USERNAME || password !== process.env.SUPER_ADMIN_PASSWORD) {
     return res.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다' });
   }
 
-  const admin = await db('users').where('role', 'admin').first();
+  const admin = await db('users').where('email', SUPER_ADMIN_EMAIL).first();
   if (!admin) return res.status(404).json({ error: '관리자 계정이 없습니다' });
 
   const token = jwt.sign(
@@ -26,7 +23,19 @@ router.post('/login', async (req, res) => {
     process.env.JWT_SECRET || 'osakamarket_secret',
     { expiresIn: '7d' }
   );
-  res.json({ token, user: { id: admin.id, name: admin.name, role: admin.role, username: account.username } });
+  res.json({ token, user: { id: admin.id, name: admin.name, email: admin.email, role: admin.role, username: process.env.SUPER_ADMIN_USERNAME } });
+});
+
+// 회원 관리자 권한 부여/해제 — 최고 관리자만 가능
+router.patch('/users/:id/role', superAdminMiddleware, async (req, res) => {
+  const { role } = req.body;
+  if (!['admin', 'user'].includes(role)) {
+    return res.status(400).json({ error: '잘못된 권한 값입니다' });
+  }
+  const target = await db('users').where('id', req.params.id).first();
+  if (!target) return res.status(404).json({ error: '회원을 찾을 수 없습니다' });
+  await db('users').where('id', req.params.id).update({ role });
+  res.json({ success: true });
 });
 
 router.get('/stats', adminMiddleware, async (req, res) => {

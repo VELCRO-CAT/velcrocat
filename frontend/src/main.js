@@ -41,12 +41,6 @@ document.documentElement.setAttribute('lang', i18n.global.locale.value);
 import { useAuthStore } from './stores/auth';
 useAuthStore(pinia).initAuth();
 
-// 관리자 페이지 접근: 브라우저 콘솔에서 velcrocat() 입력
-window.velcrocat = function () {
-  sessionStorage.setItem('__osaka_admin_access', '1');
-  router.push('/admin-login');
-};
-
 app.mount('#app');
 
 // build trigger: 애드센스 index.html 배포 반영용 (무해)

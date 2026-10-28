@@ -41,7 +41,7 @@ const routes = [
   { path: '/contact', component: Contact },
   { path: '/about', redirect: '/brand' },
   { path: '/privacy', component: Privacy },
-  { path: '/admin-login', component: AdminLogin, meta: { requiresConsole: true } },
+  { path: '/admin-login', component: AdminLogin },
   { path: '/admin', component: AdminDashboard, meta: { requiresAdmin: true } },
   { path: '/admin/products', component: AdminProducts, meta: { requiresAdmin: true } },
   { path: '/admin/orders', component: AdminOrders, meta: { requiresAdmin: true } },
@@ -68,23 +68,13 @@ function getTokenPayload(token) {
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
 
-  if (to.meta.requiresConsole) {
-    // /admin-login 도 콘솔 실행 없이는 접근 불가
-    if (sessionStorage.getItem('__osaka_admin_access') !== '1') {
-      return next('/');
-    }
-  } else if (to.meta.requiresAdmin) {
-    // 조건 1: 콘솔에서 osakamarket() 실행 후 로그인한 세션이어야 함
-    const hasSessionFlag = sessionStorage.getItem('__osaka_admin') === '1';
-    // 조건 2: 토큰이 존재하고 role이 admin이어야 함
+  if (to.meta.requiresAdmin) {
+    // 토큰이 유효하고 role이 admin이면 접근 허용 (일반/카카오/네이버 로그인 모두 동일하게 적용)
     const payload = token ? getTokenPayload(token) : null;
     const isAdminToken = payload?.role === 'admin';
-    // 조건 3: 토큰 만료 확인
     const notExpired = payload?.exp ? payload.exp * 1000 > Date.now() : false;
 
-    if (!hasSessionFlag || !isAdminToken || !notExpired) {
-      // 세션 플래그와 토큰 모두 제거 후 홈으로
-      sessionStorage.removeItem('__osaka_admin');
+    if (!isAdminToken || !notExpired) {
       return next('/');
     }
   } else if (to.meta.requiresAuth) {
