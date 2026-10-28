@@ -4,9 +4,14 @@
   <v-main class="bg-grey-lighten-4 admin-page">
     <v-container class="admin-container" style="max-width:900px">
       <h1 class="page-title">회원 관리</h1>
-      <p class="page-sub mb-5">
+      <p class="page-sub mb-2">
         가입된 회원 목록 ({{ users.length }}명)<span v-if="totalPages > 1"> · {{ currentPage }}/{{ totalPages }}페이지</span>
       </p>
+      <div v-if="users.length" class="signup-summary mb-5">
+        <span class="signup-count"><i class="dot badge-kakao" />카카오 {{ typeCounts.kakao }}명</span>
+        <span class="signup-count"><i class="dot badge-naver" />네이버 {{ typeCounts.naver }}명</span>
+        <span class="signup-count"><i class="dot badge-normal" />일반 {{ typeCounts.normal }}명</span>
+      </div>
 
       <v-progress-circular v-if="loading" indeterminate color="grey-darken-3" class="d-block mx-auto my-12" />
 
@@ -16,7 +21,7 @@
       </div>
 
       <div v-else class="user-list">
-        <div v-for="user in pagedUsers" :key="user.id" class="user-card">
+        <div v-for="user in pagedUsers" :key="user.id" class="user-card" :class="signupType(user).cls">
           <div class="user-avatar">
             <v-icon size="20" color="#999">mdi-account</v-icon>
           </div>
@@ -160,12 +165,28 @@ import AdminSidebar from '../../components/AdminSidebar.vue';
 const users = ref([]);
 const loading = ref(true);
 
+function typeKey(user) {
+  if (user.kakao_id) return 'kakao';
+  if (user.naver_id) return 'naver';
+  return 'normal';
+}
+const TYPE_ORDER = { kakao: 0, naver: 1, normal: 2 };
+
 const PAGE_SIZE = 10;
 const currentPage = ref(1);
+// 가입 방식별로 묶어서 보여줌 (카카오 → 네이버 → 일반), 묶음 내 순서는 유지
+const sortedUsers = computed(() =>
+  [...users.value].sort((a, b) => TYPE_ORDER[typeKey(a)] - TYPE_ORDER[typeKey(b)])
+);
+const typeCounts = computed(() => {
+  const c = { kakao: 0, naver: 0, normal: 0 };
+  users.value.forEach(u => { c[typeKey(u)]++; });
+  return c;
+});
 const totalPages = computed(() => Math.max(1, Math.ceil(users.value.length / PAGE_SIZE)));
 const pagedUsers = computed(() => {
   const start = (currentPage.value - 1) * PAGE_SIZE;
-  return users.value.slice(start, start + PAGE_SIZE);
+  return sortedUsers.value.slice(start, start + PAGE_SIZE);
 });
 const pageNumbers = computed(() => {
   const total = totalPages.value;
@@ -196,10 +217,13 @@ onMounted(async () => {
   loading.value = false;
 });
 
+const TYPE_LABELS = {
+  kakao: { label: '카카오', cls: 'badge-kakao' },
+  naver: { label: '네이버', cls: 'badge-naver' },
+  normal: { label: '일반', cls: 'badge-normal' }
+};
 function signupType(user) {
-  if (user.kakao_id) return { label: '카카오', cls: 'badge-kakao' };
-  if (user.naver_id) return { label: '네이버', cls: 'badge-naver' };
-  return { label: '일반', cls: 'badge-normal' };
+  return TYPE_LABELS[typeKey(user)];
 }
 
 function formatDate(str) {
@@ -313,15 +337,33 @@ async function sendMail() {
 
 .user-list { display: flex; flex-direction: column; gap: 8px; }
 
+.signup-summary { display: flex; gap: 16px; }
+.signup-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.dot.badge-kakao { background: #fee500; }
+.dot.badge-naver { background: #03c75a; }
+.dot.badge-normal { background: #ccc; }
+
 .user-card {
   display: flex;
   align-items: center;
   gap: 14px;
   background: #fff;
   border: 1px solid #e8e8e8;
+  border-left: 4px solid #ccc;
   border-radius: 8px;
   padding: 14px 16px;
 }
+.user-card.badge-kakao { border-left-color: #fee500; }
+.user-card.badge-naver { border-left-color: #03c75a; }
+.user-card.badge-normal { border-left-color: #ccc; }
 .user-avatar {
   width: 40px;
   height: 40px;
