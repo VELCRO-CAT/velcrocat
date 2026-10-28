@@ -21,7 +21,7 @@
       </div>
 
       <div v-else class="user-list">
-        <div v-for="user in pagedUsers" :key="user.id" class="user-card" :class="signupType(user).cls">
+        <div v-for="user in pagedUsers" :key="user.id" class="user-card">
           <div class="user-avatar">
             <v-icon size="20" color="#999">mdi-account</v-icon>
           </div>
@@ -357,13 +357,9 @@ async function sendMail() {
   gap: 14px;
   background: #fff;
   border: 1px solid #e8e8e8;
-  border-left: 4px solid #ccc;
   border-radius: 8px;
   padding: 14px 16px;
 }
-.user-card.badge-kakao { border-left-color: #fee500; }
-.user-card.badge-naver { border-left-color: #03c75a; }
-.user-card.badge-normal { border-left-color: #ccc; }
 .user-avatar {
   width: 40px;
   height: 40px;
@@ -389,9 +385,9 @@ async function sendMail() {
   padding: 2px 6px;
   border-radius: 4px;
 }
-.badge-kakao { background: #fee500; color: #3c1e1e; }
-.badge-naver { background: #03c75a; color: #fff; }
-.badge-normal { background: #f0f0f0; color: #888; }
+.signup-badge.badge-kakao { background: #fee500; color: #3c1e1e; }
+.signup-badge.badge-naver { background: #03c75a; color: #fff; }
+.signup-badge.badge-normal { background: #f0f0f0; color: #888; }
 .user-email {
   font-size: 12px;
   color: #888;
