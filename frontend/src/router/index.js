@@ -53,7 +53,9 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior() { return { top: 0 }; }
+  scrollBehavior(to, from, savedPosition) {
+    return savedPosition || { top: 0 };
+  }
 });
 
 // JWT payload 디코딩 (검증 없이 내용만 읽기)
