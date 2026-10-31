@@ -189,7 +189,12 @@
 
     <!-- 메인 콘텐츠 -->
     <v-main class="mobile-body-offset" style="background:#fff; padding-top:0 !important">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <!-- 상품 목록은 유지(keep-alive)해서 상세보기 갔다가 뒤로가도 다시 안 불러오고 스크롤 위치도 그대로 -->
+        <keep-alive include="Products">
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
     </v-main>
 
     <!-- 푸터 -->

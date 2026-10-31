@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, onActivated, onDeactivated, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import axios from 'axios';
@@ -188,6 +188,14 @@ function startAllSlides() {
 
 onUnmounted(() => {
   stopAllSlides();
+});
+
+// keep-alive로 유지되는 동안(상세보기 등 다른 페이지 보는 중)엔 슬라이드 타이머 꺼둠
+onDeactivated(() => {
+  stopAllSlides();
+});
+onActivated(() => {
+  startAllSlides();
 });
 const selectedCategory = ref(route.query.category || null);
 const selectedGender = ref(route.query.gender || null);

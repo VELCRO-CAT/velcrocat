@@ -54,14 +54,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      // shortcut: 목록이 API로 상품을 새로 불러오는 동안 페이지가 짧아 스크롤이 안 먹음.
-      // 데이터 로딩 끝날 시간을 벌어주는 용도 (500ms 넘게 걸리는 요청이면 다시 깨질 수 있음)
-      return new Promise((resolve) => {
-        setTimeout(() => resolve(savedPosition), 500);
-      });
-    }
-    return { top: 0 };
+    return savedPosition || { top: 0 };
   }
 });
 
