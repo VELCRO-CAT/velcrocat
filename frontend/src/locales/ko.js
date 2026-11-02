@@ -471,6 +471,12 @@ export default {
     footerLine2: '사업자등록번호 : 180-02-03888',
     footerLine3: '주소 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)'
   },
+  cookieBanner: {
+    text: '본 사이트는 서비스 제공 및 광고 게재를 위해 쿠키를 사용합니다.',
+    learnMore: '자세히 보기',
+    reject: '거부',
+    accept: '동의'
+  },
   terms: {
     pageTitle: '이용약관',
     effectiveDate: '시행일 : 2026년 11월 02일',

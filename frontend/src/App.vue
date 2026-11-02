@@ -265,6 +265,9 @@
 
     <!-- 관리자 알림 (관리자 로그인 시에만) -->
     <AdminNotification v-if="authStore.isAdmin && isAdminPage" />
+
+    <!-- 쿠키 동의 배너 -->
+    <CookieConsent />
   </v-app>
 </template>
 
@@ -276,6 +279,7 @@ import { useAuthStore } from './stores/auth';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import AdminNotification from './components/AdminNotification.vue';
+import CookieConsent from './components/CookieConsent.vue';
 import LanguageSwitcher from './components/LanguageSwitcher.vue';
 import CanonicalLink from './components/CanonicalLink.vue';
 import { useWishlistStore } from './stores/wishlist';
