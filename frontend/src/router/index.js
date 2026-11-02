@@ -14,6 +14,8 @@ import Contact from '../views/Contact.vue';
 import About from '../views/About.vue';
 import Story from '../views/Story.vue';
 import Privacy from '../views/Privacy.vue';
+import Terms from '../views/Terms.vue';
+import NotFound from '../views/NotFound.vue';
 import AdminLogin from '../views/admin/Login.vue';
 import AdminDashboard from '../views/admin/Dashboard.vue';
 import AdminProducts from '../views/admin/Products.vue';
@@ -22,32 +24,36 @@ import AdminInquiries from '../views/admin/Inquiries.vue';
 import AdminNaver from '../views/admin/Naver.vue';
 import AdminUsers from '../views/admin/Users.vue';
 
+const DEFAULT_DESC = '벨크로캣(VELCROCAT, VCAT) - 일본식 의류의 트렌드와 스타일링. 가디건, 니트, 풀오버 등 프리미엄 울 100% 의류';
+
 const routes = [
   { path: '/', redirect: '/brand' },
   { path: '/home', redirect: '/products' },
-  { path: '/brand', component: About },
-  { path: '/story', component: Story },
-  { path: '/products', component: Products },
+  { path: '/brand', component: About, meta: { title: '벨크로캣(VELCROCAT) | 브랜드 소개', description: DEFAULT_DESC } },
+  { path: '/story', component: Story, meta: { title: '브랜드 스토리 | 벨크로캣(VELCROCAT)', description: DEFAULT_DESC } },
+  { path: '/products', component: Products, meta: { title: '전체 상품 | 벨크로캣(VELCROCAT)', description: '벨크로캣(VELCROCAT) 전체 상품 - 가디건, 니트, 풀오버 등 프리미엄 울 100% 의류를 만나보세요.' } },
   { path: '/products/:id', component: ProductDetail },
-  { path: '/cart', component: Cart },
-  { path: '/login', component: Login, meta: { guestOnly: true } },
-  { path: '/register', component: Register, meta: { guestOnly: true } },
-  { path: '/forgot-password', component: ForgotPassword, meta: { guestOnly: true } },
-  { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },
+  { path: '/cart', component: Cart, meta: { title: '장바구니 | 벨크로캣(VELCROCAT)' } },
+  { path: '/login', component: Login, meta: { guestOnly: true, title: '로그인 | 벨크로캣(VELCROCAT)' } },
+  { path: '/register', component: Register, meta: { guestOnly: true, title: '회원가입 | 벨크로캣(VELCROCAT)' } },
+  { path: '/forgot-password', component: ForgotPassword, meta: { guestOnly: true, title: '비밀번호 찾기 | 벨크로캣(VELCROCAT)' } },
+  { path: '/mypage', component: MyPage, meta: { requiresAuth: true, title: '마이페이지 | 벨크로캣(VELCROCAT)' } },
   { path: '/auth/:provider/callback', component: AuthCallback },
-  { path: '/checkout', component: Checkout },
-  { path: '/order-complete', component: OrderComplete },
-  { path: '/order-lookup', component: GuestOrderLookup },
-  { path: '/contact', component: Contact },
+  { path: '/checkout', component: Checkout, meta: { title: '주문/결제 | 벨크로캣(VELCROCAT)' } },
+  { path: '/order-complete', component: OrderComplete, meta: { title: '주문완료 | 벨크로캣(VELCROCAT)' } },
+  { path: '/order-lookup', component: GuestOrderLookup, meta: { title: '비회원 주문조회 | 벨크로캣(VELCROCAT)' } },
+  { path: '/contact', component: Contact, meta: { title: '문의하기 | 벨크로캣(VELCROCAT)', description: '벨크로캣(VELCROCAT)에 궁금한 점을 문의해보세요.' } },
   { path: '/about', redirect: '/brand' },
-  { path: '/privacy', component: Privacy },
+  { path: '/privacy', component: Privacy, meta: { title: '개인정보처리방침 | 벨크로캣(VELCROCAT)' } },
+  { path: '/terms', component: Terms, meta: { title: '이용약관 | 벨크로캣(VELCROCAT)' } },
   { path: '/admin-login', component: AdminLogin, meta: { requiresConsole: true } },
   { path: '/admin', component: AdminDashboard, meta: { requiresAdmin: true } },
   { path: '/admin/products', component: AdminProducts, meta: { requiresAdmin: true } },
   { path: '/admin/orders', component: AdminOrders, meta: { requiresAdmin: true } },
   { path: '/admin/inquiries', component: AdminInquiries, meta: { requiresAdmin: true } },
   { path: '/admin/users', component: AdminUsers, meta: { requiresAdmin: true } },
-  { path: '/admin/naver', component: AdminNaver, meta: { requiresAdmin: true } }
+  { path: '/admin/naver', component: AdminNaver, meta: { requiresAdmin: true } },
+  { path: '/:pathMatch(.*)*', component: NotFound, meta: { title: '페이지를 찾을 수 없습니다 | 벨크로캣(VELCROCAT)' } }
 ];
 
 const router = createRouter({

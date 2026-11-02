@@ -450,6 +450,12 @@ async function loadProduct(id) {
     const res = await axios.get(`/api/products/${id}`);
     product.value = res.data;
     activeTab.value = 'info';
+
+    // 상품별 타이틀/설명 (검색엔진 노출용)
+    const name = lf(res.data, 'name');
+    document.title = `${name} | 벨크로캣(VELCROCAT)`;
+    const descTag = document.querySelector('meta[name="description"]');
+    if (descTag) descTag.setAttribute('content', lf(res.data, 'description') || name);
     // 블로그 블록 파싱
     try {
       detailBlocks.value = JSON.parse(res.data.detail_blocks || '[]');

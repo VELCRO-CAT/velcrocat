@@ -129,7 +129,7 @@ const { t } = useI18n();
 }
 .privacy-date {
   font-size: 12px;
-  color: #999;
+  color: #767676;
   margin-bottom: 40px;
   padding-bottom: 20px;
   border-bottom: 1.5px solid #111;
@@ -174,7 +174,7 @@ const { t } = useI18n();
   content: '·';
   position: absolute;
   left: 0;
-  color: #999;
+  color: #767676;
   font-weight: 700;
 }
 
@@ -201,7 +201,7 @@ const { t } = useI18n();
 }
 .privacy-footer-info p {
   font-size: 11px;
-  color: #999;
+  color: #767676;
   line-height: 1.8;
   margin: 0;
 }
