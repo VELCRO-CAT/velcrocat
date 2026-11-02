@@ -47,22 +47,10 @@
       <LanguageSwitcher class="mobile-menu-lang" />
     </nav>
 
-    <!-- 히어로 (배경 영상 슬라이드쇼) -->
+    <!-- 히어로 (배경 이미지 — 울 소재/니트) -->
     <section class="about-hero">
       <div class="hero-video-wrap">
-        <video
-          v-for="(vid, i) in heroVideos"
-          :key="i"
-          :ref="el => { if (el) videoRefs[i] = el }"
-          class="hero-video"
-          :class="{ active: currentVideo === i }"
-          muted
-          playsinline
-          :preload="i === 0 ? 'auto' : 'none'"
-          :poster="i === 0 ? 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=1080&fit=crop' : ''"
-          :src="vid.src"
-          @ended="nextVideo"
-        />
+        <img src="/hero-wool.jpg" alt="Wool knitwear" class="hero-video active" />
         <div class="hero-video-overlay"></div>
       </div>
       <div class="hero-content">
@@ -315,45 +303,6 @@ function scrollTo(id) {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// 히어로 영상 (사람 없이 옷/수트만 나오는 테일러 아틀리에 영상)
-const heroVideos = [
-  { src: '/hero-atelier.mp4' },
-];
-const currentVideo = ref(0);
-const videoRefs = ref([]);
-
-function nextVideo() {
-  const prev = currentVideo.value;
-  currentVideo.value = (prev + 1) % heroVideos.length;
-  const nextEl = videoRefs.value[currentVideo.value];
-  if (nextEl) {
-    nextEl.currentTime = 0;
-    nextEl.play().catch(() => {});
-  }
-  // 그 다음 영상도 미리 로드
-  const upcoming = (currentVideo.value + 1) % heroVideos.length;
-  const upcomingEl = videoRefs.value[upcoming];
-  if (upcomingEl && upcomingEl.preload === 'none') {
-    upcomingEl.preload = 'auto';
-    upcomingEl.load();
-  }
-}
-
-function startFirstVideo() {
-  const first = videoRefs.value[0];
-  if (first) {
-    first.play().catch(() => {});
-  }
-  // 두 번째 영상만 미리 로드
-  setTimeout(() => {
-    const second = videoRefs.value[1];
-    if (second) {
-      second.preload = 'auto';
-      second.load();
-    }
-  }, 2000);
-}
-
 // 음악 시작 (사용자 인터랙션 후)
 function startMusic() {
   if (musicStarted.value || !bgAudio.value) return;
@@ -457,9 +406,6 @@ onMounted(() => {
     document.addEventListener('click', tryStartMusicHandler);
     document.addEventListener('touchstart', tryStartMusicHandler);
   });
-
-  // 첫 영상 자동재생
-  setTimeout(startFirstVideo, 300);
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
