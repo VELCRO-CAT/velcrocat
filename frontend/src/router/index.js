@@ -15,6 +15,8 @@ import About from '../views/About.vue';
 import Story from '../views/Story.vue';
 import Privacy from '../views/Privacy.vue';
 import Terms from '../views/Terms.vue';
+import Refund from '../views/Refund.vue';
+import Cookies from '../views/Cookies.vue';
 import NotFound from '../views/NotFound.vue';
 import AdminLogin from '../views/admin/Login.vue';
 import AdminDashboard from '../views/admin/Dashboard.vue';
@@ -46,6 +48,8 @@ const routes = [
   { path: '/about', redirect: '/brand' },
   { path: '/privacy', component: Privacy, meta: { title: '개인정보처리방침 | 벨크로캣(VELCROCAT)' } },
   { path: '/terms', component: Terms, meta: { title: '이용약관 | 벨크로캣(VELCROCAT)' } },
+  { path: '/refund', component: Refund, meta: { title: '환불정책 | 벨크로캣(VELCROCAT)' } },
+  { path: '/cookies', component: Cookies, meta: { title: '쿠키 정책 | 벨크로캣(VELCROCAT)' } },
   { path: '/admin-login', component: AdminLogin, meta: { requiresConsole: true } },
   { path: '/admin', component: AdminDashboard, meta: { requiresAdmin: true } },
   { path: '/admin/products', component: AdminProducts, meta: { requiresAdmin: true } },

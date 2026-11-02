@@ -191,7 +191,7 @@ function statusLabel(s) {
 .order-section-label {
   font-size: 11px;
   font-weight: 700;
-  color: #999;
+  color: #767676;
   letter-spacing: 0.04em;
   margin: 20px 0 10px;
   padding-top: 16px;

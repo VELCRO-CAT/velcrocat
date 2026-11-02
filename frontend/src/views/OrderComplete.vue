@@ -151,7 +151,7 @@ onBeforeUnmount(() => { if (pollTimer) clearTimeout(pollTimer); });
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #bbb;
+  color: #767676;
   font-weight: 600;
 }
 .oc-step-num {
@@ -159,7 +159,7 @@ onBeforeUnmount(() => { if (pollTimer) clearTimeout(pollTimer); });
   height: 24px;
   border-radius: 50%;
   background: #eee;
-  color: #999;
+  color: #767676;
   display: flex;
   align-items: center;
   justify-content: center;

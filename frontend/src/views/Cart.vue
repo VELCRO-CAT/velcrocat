@@ -212,7 +212,7 @@ function checkout() {
 .cart-item-remove {
   background: none;
   border: none;
-  color: #999;
+  color: #767676;
   cursor: pointer;
   padding: 2px;
   margin-top: 4px;
@@ -223,7 +223,7 @@ function checkout() {
   background: none;
   border: none;
   font-size: 12.5px;
-  color: #999;
+  color: #767676;
   cursor: pointer;
   padding: 16px 0 0;
 }

@@ -614,7 +614,7 @@ function buyNow() {
 
 .product-seller {
   font-size: 11px;
-  color: #999;
+  color: #767676;
   letter-spacing: 1px;
   margin-bottom: 8px;
 }
@@ -644,7 +644,7 @@ function buyNow() {
 }
 .product-stock {
   font-size: 12px;
-  color: #2a9d5c;
+  color: #1a7a42;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -773,7 +773,7 @@ function buyNow() {
 .total-qty {
   font-size: 12px;
   font-weight: 500;
-  color: #999;
+  color: #767676;
   margin-left: 4px;
 }
 
@@ -792,7 +792,7 @@ function buyNow() {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #999;
+  color: #767676;
   transition: all 0.2s;
 }
 .wish-btn:hover {
@@ -982,7 +982,7 @@ function buyNow() {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 1px;
-  color: #999;
+  color: #767676;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -1028,7 +1028,7 @@ function buyNow() {
 }
 .brand-header-sub {
   font-size: 11px;
-  color: #999;
+  color: #767676;
   letter-spacing: 2px;
   margin-top: 0;
 }
@@ -1187,7 +1187,7 @@ function buyNow() {
   content: '·';
   position: absolute;
   left: 0;
-  color: #999;
+  color: #767676;
   font-weight: 700;
 }
 
@@ -1248,7 +1248,7 @@ function buyNow() {
 }
 .notice-list li {
   font-size: 12px;
-  color: #777;
+  color: #707070;
   line-height: 2;
 }
 
@@ -1313,12 +1313,12 @@ function buyNow() {
 }
 .added-item-opt {
   font-size: 12px;
-  color: #999;
+  color: #767676;
   margin: 0 0 4px;
 }
 .added-item-qty {
   font-size: 12px;
-  color: #999;
+  color: #767676;
   margin: 0 0 4px;
 }
 .added-item-price {

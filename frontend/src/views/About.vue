@@ -697,7 +697,7 @@ onUnmounted(() => {
   font-weight: 700;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #999;
+  color: #767676;
   margin-bottom: 14px;
 }
 .section-title {
@@ -799,7 +799,7 @@ onUnmounted(() => {
 }
 .hero-desc {
   font-size: 17px;
-  color: #999;
+  color: #767676;
   line-height: 1.8;
   letter-spacing: 0.5px;
   max-width: 480px;
@@ -949,7 +949,7 @@ onUnmounted(() => {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 5px;
-  color: #999;
+  color: #767676;
   text-transform: uppercase;
   margin-bottom: 20px;
 }
@@ -1041,7 +1041,7 @@ onUnmounted(() => {
 .value-card p {
   font-size: 15px;
   line-height: 1.8;
-  color: #777;
+  color: #707070;
 }
 
 /* 특징 */
@@ -1092,7 +1092,7 @@ onUnmounted(() => {
 .feature-item p {
   font-size: 15px;
   line-height: 1.9;
-  color: #777;
+  color: #707070;
 }
 
 /* CTA */
@@ -1191,7 +1191,7 @@ onUnmounted(() => {
 }
 .pickup-sub {
   font-size: 13px;
-  color: #999;
+  color: #767676;
   margin-top: 8px;
 }
 .pickup-grid {

@@ -783,7 +783,7 @@ function itemsSubtotal(order) {
 .mypage-sidebar-group {
   font-size: 11px;
   font-weight: 700;
-  color: #aaa;
+  color: #767676;
   letter-spacing: 0.06em;
   margin: 28px 0 10px;
 }
@@ -818,7 +818,7 @@ function itemsSubtotal(order) {
   background: #f7f7f5;
   font-size: 12px;
   font-weight: 700;
-  color: #777;
+  color: #707070;
   letter-spacing: 0.3px;
 }
 .mypage-mobile-link {
@@ -903,7 +903,7 @@ function itemsSubtotal(order) {
 .order-month-head {
   font-size: 12px;
   font-weight: 700;
-  color: #999;
+  color: #767676;
   letter-spacing: 0.04em;
   margin: 24px 0 12px;
 }
@@ -932,7 +932,7 @@ function itemsSubtotal(order) {
 .order-section-label {
   font-size: 11px;
   font-weight: 700;
-  color: #999;
+  color: #767676;
   letter-spacing: 0.04em;
   margin: 16px 0 10px;
   padding-top: 14px;

@@ -1,8 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { adminMiddleware } = require('../middleware/auth');
+
+const SITE_URL = process.env.SITE_URL || 'https://vcat.kr';
+
+function unsubscribeToken(email) {
+  return jwt.sign({ email, purpose: 'newsletter_unsubscribe' }, process.env.JWT_SECRET, { expiresIn: '5y' });
+}
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -19,7 +26,8 @@ const transporter = nodemailer.createTransport({
 });
 
 // 명품 미니멀 HTML 래퍼 — 본문(plain text 또는 HTML)을 감쌈
-function wrapEmail(subject, body) {
+function wrapEmail(subject, body, to) {
+  const unsubUrl = `${SITE_URL}/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubscribeToken(to))}`;
   return `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>${subject}</title></head>
@@ -37,7 +45,7 @@ function wrapEmail(subject, body) {
         </td></tr>
         <tr><td style="padding:24px 40px;border-top:1px solid #E8E0CF;text-align:center;font-size:10.5px;letter-spacing:0.04em;color:#4A433C">
           본 메일은 VELCROCAT 뉴스레터 구독자에게 발송되었습니다.<br>
-          더 이상 받지 않으시려면 회신으로 알려주세요.
+          <a href="${unsubUrl}" style="color:#4A433C">수신거부</a>
         </td></tr>
       </table>
     </td></tr>
@@ -66,6 +74,19 @@ router.post('/subscribe', async (req, res) => {
   } catch (e) {
     console.error('[newsletter /subscribe]', e.message);
     res.status(500).json({ error: '구독 처리에 실패했습니다' });
+  }
+});
+
+// 공개 — 메일 내 수신거부 링크로 접속, 토큰 검증 후 즉시 구독 해지
+router.get('/unsubscribe', async (req, res) => {
+  const fail = (msg) => res.status(400).send(`<!DOCTYPE html><meta charset="utf-8"><body style="font-family:sans-serif;text-align:center;padding:80px 20px"><p>${msg}</p></body>`);
+  try {
+    const payload = jwt.verify(String(req.query.token || ''), process.env.JWT_SECRET);
+    if (payload.purpose !== 'newsletter_unsubscribe' || !payload.email) return fail('잘못된 링크입니다.');
+    await db('newsletter_subscribers').where('email', payload.email).del();
+    res.send(`<!DOCTYPE html><meta charset="utf-8"><body style="font-family:sans-serif;text-align:center;padding:80px 20px"><p>${payload.email} 님의 뉴스레터 수신이 해지되었습니다.</p></body>`);
+  } catch (e) {
+    fail('유효하지 않거나 만료된 링크입니다.');
   }
 });
 
@@ -147,14 +168,14 @@ router.post('/send', adminMiddleware, async (req, res) => {
           .replace(/>/g, '&gt;')
           .replace(/\r?\n/g, '<br>');
 
-    const html = wrapEmail(subject, safeBody);
     const from = `"VELCROCAT" <${process.env.MAIL_USER}>`;
 
-    // 개인정보 보호를 위해 개별 발송 (BCC 묶음 회피)
+    // 개인정보 보호를 위해 개별 발송 (BCC 묶음 회피), 수신자별 수신거부 링크 포함
     let sent = 0;
     const failures = [];
     for (const to of targets) {
       try {
+        const html = wrapEmail(subject, safeBody, to);
         const info = await transporter.sendMail({ from, to, subject, html });
         sent++;
         console.log(`[newsletter /send] ✓ ${to} · messageId=${info.messageId}`);

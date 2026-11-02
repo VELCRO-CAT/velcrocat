@@ -79,10 +79,27 @@
           required
         />
 
+        <v-checkbox
+          v-model="agreeTerms"
+          density="compact"
+          hide-details
+          class="mb-1"
+        >
+          <template #label>
+            <span class="text-caption">
+              {{ t('auth.agreeTermsPrefix') }}
+              <router-link to="/terms" target="_blank" style="color:#111;font-weight:600">{{ t('footer.menuTerms') }}</router-link>
+              {{ t('auth.agreeTermsMid') }}
+              <router-link to="/privacy" target="_blank" style="color:#111;font-weight:600">{{ t('footer.menuPrivacy') }}</router-link>
+              {{ t('auth.agreeTermsSuffix') }}
+            </span>
+          </template>
+        </v-checkbox>
+
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mb-4">{{ error }}</v-alert>
         <v-alert v-if="success" type="success" variant="tonal" density="compact" class="mb-4">{{ success }}</v-alert>
 
-        <v-btn type="submit" variant="outlined" color="#111" block size="large" :loading="loading" :disabled="!emailVerified">{{ t('auth.registerBtn') }}</v-btn>
+        <v-btn type="submit" variant="outlined" color="#111" block size="large" :loading="loading" :disabled="!emailVerified || !agreeTerms">{{ t('auth.registerBtn') }}</v-btn>
       </v-form>
 
       <!-- 소셜 회원가입 (네이버/카카오) -->
@@ -96,6 +113,9 @@
         </div>
         <p class="text-caption text-grey text-center mt-2">
           {{ t('auth.naverRegisterHint') }}
+        </p>
+        <p class="text-caption text-grey text-center mt-1">
+          {{ t('auth.socialAgreeNotice') }}
         </p>
       </div>
 
@@ -131,6 +151,7 @@ const name = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
+const agreeTerms = ref(false);
 const showPw = ref(false);
 const error = ref('');
 const success = ref('');
@@ -219,6 +240,7 @@ async function handleSubmit() {
   error.value = '';
   success.value = '';
   if (!emailVerified.value) { error.value = t('auth.pleaseVerifyEmail'); return; }
+  if (!agreeTerms.value) { error.value = t('auth.pleaseAgreeTerms'); return; }
   if (password.value !== confirmPassword.value) { error.value = t('auth.passwordMismatch'); return; }
   loading.value = true;
   try {
@@ -257,7 +279,7 @@ async function handleSubmit() {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #999;
+  color: #767676;
   font-size: 13px;
 }
 .social-divider::before,

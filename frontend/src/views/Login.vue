@@ -111,7 +111,7 @@ async function handleLogin() {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #999;
+  color: #767676;
   font-size: 13px;
 }
 .social-divider::before,

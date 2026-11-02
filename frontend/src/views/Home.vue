@@ -250,7 +250,7 @@ function toggleWish(product) {
   justify-content: center;
   cursor: pointer;
   z-index: 4;
-  color: #999;
+  color: #767676;
   opacity: 0;
   transition: opacity 0.2s, color 0.15s;
 }

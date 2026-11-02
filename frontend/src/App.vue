@@ -240,6 +240,8 @@
             <router-link to="/order-lookup" class="footer-menu-link">{{ t('footer.menuOrderLookup') }}</router-link>
             <router-link to="/terms" class="footer-menu-link">{{ t('footer.menuTerms') }}</router-link>
             <router-link to="/privacy" class="footer-menu-link">{{ t('footer.menuPrivacy') }}</router-link>
+            <router-link to="/refund" class="footer-menu-link">{{ t('footer.menuRefund') }}</router-link>
+            <router-link to="/cookies" class="footer-menu-link">{{ t('footer.menuCookies') }}</router-link>
           </div>
         </div>
         <!-- 하단 -->
@@ -464,13 +466,13 @@ function logout() {
 .wish-count {
   font-size: 11px;
   font-weight: 600;
-  color: #999;
+  color: #767676;
 }
 .wish-empty {
   padding: 40px 16px;
   text-align: center;
   font-size: 12px;
-  color: #999;
+  color: #767676;
 }
 .wish-list {
   overflow-y: auto;
@@ -720,7 +722,7 @@ function logout() {
 .drawer-arrow {
   font-size: 10px;
   transition: transform 0.2s;
-  color: #999;
+  color: #767676;
 }
 .drawer-arrow.open { transform: rotate(90deg); }
 .drawer-cat-section {
@@ -910,7 +912,7 @@ function logout() {
   gap: 16px;
 }
 .footer-social a {
-  color: #999;
+  color: #767676;
   transition: color 0.2s;
 }
 .footer-social a:hover { color: #111; }

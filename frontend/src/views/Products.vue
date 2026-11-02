@@ -342,7 +342,7 @@ function toggleWish(product) {
 .loading-wrap, .empty-wrap {
   text-align: center;
   padding: 80px 24px;
-  color: #999;
+  color: #767676;
 }
 .empty-wrap p { margin-top: 16px; font-size: 14px; }
 
@@ -411,7 +411,7 @@ function toggleWish(product) {
   justify-content: center;
   cursor: pointer;
   z-index: 4;
-  color: #999;
+  color: #767676;
   opacity: 0;
   transition: opacity 0.2s, color 0.15s;
 }

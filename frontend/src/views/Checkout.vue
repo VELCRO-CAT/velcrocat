@@ -594,7 +594,7 @@ function abandonOrder(orderNo) {
 
 .guest-hint {
   font-size: 12px;
-  color: #999;
+  color: #767676;
   margin: 0;
   line-height: 1.5;
 }
@@ -613,7 +613,7 @@ function abandonOrder(orderNo) {
 }
 .checkout-subtitle {
   font-size: 11px;
-  color: #999;
+  color: #767676;
   letter-spacing: 6px;
   margin: 4px 0 24px;
   font-weight: 600;
@@ -629,7 +629,7 @@ function abandonOrder(orderNo) {
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #bbb;
+  color: #767676;
   font-weight: 600;
 }
 .step-num {
@@ -637,7 +637,7 @@ function abandonOrder(orderNo) {
   height: 24px;
   border-radius: 50%;
   background: #eee;
-  color: #999;
+  color: #767676;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -864,7 +864,7 @@ function abandonOrder(orderNo) {
   align-items: center;
   gap: 4px;
   font-size: 12.5px;
-  color: #777;
+  color: #707070;
   padding: 12px 14px;
   background: #f8f8f8;
   border-radius: 8px;
@@ -896,7 +896,7 @@ function abandonOrder(orderNo) {
 }
 .summary-count {
   font-size: 12px;
-  color: #999;
+  color: #767676;
   font-weight: 500;
 }
 
@@ -959,7 +959,7 @@ function abandonOrder(orderNo) {
 }
 .summary-size {
   font-size: 11px;
-  color: #999;
+  color: #767676;
   margin: 0;
 }
 .summary-price {
@@ -1047,7 +1047,7 @@ function abandonOrder(orderNo) {
   gap: 4px;
   margin-top: 12px;
   font-size: 11px;
-  color: #999;
+  color: #767676;
   font-weight: 500;
 }
 

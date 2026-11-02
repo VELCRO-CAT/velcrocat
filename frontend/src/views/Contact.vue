@@ -103,6 +103,7 @@ const inquiryTypes = computed(() => [
   { title: t('contact.type2'), value: '배송 문의' },
   { title: t('contact.type3'), value: '교환/반품' },
   { title: t('contact.type4'), value: '결제 문의' },
+  { title: t('contact.type6'), value: '개인정보 삭제 요청' },
   { title: t('contact.type5'), value: '기타' }
 ]);
 
@@ -165,7 +166,7 @@ async function submit() {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 4px;
-  color: #999;
+  color: #767676;
   margin-bottom: 12px;
 }
 .page-title {
