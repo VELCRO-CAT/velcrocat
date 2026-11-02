@@ -314,14 +314,9 @@ function scrollTo(id) {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// 히어로 영상 슬라이드쇼
+// 히어로 영상 (사람 없이 옷/수트만 나오는 테일러 아틀리에 영상)
 const heroVideos = [
-  { src: 'https://assets.mixkit.co/videos/34707/34707-720.mp4' },     // 매장 행거에 걸린 티셔츠들
-  { src: 'https://assets.mixkit.co/videos/21328/21328-720.mp4' },     // 매장을 걷는 여성
-  { src: 'https://assets.mixkit.co/videos/23327/23327-720.mp4' },     // 손으로 옷을 넘기며 고르기
-  { src: 'https://assets.mixkit.co/videos/33125/33125-720.mp4' },     // 매장 진열대를 보는 남성
-  { src: 'https://assets.mixkit.co/videos/33167/33167-720.mp4' },     // 코트랙에 걸린 스웨터들
-  { src: 'https://assets.mixkit.co/videos/21330/21330-720.mp4' },     // 쇼핑백 들고 매장 걷기
+  { src: '/hero-atelier.mp4' },
 ];
 const currentVideo = ref(0);
 const videoRefs = ref([]);
