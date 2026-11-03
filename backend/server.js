@@ -70,7 +70,12 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // SEO: 상품 상세 페이지는 공유 미리보기/크롤러를 위해 서버에서 메타태그를 주입해 내려준다
 // (일반 사용자는 nginx가 그대로 정적 SPA를 서빙하고, 이 경로로는 넘어오지 않는다)
-app.get('/products/:id(\\d+)', require('./middleware/prerenderMeta').prerenderProduct);
+const { prerenderProduct, prerenderStatic } = require('./middleware/prerenderMeta');
+app.get('/products/:id(\\d+)', prerenderProduct);
+
+// SEO: 주요 정적 페이지도 동일하게 페이지별 title/description/canonical을 서버에서 주입
+// (기존엔 모든 페이지가 index.html 기본값을 그대로 받아서 canonical이 전부 "/"로 보였음)
+app.get(['/', '/brand', '/products', '/story', '/contact', '/terms', '/privacy', '/refund', '/cookies'], prerenderStatic);
 
 // sitemap.xml — 상품이 추가/삭제될 때마다 항상 최신 상태로 동적 생성
 app.use('/', require('./routes/sitemap'));

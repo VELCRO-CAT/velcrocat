@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { getProductMeta } = require('../services/prerender');
+const { getProductMeta, getStaticMeta } = require('../services/prerender');
 
 const DIST_INDEX_PATH = path.join(__dirname, '..', '..', 'frontend', 'dist', 'index.html');
 
@@ -69,4 +69,21 @@ async function prerenderProduct(req, res, next) {
   }
 }
 
-module.exports = { prerenderProduct, injectMeta, getTemplate };
+// 정적 페이지(브랜드소개, 상품목록, 약관 등) — 크롤러가 JS 없이 봐도 페이지별로
+// 다른 title/description/canonical이 보이도록 서버에서 주입
+async function prerenderStatic(req, res, next) {
+  try {
+    const template = getTemplate();
+    if (!template) return next();
+
+    const meta = getStaticMeta(req.path);
+    const html = meta ? injectMeta(template, meta) : template;
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (e) {
+    console.error('[prerenderMeta] 정적 페이지 오류:', e);
+    next();
+  }
+}
+
+module.exports = { prerenderProduct, prerenderStatic, injectMeta, getTemplate };
