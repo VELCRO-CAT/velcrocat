@@ -54,6 +54,10 @@
         </div>
       </div>
     </div>
+
+    <v-snackbar v-model="socialErrorToast" color="error" timeout="3000" location="top">
+      {{ t('auth.loginFailed') }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -67,6 +71,10 @@ import NaverLoginButton from '../components/NaverLoginButton.vue';
 import KakaoLoginButton from '../components/KakaoLoginButton.vue';
 
 const { t } = useI18n();
+const authStore = useAuthStore();
+const router = useRouter();
+const route = useRoute();
+const socialErrorToast = ref(route.query.socialError === '1');
 
 onMounted(() => {
   document.querySelectorAll('.login-card .reveal').forEach((el, i) => {
@@ -74,9 +82,6 @@ onMounted(() => {
   });
 });
 
-const authStore = useAuthStore();
-const router = useRouter();
-const route = useRoute();
 const email = ref('');
 const password = ref('');
 const showPw = ref(false);

@@ -1,31 +1,23 @@
 <template>
   <v-container class="py-16 d-flex justify-center align-center" style="min-height:60vh">
     <div class="text-center">
-      <v-progress-circular v-if="!error" indeterminate color="#111" size="48" class="mb-4" />
-      <p v-if="!error" class="text-body-1">{{ t('authCallback.processing') }}</p>
-      <div v-else>
-        <v-icon size="48" color="error" class="mb-4">mdi-alert-circle-outline</v-icon>
-        <p class="text-body-1 mb-4">{{ error }}</p>
-        <v-btn variant="outlined" color="#111" @click="$router.push('/login')">{{ t('auth.backToLogin') }}</v-btn>
-      </div>
+      <v-progress-circular indeterminate color="#111" size="48" class="mb-4" />
+      <p class="text-body-1">{{ t('authCallback.processing') }}</p>
     </div>
   </v-container>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import { useWishlistStore } from '../stores/wishlist';
 import { useCartStore } from '../stores/cart';
 import axios from 'axios';
 
-const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
-const error = ref('');
 
 onMounted(async () => {
   const code = route.query.code;
@@ -33,7 +25,7 @@ onMounted(async () => {
   const provider = route.params.provider;
 
   if (!code) {
-    error.value = t('authCallback.noCode');
+    router.replace({ path: '/login', query: { socialError: '1' } });
     return;
   }
 
@@ -48,7 +40,7 @@ onMounted(async () => {
     useCartStore().load();
     router.push('/products');
   } catch (e) {
-    error.value = e.response?.data?.error || t('auth.loginFailed');
+    router.replace({ path: '/login', query: { socialError: '1' } });
   }
 });
 </script>
