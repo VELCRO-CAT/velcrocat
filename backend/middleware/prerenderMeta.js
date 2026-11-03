@@ -4,12 +4,11 @@ const { getProductMeta, getStaticMeta } = require('../services/prerender');
 
 const DIST_INDEX_PATH = path.join(__dirname, '..', '..', 'frontend', 'dist', 'index.html');
 
-let cachedTemplate = null;
+// 메모리에 캐시하지 않고 매 요청마다 디스크에서 읽는다 — 프런트엔드만 재빌드되고
+// 백엔드가 재시작되지 않아도(해시가 바뀐 JS/CSS 경로) 항상 최신 index.html을 내려주기 위함
 function getTemplate() {
-  if (cachedTemplate) return cachedTemplate;
   if (!fs.existsSync(DIST_INDEX_PATH)) return null;
-  cachedTemplate = fs.readFileSync(DIST_INDEX_PATH, 'utf8');
-  return cachedTemplate;
+  return fs.readFileSync(DIST_INDEX_PATH, 'utf8');
 }
 
 function escapeHtml(str) {
