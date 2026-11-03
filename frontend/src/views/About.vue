@@ -54,7 +54,13 @@
         <div class="hero-video-overlay"></div>
       </div>
       <div class="hero-content">
-        <img src="../image/osakamarketLOGO6.png" alt="Velcro Cat" class="hero-main-logo hero-reveal hero-reveal-2" />
+        <div class="hero-wordmark hero-reveal hero-reveal-2">
+          <img src="/favicon.png" alt="Velcro Cat" class="hero-cat-icon" />
+          <div class="hero-wordmark-text">
+            <span class="hero-wordmark-main">VELCRO</span>
+            <span class="hero-wordmark-sub">CAT</span>
+          </div>
+        </div>
         <p class="hero-desc hero-reveal hero-reveal-3" v-html="t('about.heroDesc')"></p>
         <div class="hero-btns hero-reveal hero-reveal-4">
           <router-link to="/products" class="second-hero-btn">{{ t('about.shopBtn') }}</router-link>
@@ -736,12 +742,35 @@ onUnmounted(() => {
   display: block;
   margin: 0 auto -10px;
 }
-.hero-main-logo {
-  height: 280px;
+.hero-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto 16px;
+}
+.hero-cat-icon {
+  height: 90px;
   width: auto;
   object-fit: contain;
-  display: block;
-  margin: 0 auto 16px;
+  margin-bottom: 10px;
+}
+.hero-wordmark-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.05;
+}
+.hero-wordmark-main,
+.hero-wordmark-sub {
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+.hero-wordmark-main {
+  color: #fff;
+}
+.hero-wordmark-sub {
+  color: rgba(255, 255, 255, 0.55);
 }
 .hero-desc {
   font-size: 17px;
@@ -1280,9 +1309,14 @@ onUnmounted(() => {
     font-size: 42px;
     letter-spacing: 4px;
   }
-  .hero-main-logo {
-    height: 200px;
-    margin: 0 auto 12px;
+  .hero-cat-icon {
+    height: 64px;
+    margin-bottom: 8px;
+  }
+  .hero-wordmark-main,
+  .hero-wordmark-sub {
+    font-size: 42px;
+    letter-spacing: 2px;
   }
   .story-layout {
     flex-direction: column;
