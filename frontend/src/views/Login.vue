@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
@@ -74,12 +74,33 @@ const { t } = useI18n();
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const socialErrorToast = ref(route.query.socialError === '1');
+const socialErrorToast = ref(false);
+
+// 소셜 로그인 버튼 클릭 후 성공도 명시적 취소도 아니게(뒤로가기 등) 돌아온 경우도 실패로 간주
+function checkSocialPending() {
+  if (sessionStorage.getItem('vcat_social_pending') === '1') {
+    sessionStorage.removeItem('vcat_social_pending');
+    socialErrorToast.value = true;
+  }
+}
+
+// bfcache로 페이지가 그대로 복원되는 경우(뒤로가기)엔 setup이 재실행되지 않으므로 별도 감지 필요
+function onPageShow(e) {
+  if (e.persisted) checkSocialPending();
+}
+
+if (route.query.socialError === '1') socialErrorToast.value = true;
+else checkSocialPending();
 
 onMounted(() => {
+  window.addEventListener('pageshow', onPageShow);
   document.querySelectorAll('.login-card .reveal').forEach((el, i) => {
     setTimeout(() => el.classList.add('visible'), 150 * (i + 1));
   });
+});
+
+onUnmounted(() => {
+  window.removeEventListener('pageshow', onPageShow);
 });
 
 const email = ref('');

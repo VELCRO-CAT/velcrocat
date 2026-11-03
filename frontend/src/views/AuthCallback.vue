@@ -20,6 +20,7 @@ const route = useRoute();
 const authStore = useAuthStore();
 
 onMounted(async () => {
+  sessionStorage.removeItem('vcat_social_pending');
   const code = route.query.code;
   const state = route.query.state;
   const provider = route.params.provider;

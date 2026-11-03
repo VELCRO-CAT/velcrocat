@@ -27,6 +27,7 @@ async function onClick() {
   loading.value = true;
   try {
     const res = await axios.get('/api/auth/kakao');
+    sessionStorage.setItem('vcat_social_pending', '1');
     window.location.href = res.data.url;
   } catch {
     loading.value = false;
