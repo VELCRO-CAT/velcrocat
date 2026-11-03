@@ -1,14 +1,16 @@
 <template>
-  <div v-if="visible" class="cookie-banner">
-    <p class="cookie-text">
-      {{ t('cookieBanner.text') }}
-      <router-link to="/cookies" class="cookie-link">{{ t('cookieBanner.learnMore') }}</router-link>
-    </p>
-    <div class="cookie-btns">
-      <button class="cookie-btn cookie-btn-reject" @click="decide(false)">{{ t('cookieBanner.reject') }}</button>
-      <button class="cookie-btn cookie-btn-accept" @click="decide(true)">{{ t('cookieBanner.accept') }}</button>
+  <Teleport to="body">
+    <div v-if="visible" class="cookie-banner" role="dialog" aria-label="쿠키 동의">
+      <p class="cookie-text">
+        {{ t('cookieBanner.text') }}
+        <router-link to="/cookies" class="cookie-link">{{ t('cookieBanner.learnMore') }}</router-link>
+      </p>
+      <div class="cookie-btns">
+        <button class="cookie-btn cookie-btn-reject" @click="decide(false)">{{ t('cookieBanner.reject') }}</button>
+        <button class="cookie-btn cookie-btn-accept" @click="decide(true)">{{ t('cookieBanner.accept') }}</button>
+      </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>

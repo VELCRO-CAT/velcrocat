@@ -5,7 +5,8 @@ const db = require('../db');
 const SITE_URL = process.env.SITE_URL || 'https://vcat.kr';
 
 const STATIC_PAGES = [
-  { loc: '/brand', priority: '1.0' },
+  { loc: '/', priority: '1.0' },
+  { loc: '/brand', priority: '0.9' },
   { loc: '/products', priority: '0.9' },
   { loc: '/story', priority: '0.8' },
   { loc: '/contact', priority: '0.7' }
