@@ -220,6 +220,19 @@
       </div>
     </section>
 
+    <!-- 매장 입점 스냅샷 -->
+    <section class="section instore">
+      <div class="pickup-header">
+        <h2 class="section-title">{{ t('about.storeTitle') }}</h2>
+        <p class="pickup-sub">{{ t('about.storeSub') }}</p>
+      </div>
+      <div class="instore-grid">
+        <div class="instore-item" v-for="img in storeImages" :key="img.src">
+          <img :src="img.src" :alt="img.alt" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
     <!-- CTA (video3.gif 배경) -->
     <section class="second-hero">
       <video src="../image/video3.mp4" class="second-hero-bg" autoplay muted loop playsinline />
@@ -275,6 +288,12 @@ const { t } = useI18n();
 const { lf } = useLocalized();
 const storyRef = ref(null);
 const pickupItems = ref([]);
+const storeImages = [
+  { src: '/store-cardigan-navy.jpg', alt: 'Velcrocat navy cardigan in store' },
+  { src: '/store-cardigan-gray.jpg', alt: 'Velcrocat gray cardigan in store' },
+  { src: '/store-knit-ivory.jpg', alt: 'Velcrocat ivory knit in store' },
+  { src: '/store-polo-gray.jpg', alt: 'Velcrocat gray polo in store' }
+];
 const bgAudio = ref(null);
 const musicStarted = ref(false);
 const mobileMenuOpen = ref(false);
@@ -1224,6 +1243,26 @@ onUnmounted(() => {
 }
 .btn-outline:hover { background: #111; color: #fff; }
 
+/* 매장 입점 스냅샷 */
+.instore { max-width: 1200px; }
+.instore-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.instore-item {
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+.instore-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+.instore-item:hover img { transform: scale(1.05); }
+
 /* 브랜드 푸터 */
 .brand-footer {
   background: #111;
@@ -1305,6 +1344,7 @@ onUnmounted(() => {
   .brand-nav-name { font-size: 13px; letter-spacing: 1px; }
   .brand-nav-right { display: none; }
   .pickup-grid { grid-template-columns: repeat(2, 1fr); }
+  .instore-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-title {
     font-size: 42px;
     letter-spacing: 4px;
