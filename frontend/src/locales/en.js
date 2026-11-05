@@ -91,7 +91,7 @@ export default {
     pickupSub: "This season's styles, curated by Velcro Cat",
     pickupMore: 'View All Products →',
     storeTitle: 'Find Us In Stores',
-    storeSub: 'Velcro Cat, now carried at premium select shops',
+    storeSub: 'Velcro Cat, now carried at premium department stores',
     ctaTitle: 'Discover<br>Today\'s Style',
     ctaDesc: "Check out VELCROCAT's new collection now.<br>Don't miss out on comfort and style, together.",
     bizLine1: 'Company: Velcrocat · Co-CEO: 김충성, 장윤호',

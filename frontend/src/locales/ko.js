@@ -95,7 +95,7 @@ export default {
     pickupSub: 'Velcro Cat이 제안하는 이번 시즌 스타일',
     pickupMore: '모든 상품 보기 →',
     storeTitle: '지금, 매장에서 만나보세요',
-    storeSub: '프리미엄 편집숍에 정식 입점한 벨크로캣',
+    storeSub: '프리미엄 백화점에 정식 입점한 벨크로캣',
     ctaTitle: '오늘의 스타일을<br>만나보세요',
     ctaDesc: 'VELCROCAT의 새로운 컬렉션을 지금 확인하세요.<br>편안함과 스타일, 두 가지 모두를 놓치지 마세요.',
     bizLine1: '상호 : 벨크로캣(velcrocat) · 공동 대표 : 김충성, 장윤호',

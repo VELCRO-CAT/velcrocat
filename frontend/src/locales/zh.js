@@ -91,7 +91,7 @@ export default {
     pickupSub: 'Velcro Cat 为您呈现本季风格提案',
     pickupMore: '查看全部商品 →',
     storeTitle: '现在，在实体店与我们相遇',
-    storeSub: '正式入驻高端买手店的 Velcro Cat',
+    storeSub: '正式入驻高端百货商场的 Velcro Cat',
     ctaTitle: '遇见今日<br>专属风格',
     ctaDesc: '立即查看 VELCROCAT 全新系列。<br>舒适与风格，一个都不错过。',
     bizLine1: '公司名称：Velcrocat · 共同代表：김충성, 장윤호',

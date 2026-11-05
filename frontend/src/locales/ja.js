@@ -91,7 +91,7 @@ export default {
     pickupSub: 'Velcro Catが提案する今シーズンのスタイル',
     pickupMore: 'すべての商品を見る →',
     storeTitle: '今、店舗でも出会えます',
-    storeSub: 'プレミアムセレクトショップに正式入店したVelcro Cat',
+    storeSub: 'プレミアム百貨店に正式入店したVelcro Cat',
     ctaTitle: '今日のスタイルを<br>見つけよう',
     ctaDesc: 'VELCROCATの新しいコレクションを今すぐチェック。<br>快適さとスタイル、どちらも見逃さないで。',
     bizLine1: '商号 : Velcrocat · 共同代表 : 김충성, 장윤호',
