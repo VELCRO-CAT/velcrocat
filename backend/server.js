@@ -75,7 +75,7 @@ app.get('/products/:id(\\d+)', prerenderProduct);
 
 // SEO: 주요 정적 페이지도 동일하게 페이지별 title/description/canonical을 서버에서 주입
 // (기존엔 모든 페이지가 index.html 기본값을 그대로 받아서 canonical이 전부 "/"로 보였음)
-app.get(['/', '/brand', '/products', '/story', '/contact', '/terms', '/privacy', '/refund', '/cookies'], prerenderStatic);
+app.get(['/brand', '/products', '/story', '/contact', '/terms', '/privacy', '/refund', '/cookies'], prerenderStatic);
 
 // sitemap.xml — 상품이 추가/삭제될 때마다 항상 최신 상태로 동적 생성
 app.use('/', require('./routes/sitemap'));
@@ -99,8 +99,10 @@ app.use('/api/notify',   require('./routes/notify'));
 app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// SEO: "/"는 실제로는 항상 /brand로 보여지는 페이지라, 클라이언트 리다이렉트 대신
+// 서버에서 진짜 301을 내려 크롤러가 "/"를 별도 페이지로 색인하지 않게 한다
 app.get('/', (req, res) => {
-  res.json({ message: '벨크로캣 API v2.0', db: process.env.DATABASE_URL ? 'PostgreSQL' : 'JSON 파일' });
+  res.redirect(301, '/brand');
 });
 
 // 전역 에러 핸들러 — 상세 오류는 서버 로그에만 남기고 클라이언트엔 일반 메시지만 반환
