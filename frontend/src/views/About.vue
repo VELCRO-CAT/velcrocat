@@ -768,7 +768,7 @@ onUnmounted(() => {
   margin: 0 auto 16px;
 }
 .hero-cat-icon {
-  height: 90px;
+  height: 126px;
   width: auto;
   object-fit: contain;
   margin-bottom: 10px;
@@ -781,7 +781,7 @@ onUnmounted(() => {
 }
 .hero-wordmark-main,
 .hero-wordmark-sub {
-  font-size: 64px;
+  font-size: 51px;
   font-weight: 900;
   letter-spacing: 4px;
 }
@@ -1350,12 +1350,12 @@ onUnmounted(() => {
     letter-spacing: 4px;
   }
   .hero-cat-icon {
-    height: 64px;
+    height: 90px;
     margin-bottom: 8px;
   }
   .hero-wordmark-main,
   .hero-wordmark-sub {
-    font-size: 42px;
+    font-size: 34px;
     letter-spacing: 2px;
   }
   .story-layout {
