@@ -1045,7 +1045,12 @@ function abandonOrder(orderNo) {
 .summary-discount { color: #e53e3e; font-weight: 600; }
 
 /* 쿠폰 입력 */
-.coupon-box { padding: 2px 0; }
+.coupon-box {
+  padding: 12px;
+  background: #f7f5ef;
+  border: 1px solid #e8e2d0;
+  border-radius: 8px;
+}
 .coupon-input-row {
   display: flex;
   gap: 8px;
@@ -1055,10 +1060,11 @@ function abandonOrder(orderNo) {
   min-width: 0;
   height: 38px;
   padding: 0 12px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e0dccc;
   border-radius: 6px;
   font-size: 13px;
   outline: none;
+  background: #fff;
 }
 .coupon-input:focus { border-color: #111; }
 .coupon-apply-btn {
@@ -1066,16 +1072,16 @@ function abandonOrder(orderNo) {
   padding: 0 16px;
   border: 1px solid #111;
   border-radius: 6px;
-  background: #fff;
-  color: #111;
+  background: #111;
+  color: #fff;
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s;
 }
-.coupon-apply-btn:hover:not(:disabled) { background: #111; color: #fff; }
-.coupon-apply-btn:disabled { border-color: #ddd; color: #bbb; cursor: not-allowed; }
+.coupon-apply-btn:hover:not(:disabled) { background: #333; }
+.coupon-apply-btn:disabled { background: #ddd8c8; border-color: #ddd8c8; color: #8f897a; cursor: not-allowed; }
 .coupon-error {
   margin: 6px 0 0;
   font-size: 11.5px;
