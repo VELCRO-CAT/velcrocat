@@ -93,7 +93,7 @@ onMounted(async () => {
 <style scoped>
 .admin-container {
   padding: 24px;
-  max-width: 900px;
+  max-width: 1000px;
 }
 .dash-title {
   font-size: 22px;

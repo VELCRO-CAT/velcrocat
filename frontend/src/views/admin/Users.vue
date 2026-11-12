@@ -2,7 +2,7 @@
   <AdminSidebar />
 
   <v-main class="bg-grey-lighten-4 admin-page">
-    <v-container class="admin-container" style="max-width:900px">
+    <v-container class="admin-container" style="max-width:1000px">
       <h1 class="page-title">회원 관리</h1>
       <p class="page-sub mb-2">
         가입된 회원 목록 ({{ users.length }}명)<span v-if="totalPages > 1"> · {{ currentPage }}/{{ totalPages }}페이지</span>

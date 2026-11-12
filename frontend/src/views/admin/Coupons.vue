@@ -2,7 +2,7 @@
   <AdminSidebar />
 
   <v-main class="bg-grey-lighten-4 admin-page">
-    <v-container class="admin-container" style="max-width:900px">
+    <v-container class="admin-container" style="max-width:1000px">
       <h1 class="page-title">쿠폰 관리</h1>
       <p class="page-sub mb-5">총 {{ coupons.length }}개의 쿠폰</p>
 
@@ -24,21 +24,24 @@
             <label class="field-label">할인 값{{ form.discountType === 'PERCENT' ? ' (%)' : ' (원)' }}</label>
             <input v-model.number="form.discountValue" type="number" min="1" class="field-input" />
           </div>
-          <div class="form-field" v-if="form.discountType === 'PERCENT'">
-            <label class="field-label">최대 할인금액 (선택)</label>
-            <input v-model.number="form.maxDiscountAmount" type="number" min="1" class="field-input" placeholder="제한 없음" />
-          </div>
           <div class="form-field">
-            <label class="field-label">최소 주문금액 (선택)</label>
-            <input v-model.number="form.minOrderAmount" type="number" min="0" class="field-input" placeholder="제한 없음" />
+            <label class="field-label">최소 주문금액</label>
+            <select v-model.number="form.minOrderAmount" class="field-input">
+              <option :value="50000">5만원</option>
+              <option :value="100000">10만원</option>
+              <option :value="150000">15만원</option>
+            </select>
           </div>
           <div class="form-field">
             <label class="field-label">유효기간 (선택)</label>
             <input v-model="form.expiresAt" type="date" :min="todayKst" class="field-input" />
           </div>
           <div class="form-field">
-            <label class="field-label">사용 횟수 한도 (선택)</label>
-            <input v-model.number="form.usageLimit" type="number" min="1" class="field-input" placeholder="제한 없음" />
+            <label class="field-label">사용 횟수 한도</label>
+            <select v-model.number="form.usageLimit" class="field-input">
+              <option :value="10">10회</option>
+              <option :value="20">20회</option>
+            </select>
           </div>
         </div>
         <p v-if="formError" class="form-error">{{ formError }}</p>
@@ -108,10 +111,9 @@ const emptyForm = () => ({
   code: '',
   discountType: 'PERCENT',
   discountValue: null,
-  maxDiscountAmount: null,
-  minOrderAmount: null,
+  minOrderAmount: 50000,
   expiresAt: '',
-  usageLimit: null
+  usageLimit: 10
 });
 const form = ref(emptyForm());
 
@@ -132,10 +134,9 @@ async function createCoupon() {
       code: form.value.code,
       discountType: form.value.discountType,
       discountValue: form.value.discountValue,
-      maxDiscountAmount: form.value.discountType === 'PERCENT' ? (form.value.maxDiscountAmount || undefined) : undefined,
-      minOrderAmount: form.value.minOrderAmount || undefined,
+      minOrderAmount: form.value.minOrderAmount,
       expiresAt: form.value.expiresAt || undefined,
-      usageLimit: form.value.usageLimit || undefined
+      usageLimit: form.value.usageLimit
     });
     coupons.value.unshift(data);
     form.value = emptyForm();
@@ -276,4 +277,10 @@ function formatDate(dt) {
   padding: 4px;
 }
 .delete-btn:hover { color: #e53e3e; }
+
+@media (max-width: 768px) {
+  .admin-page { padding-top: 52px !important; }
+  .admin-container { padding: 16px !important; }
+  .page-title { font-size: 17px; }
+}
 </style>
