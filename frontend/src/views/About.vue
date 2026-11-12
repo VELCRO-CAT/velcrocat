@@ -293,7 +293,8 @@ const storeImages = [
   { src: '/store-cardigan-gray.jpg', alt: 'Velcrocat gray cardigan in store' },
   { src: '/store-knit-ivory.jpg', alt: 'Velcrocat ivory knit in store' },
   { src: '/store-polo-gray.jpg', alt: 'Velcrocat gray polo in store' },
-  { src: '/store-polo-black.jpg', alt: 'Velcrocat black polo in store' }
+  { src: '/store-polo-black.jpg', alt: 'Velcrocat black polo in store' },
+  { src: '/store-tee-mixed.jpg', alt: 'Velcrocat rack display in store' }
 ];
 const bgAudio = ref(null);
 const musicStarted = ref(false);
@@ -1248,7 +1249,7 @@ onUnmounted(() => {
 .instore { max-width: 1200px; }
 .instore-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 .instore-item {
