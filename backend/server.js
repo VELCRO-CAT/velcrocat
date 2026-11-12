@@ -87,6 +87,7 @@ app.use('/api/users',     require('./routes/users'));
 app.use('/api/cart',      require('./routes/cart'));
 app.use('/api/addresses', require('./routes/addresses'));
 app.use('/api/orders',    require('./routes/orders'));
+app.use('/api/coupons',   require('./routes/coupons'));
 app.use('/api/payment/mainpay', require('./routes/mainpay'));
 app.use('/api/payment',   require('./routes/payment'));
 app.use('/api/admin',     require('./routes/admin'));

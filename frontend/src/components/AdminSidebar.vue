@@ -20,6 +20,10 @@
           <v-icon size="16">mdi-receipt</v-icon>
           주문 관리
         </router-link>
+        <router-link to="/admin/coupons" class="admin-nav-item" active-class="active">
+          <v-icon size="16">mdi-ticket-percent-outline</v-icon>
+          쿠폰 관리
+        </router-link>
         <router-link to="/admin/users" class="admin-nav-item" active-class="active">
           <v-icon size="16">mdi-account-group</v-icon>
           회원 관리
@@ -61,6 +65,10 @@
         <router-link to="/admin/orders" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
           <v-icon size="18">mdi-receipt</v-icon>
           주문 관리
+        </router-link>
+        <router-link to="/admin/coupons" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
+          <v-icon size="18">mdi-ticket-percent-outline</v-icon>
+          쿠폰 관리
         </router-link>
         <router-link to="/admin/users" class="admin-mobile-item" active-class="active" @click="mobileOpen = false">
           <v-icon size="18">mdi-account-group</v-icon>

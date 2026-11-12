@@ -22,6 +22,7 @@ import AdminLogin from '../views/admin/Login.vue';
 import AdminDashboard from '../views/admin/Dashboard.vue';
 import AdminProducts from '../views/admin/Products.vue';
 import AdminOrders from '../views/admin/Orders.vue';
+import AdminCoupons from '../views/admin/Coupons.vue';
 import AdminInquiries from '../views/admin/Inquiries.vue';
 import AdminNaver from '../views/admin/Naver.vue';
 import AdminUsers from '../views/admin/Users.vue';
@@ -54,6 +55,7 @@ const routes = [
   { path: '/admin', component: AdminDashboard, meta: { requiresAdmin: true } },
   { path: '/admin/products', component: AdminProducts, meta: { requiresAdmin: true } },
   { path: '/admin/orders', component: AdminOrders, meta: { requiresAdmin: true } },
+  { path: '/admin/coupons', component: AdminCoupons, meta: { requiresAdmin: true } },
   { path: '/admin/inquiries', component: AdminInquiries, meta: { requiresAdmin: true } },
   { path: '/admin/users', component: AdminUsers, meta: { requiresAdmin: true } },
   { path: '/admin/naver', component: AdminNaver, meta: { requiresAdmin: true } },

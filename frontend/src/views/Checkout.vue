@@ -267,6 +267,33 @@
 
             <div class="summary-divider"></div>
 
+            <!-- 쿠폰 입력 -->
+            <div class="coupon-box">
+              <template v-if="!appliedCoupon">
+                <div class="coupon-input-row">
+                  <input
+                    v-model="couponInput"
+                    class="coupon-input"
+                    :placeholder="t('checkout.couponPlaceholder')"
+                    @keyup.enter="applyCoupon"
+                  />
+                  <button class="coupon-apply-btn" :disabled="!couponInput.trim() || couponLoading" @click="applyCoupon">
+                    {{ t('checkout.couponApplyBtn') }}
+                  </button>
+                </div>
+                <p v-if="couponError" class="coupon-error">{{ couponError }}</p>
+              </template>
+              <div v-else class="coupon-applied-row">
+                <span class="coupon-applied-text">
+                  <v-icon size="14" color="#2a9d5c" class="mr-1">mdi-check-circle</v-icon>
+                  {{ t('checkout.couponApplied', { code: appliedCoupon.code }) }}
+                </span>
+                <button class="coupon-remove-btn" @click="removeCoupon">{{ t('checkout.couponRemoveBtn') }}</button>
+              </div>
+            </div>
+
+            <div class="summary-divider"></div>
+
             <div class="summary-row">
               <span>{{ t('checkout.productAmount') }}</span>
               <span>₩{{ cartStore.total.toLocaleString() }}</span>
@@ -275,12 +302,16 @@
               <span>{{ t('cart.shipping') }}</span>
               <span class="summary-free">{{ t('cart.free') }}</span>
             </div>
+            <div v-if="appliedCoupon" class="summary-row">
+              <span>{{ t('checkout.discountAmount') }}</span>
+              <span class="summary-discount">-₩{{ appliedCoupon.discountAmount.toLocaleString() }}</span>
+            </div>
 
             <div class="summary-divider"></div>
 
             <div class="summary-total">
               <span>{{ t('checkout.totalPay') }}</span>
-              <span class="total-amount">₩{{ cartStore.total.toLocaleString() }}</span>
+              <span class="total-amount">₩{{ finalTotal.toLocaleString() }}</span>
             </div>
 
             <button
@@ -290,7 +321,7 @@
             >
               <span v-if="loading" class="loading-spinner"></span>
               <template v-else>
-                <span>{{ t('checkout.payBtn', { amount: cartStore.total.toLocaleString() }) }}</span>
+                <span>{{ t('checkout.payBtn', { amount: finalTotal.toLocaleString() }) }}</span>
                 <v-icon size="18" class="ml-1">mdi-arrow-right</v-icon>
               </template>
             </button>
@@ -357,6 +388,32 @@ const form = ref({
 });
 const showPostcode = ref(false);
 const selectedMethod = ref('card');
+const couponInput = ref('');
+const appliedCoupon = ref(null);
+const couponError = ref('');
+const couponLoading = ref(false);
+const finalTotal = computed(() => Math.max(0, cartStore.total - (appliedCoupon.value?.discountAmount || 0)));
+
+// 서버가 보여주는 할인액은 미리보기일 뿐 — 실제 결제 생성 시(/ready) 서버가 다시 검증·계산한다
+async function applyCoupon() {
+  const code = couponInput.value.trim();
+  if (!code) return;
+  couponError.value = '';
+  couponLoading.value = true;
+  try {
+    const { data } = await axios.post('/api/coupons/validate', { code, subtotal: cartStore.total });
+    appliedCoupon.value = { code: code.toUpperCase(), discountAmount: data.discountAmount };
+  } catch (e) {
+    couponError.value = e.response?.data?.error || t('checkout.errorPaymentFailed');
+  } finally {
+    couponLoading.value = false;
+  }
+}
+function removeCoupon() {
+  appliedCoupon.value = null;
+  couponInput.value = '';
+  couponError.value = '';
+}
 const addresses = ref([]);
 const selectedAddressId = ref('new');
 const saveAsDefaultAddress = ref(true);
@@ -487,7 +544,8 @@ async function processPayment() {
         size: i.size,
         image: i.image
       })),
-      amount: cartStore.total,
+      amount: finalTotal.value,
+      couponCode: appliedCoupon.value?.code,
       shippingAddress: form.value,
       paymethod: 'CARD',
       guestInfo: checkoutMode.value === 'guest'
@@ -984,6 +1042,70 @@ function abandonOrder(orderNo) {
   margin-bottom: 8px;
 }
 .summary-free { color: #2a9d5c; font-weight: 600; }
+.summary-discount { color: #e53e3e; font-weight: 600; }
+
+/* 쿠폰 입력 */
+.coupon-box { padding: 2px 0; }
+.coupon-input-row {
+  display: flex;
+  gap: 8px;
+}
+.coupon-input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+.coupon-input:focus { border-color: #111; }
+.coupon-apply-btn {
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid #111;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.coupon-apply-btn:hover:not(:disabled) { background: #111; color: #fff; }
+.coupon-apply-btn:disabled { border-color: #ddd; color: #bbb; cursor: not-allowed; }
+.coupon-error {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  color: #e53e3e;
+}
+.coupon-applied-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f3faf5;
+  border: 1px solid #cdebd6;
+  border-radius: 6px;
+}
+.coupon-applied-text {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #2a9d5c;
+  display: flex;
+  align-items: center;
+}
+.coupon-remove-btn {
+  background: none;
+  border: none;
+  font-size: 11.5px;
+  color: #888;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.coupon-remove-btn:hover { color: #111; }
 
 .summary-total {
   display: flex;

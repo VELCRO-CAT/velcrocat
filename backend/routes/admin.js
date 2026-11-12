@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { adminMiddleware, superAdminMiddleware, SUPER_ADMIN_EMAIL } = require('../middleware/auth');
+const { toExpiryDate } = require('../services/coupons');
 
 // 최고 관리자 전용 로그인 (아이디/비밀번호 방식) — 이 계정(SUPER_ADMIN_EMAIL) 하나에 로그인
 // 수단이 2개 있는 것. 이 계정만 다른 회원에게 관리자 권한을 주고 뺏을 수 있음
@@ -83,7 +84,19 @@ router.get('/orders', adminMiddleware, async (req, res) => {
 });
 
 router.patch('/orders/:id/status', adminMiddleware, async (req, res) => {
+  const before = await db('orders').where('id', req.params.id).first();
   await db('orders').where('id', req.params.id).update({ status: req.body.status });
+
+  // 결제 완료된 주문을 취소로 바꾸면 쿠폰도 재고와 대칭으로 복구한다.
+  // paid였던 주문만 복구 대상 — pending/다른 상태에선 애초에 소진(used_count 증가)된 적이 없다.
+  if (before && before.status === 'paid' && req.body.status === 'cancelled' && before.coupon_code) {
+    try {
+      await db('coupons').where('code', before.coupon_code).update({ used_count: db.raw('GREATEST(used_count - 1, 0)') });
+    } catch (e) {
+      console.error('[admin] 쿠폰 복구 실패', before.coupon_code, e.message);
+    }
+  }
+
   const order = await db('orders').where('id', req.params.id).first();
   res.json(order);
 });
@@ -168,6 +181,90 @@ router.put('/products/:id', adminMiddleware, async (req, res) => {
 router.delete('/products/:id', adminMiddleware, async (req, res) => {
   const count = await db('products').where('id', req.params.id).del();
   if (!count) return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+  res.json({ message: '삭제되었습니다' });
+});
+
+// 쿠폰 관리
+router.get('/coupons', adminMiddleware, async (req, res) => {
+  const coupons = await db('coupons').orderBy('created_at', 'desc');
+  res.json(coupons);
+});
+
+router.post('/coupons', adminMiddleware, async (req, res) => {
+  try {
+    const { code, discountType, discountValue, minOrderAmount, maxDiscountAmount, expiresAt, usageLimit } = req.body;
+    if (!code || !String(code).trim()) return res.status(400).json({ error: '쿠폰 코드를 입력해주세요' });
+    if (!['FIXED', 'PERCENT'].includes(discountType)) return res.status(400).json({ error: '할인 유형이 올바르지 않습니다' });
+    const value = Number(discountValue);
+    if (!Number.isFinite(value) || value <= 0) return res.status(400).json({ error: '할인 값이 올바르지 않습니다' });
+    // 이미 지난 날짜로는 쿠폰을 만들 수 없다 — 만들자마자 못 쓰는 쿠폰이 생기지 않게
+    const expiry = expiresAt ? toExpiryDate(expiresAt) : null;
+    if (expiry && expiry.getTime() <= Date.now()) {
+      return res.status(400).json({ error: '유효기간이 이미 지난 날짜입니다. 오늘 이후 날짜를 골라주세요.' });
+    }
+
+    const normalizedCode = String(code).trim().toUpperCase();
+    const existing = await db('coupons').where('code', normalizedCode).first();
+    if (existing) return res.status(409).json({ error: '이미 존재하는 쿠폰 코드입니다' });
+
+    const [{ id }] = await db('coupons').insert({
+      code: normalizedCode,
+      discount_type: discountType,
+      discount_value: value,
+      min_order_amount: minOrderAmount !== undefined && minOrderAmount !== '' ? Number(minOrderAmount) : null,
+      max_discount_amount: maxDiscountAmount !== undefined && maxDiscountAmount !== '' ? Number(maxDiscountAmount) : null,
+      expires_at: expiry,
+      usage_limit: usageLimit !== undefined && usageLimit !== '' ? Number(usageLimit) : null,
+      used_count: 0,
+      is_active: true
+    }).returning('id');
+    const coupon = await db('coupons').where('id', id).first();
+    res.status(201).json(coupon);
+  } catch (e) {
+    console.error('[admin POST /coupons]', e.message);
+    res.status(500).json({ error: '쿠폰 생성에 실패했습니다' });
+  }
+});
+
+router.patch('/coupons/:id', adminMiddleware, async (req, res) => {
+  try {
+    const existing = await db('coupons').where('id', req.params.id).first();
+    if (!existing) return res.status(404).json({ error: '쿠폰을 찾을 수 없습니다' });
+
+    const data = {};
+    if (req.body.discountType !== undefined) {
+      if (!['FIXED', 'PERCENT'].includes(req.body.discountType)) return res.status(400).json({ error: '할인 유형이 올바르지 않습니다' });
+      data.discount_type = req.body.discountType;
+    }
+    if (req.body.discountValue !== undefined) {
+      const value = Number(req.body.discountValue);
+      if (!Number.isFinite(value) || value <= 0) return res.status(400).json({ error: '할인 값이 올바르지 않습니다' });
+      data.discount_value = value;
+    }
+    if (req.body.minOrderAmount !== undefined) data.min_order_amount = req.body.minOrderAmount === '' ? null : Number(req.body.minOrderAmount);
+    if (req.body.maxDiscountAmount !== undefined) data.max_discount_amount = req.body.maxDiscountAmount === '' ? null : Number(req.body.maxDiscountAmount);
+    if (req.body.usageLimit !== undefined) data.usage_limit = req.body.usageLimit === '' ? null : Number(req.body.usageLimit);
+    if (req.body.expiresAt !== undefined) {
+      const expiry = req.body.expiresAt ? toExpiryDate(req.body.expiresAt) : null;
+      if (expiry && expiry.getTime() <= Date.now()) {
+        return res.status(400).json({ error: '유효기간이 이미 지난 날짜입니다. 오늘 이후 날짜를 골라주세요.' });
+      }
+      data.expires_at = expiry;
+    }
+    if (req.body.isActive !== undefined) data.is_active = !!req.body.isActive;
+
+    await db('coupons').where('id', req.params.id).update(data);
+    const coupon = await db('coupons').where('id', req.params.id).first();
+    res.json(coupon);
+  } catch (e) {
+    console.error('[admin PATCH /coupons]', e.message);
+    res.status(500).json({ error: '쿠폰 수정에 실패했습니다' });
+  }
+});
+
+router.delete('/coupons/:id', adminMiddleware, async (req, res) => {
+  const count = await db('coupons').where('id', req.params.id).del();
+  if (!count) return res.status(404).json({ error: '쿠폰을 찾을 수 없습니다' });
   res.json({ message: '삭제되었습니다' });
 });
 

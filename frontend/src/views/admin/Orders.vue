@@ -39,6 +39,10 @@
               <span class="order-label">결제수단</span>
               <span class="order-value">{{ methodLabel(order.payment_method) }}</span>
             </div>
+            <div v-if="order.coupon_code" class="order-info-row">
+              <span class="order-label">적용 쿠폰</span>
+              <span class="order-value">{{ order.coupon_code }} (-₩{{ Number(order.discount_amount || 0).toLocaleString() }})</span>
+            </div>
 
             <button class="order-detail-toggle" @click="toggleExpand(order.id)">
               <span>주문 상품 {{ order.items?.length || 0 }}건 {{ isExpanded(order.id) ? '접기' : '상세보기' }}</span>

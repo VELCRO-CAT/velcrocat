@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { optionalAuthMiddleware } = require('../middleware/auth');
+const { validateCoupon } = require('../services/coupons');
 
 // 네이버 SMTP (users.js/newsletter.js와 동일 설정 — MAIL_USER/MAIL_PASS .env)
 const transporter = nodemailer.createTransport({
@@ -158,10 +159,26 @@ function closeAndRedirectHtml(redirectUrl, message = '결제 처리 중...') {
 // 1. 결제 준비 (READY)
 router.post('/ready', optionalAuthMiddleware, async (req, res) => {
   try {
-    const { items, amount, shippingAddress, paymethod = 'CARD', guestInfo } = req.body;
+    const { items, shippingAddress, paymethod = 'CARD', guestInfo, couponCode } = req.body;
 
-    if (!items?.length || !amount) {
+    if (!items?.length) {
       return res.status(400).json({ error: '주문 정보가 부족합니다' });
+    }
+
+    // 금액은 클라이언트가 보낸 amount를 신뢰하지 않고, 상품 가격 합계로 서버가 직접 계산한다.
+    // 쿠폰 할인도 여기서 다시 검증·계산한 값만 반영 — 클라이언트가 보여준 미리보기 금액은 참고용일 뿐.
+    const subtotal = items.reduce((sum, i) => sum + (Number(i.price) || 0) * (Number(i.quantity) || 1), 0);
+    let discountAmount = 0;
+    if (couponCode) {
+      try {
+        discountAmount = (await validateCoupon(couponCode, subtotal)).discountAmount;
+      } catch (e) {
+        return res.status(e.status || 400).json({ error: e.message || '쿠폰을 적용할 수 없습니다' });
+      }
+    }
+    const amount = subtotal - discountAmount;
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return res.status(400).json({ error: '주문 금액이 올바르지 않습니다' });
     }
 
     // 비회원 주문: 로그인 정보 대신 주문자 정보 + 주문조회용 비밀번호를 받는다
@@ -195,6 +212,8 @@ router.post('/ready', optionalAuthMiddleware, async (req, res) => {
       guest_password: guestPasswordHash,
       items_json: JSON.stringify(items),
       total: amount,
+      discount_amount: discountAmount,
+      coupon_code: couponCode ? String(couponCode).trim().toUpperCase() : null,
       payment_method: 'mpc',
       shipping_address_json: JSON.stringify(shippingAddress || {}),
       status: 'pending'
@@ -457,6 +476,26 @@ router.post('/notify', async (req, res) => {
       }
     } catch (stockErr) {
       console.error('[MPC notify] 재고 차감 실패', orderNo, stockErr.message);
+    }
+
+    // 쿠폰 소진 (재고 차감과 같은 타이밍 — 주문 생성 시점엔 검증만 했고 올리지 않았다).
+    // WHERE 조건에 한도 체크를 같이 걸어서, 마지막 1장을 두고 여러 주문이 동시에 경쟁해도
+    // DB 레벨에서 오버유즈를 막는다. 영향받은 row가 0이면 레이스로 못 올린 것인데,
+    // 이미 결제된 돈을 무르지 않고 로그만 남긴다.
+    if (order.coupon_code) {
+      try {
+        const affected = await db('coupons')
+          .where('code', order.coupon_code)
+          .where(function () {
+            this.whereNull('usage_limit').orWhereRaw('used_count < usage_limit');
+          })
+          .update({ used_count: db.raw('used_count + 1') });
+        if (!affected) {
+          console.error(`[ALERT][coupon-overuse] order=${orderNo} code=${order.coupon_code}`);
+        }
+      } catch (couponErr) {
+        console.error('[MPC notify] 쿠폰 소진 처리 실패', orderNo, couponErr.message);
+      }
     }
 
     // 주문 확인 메일 (상품/사이즈/색상/배송지 안내)
