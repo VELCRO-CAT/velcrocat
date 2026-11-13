@@ -289,10 +289,6 @@ const { lf } = useLocalized();
 const storyRef = ref(null);
 const pickupItems = ref([]);
 const storeImages = [
-  { src: '/store-cardigan-navy.jpg', alt: 'Velcrocat navy cardigan in store' },
-  { src: '/store-cardigan-gray.jpg', alt: 'Velcrocat gray cardigan in store' },
-  { src: '/store-knit-ivory.jpg', alt: 'Velcrocat ivory knit in store' },
-  { src: '/store-polo-gray.jpg', alt: 'Velcrocat gray polo in store' },
   { src: '/store-polo-black.jpg', alt: 'Velcrocat black polo in store' },
   { src: '/store-tee-mixed.jpg', alt: 'Velcrocat rack display in store' },
   { src: '/store-navy-cardigan-rack.jpg', alt: 'Velcrocat navy cardigan on rack in store' },
