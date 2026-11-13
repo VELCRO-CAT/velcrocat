@@ -17,7 +17,6 @@
           <router-link to="/contact">CONTACT</router-link>
         </div>
         <div class="brand-nav-sub">
-          <a href="#" class="sub-link">{{ t('about.navCompanyIntro') }}</a>
           <router-link to="/privacy" class="sub-link">{{ t('about.navPrivacy') }}</router-link>
           <router-link to="/terms" class="sub-link">{{ t('terms.pageTitle') }}</router-link>
           <a href="https://www.instagram.com/" target="_blank" class="sub-social">
