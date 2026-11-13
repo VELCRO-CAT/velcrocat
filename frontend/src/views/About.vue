@@ -1300,7 +1300,7 @@ onUnmounted(() => {
 }
 .footer-nav a {
   font-size: 13px;
-  color: #666;
+  color: #aaa;
   text-decoration: none;
   letter-spacing: 1px;
   transition: color 0.2s;
@@ -1318,13 +1318,13 @@ onUnmounted(() => {
 }
 .footer-biz p {
   font-size: 13px;
-  color: #555;
+  color: #999;
   line-height: 1.9;
   margin: 0;
 }
 .footer-copy {
   font-size: 13px;
-  color: #444;
+  color: #888;
 }
 
 /* 모바일 반응형 */
