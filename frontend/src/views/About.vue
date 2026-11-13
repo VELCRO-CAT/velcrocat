@@ -294,7 +294,13 @@ const storeImages = [
   { src: '/store-knit-ivory.jpg', alt: 'Velcrocat ivory knit in store' },
   { src: '/store-polo-gray.jpg', alt: 'Velcrocat gray polo in store' },
   { src: '/store-polo-black.jpg', alt: 'Velcrocat black polo in store' },
-  { src: '/store-tee-mixed.jpg', alt: 'Velcrocat rack display in store' }
+  { src: '/store-tee-mixed.jpg', alt: 'Velcrocat rack display in store' },
+  { src: '/store-navy-cardigan-rack.jpg', alt: 'Velcrocat navy cardigan on rack in store' },
+  { src: '/store-gray-cardigan-rack.jpg', alt: 'Velcrocat gray cardigan on rack in store' },
+  { src: '/store-entrance-wide.jpg', alt: 'Velcrocat store entrance with sweaters on display' },
+  { src: '/store-cream-sweater-rack.jpg', alt: 'Velcrocat cream sweater on rack in store' },
+  { src: '/store-cream-vneck-rack.jpg', alt: 'Velcrocat cream v-neck sweater on rack in store' },
+  { src: '/store-gray-polo-rack.jpg', alt: 'Velcrocat gray polo on rack in store' }
 ];
 const bgAudio = ref(null);
 const musicStarted = ref(false);
@@ -1246,10 +1252,10 @@ onUnmounted(() => {
 .btn-outline:hover { background: #111; color: #fff; }
 
 /* 매장 입점 스냅샷 */
-.instore { max-width: 1200px; }
+.instore { max-width: 1440px; }
 .instore-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 .instore-item {
@@ -1260,7 +1266,7 @@ onUnmounted(() => {
 .instore-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.4s;
 }
 .instore-item:hover img { transform: scale(1.05); }
