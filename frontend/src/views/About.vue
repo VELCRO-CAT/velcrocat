@@ -54,7 +54,7 @@
       </div>
       <div class="hero-content">
         <div class="hero-wordmark hero-reveal hero-reveal-2">
-          <img src="/favicon.png" alt="Velcro Cat" class="hero-cat-icon" />
+          <img src="/cat-icon-hero.png" alt="Velcro Cat" class="hero-cat-icon" />
           <div class="hero-wordmark-text">
             <span class="hero-wordmark-main">VELCRO</span>
             <span class="hero-wordmark-sub">CAT</span>
