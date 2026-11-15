@@ -46,13 +46,13 @@ export default {
     companyCeo: '共同代表 : 김충성, 장윤호',
     companyRegNo: '事業者登録番号 : 180-02-03888',
     companyBiz: '業態 : 卸小売 / 種目 : 電子商取引小売業',
-    companyAddress: '住所 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)、韓国',
+    companyAddress: '住所 : 경기도 안양시 동안구 관악대로360번길 22, 302호 (운산빌딩)、韓国',
     companyEmail: "E-MAIL : velcrocat{'@'}velcrocat.com",
     companyJapanBranch: '日本支店 : (주) A-ble',
     companyJapanAddress: '住所 : 東京都渋谷区本町1-20-2-506 (〒151-0071)',
     returnTitle: '交換 / 返品',
     returnAddressLabel: '交換/返品先住所 :',
-    returnAddress: '경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)、韓国',
+    returnAddress: '경기도 안양시 동안구 관악대로360번길 22, 302호 (운산빌딩)、韓国',
     returnPeriod: '商品受け取り後7日以内に交換・返品可能',
     menuTitle: 'ショップメニュー',
     menuHome: 'ホーム',
@@ -96,7 +96,7 @@ export default {
     ctaDesc: 'VELCROCATの新しいコレクションを今すぐチェック。<br>快適さとスタイル、どちらも見逃さないで。',
     bizLine1: '商号 : Velcrocat · 共同代表 : 김충성, 장윤호',
     bizLine2: '事業者登録番号 : 180-02-03888 · 業態 : 卸小売 · 種目 : 電子商取引小売業',
-    bizLine3: '住所 : 경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)、韓国',
+    bizLine3: '住所 : 경기도 안양시 동안구 관악대로360번길 22, 302호 (운산빌딩)、韓国',
     navCompanyIntro: 'ブランド紹介',
     navPrivacy: 'プライバシーポリシー'
   },
@@ -467,6 +467,6 @@ export default {
     s9Desc: '本プライバシーポリシーは2026年3月17日から適用されます。変更事項がある場合はウェブサイトのお知らせを通じて告知します。',
     footerLine1: '商号：Velcrocat（벨크로캣） · 共同代表：김충성, 장윤호',
     footerLine2: '事業者登録番号：180-02-03888',
-    footerLine3: '住所：경기도 안양시 동안구 관악대로360번길 22, 301호 (운산빌딩)、韓国'
+    footerLine3: '住所：경기도 안양시 동안구 관악대로360번길 22, 302호 (운산빌딩)、韓国'
   }
 };
