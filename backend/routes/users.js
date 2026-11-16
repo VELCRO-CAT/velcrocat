@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const db = require('../db');
 const { authMiddleware } = require('../middleware/auth');
+const { loginLimiter, codeRequestLimiter } = require('../middleware/rateLimit');
 
 // 이메일 전송 설정 (네이버 SMTP)
 const transporter = nodemailer.createTransport({
@@ -33,7 +34,7 @@ function generateToken(user) {
 }
 
 // 회원가입 이메일 인증코드 발송
-router.post('/register/send-code', async (req, res) => {
+router.post('/register/send-code', codeRequestLimiter, async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: '이메일을 입력해주세요' });
 
@@ -139,7 +140,7 @@ router.post('/register', async (req, res) => {
   res.status(201).json({ message: '회원가입이 완료되었습니다', token: generateToken(user), user });
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: '이메일과 비밀번호를 입력해주세요' });
 
@@ -200,12 +201,18 @@ router.delete('/me', authMiddleware, async (req, res) => {
 });
 
 // 비밀번호 찾기 - 인증코드 발송
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', codeRequestLimiter, async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: '이메일을 입력해주세요' });
 
   const user = await db('users').where('email', email).first();
   if (!user) return res.status(404).json({ error: '등록되지 않은 이메일입니다' });
+
+  // 카카오/네이버로만 가입한 계정은 원래 비밀번호가 없다(password='') — 여기서 막지 않으면
+  // 재설정이 아니라 그 계정에 없던 이메일+비밀번호 로그인 수단을 새로 만들어주는 꼴이 된다.
+  if (!user.password) {
+    return res.status(400).json({ error: '카카오 또는 네이버로 가입된 계정입니다. 해당 서비스로 로그인해주세요' });
+  }
 
   // 6자리 인증코드 생성
   const code = String(Math.floor(100000 + Math.random() * 900000));
@@ -282,6 +289,11 @@ router.post('/reset-password', async (req, res) => {
   try {
     const payload = jwt.verify(resetToken, process.env.JWT_SECRET);
     if (payload.purpose !== 'reset') throw new Error('invalid token');
+
+    const user = await db('users').where('email', payload.email).first();
+    if (!user || !user.password) {
+      return res.status(400).json({ error: '카카오 또는 네이버로 가입된 계정입니다. 해당 서비스로 로그인해주세요' });
+    }
 
     const hashed = await bcrypt.hash(password, 10);
     await db('users').where('email', payload.email).update({ password: hashed });

@@ -30,7 +30,7 @@
         <div class="nav-desktop">
           <router-link to="/products" class="nav-link hvr-underline-from-center">{{ t('nav.shop') }}</router-link>
           <!-- CATEGORY 드롭다운 -->
-          <div class="nav-category" @mouseenter="catOpen = true" @mouseleave="catOpen = false; activeGender = null">
+          <div class="nav-category" @mouseenter="catOpen = true" @click="catOpen = !catOpen" @mouseleave="catOpen = false; activeGender = null">
             <span class="nav-link hvr-underline-from-center" style="cursor:pointer">{{ t('nav.category') }}</span>
             <transition name="fade">
               <div v-if="catOpen" class="cat-dropdown">
@@ -42,6 +42,7 @@
                     class="cat-gender"
                     :class="{ active: activeGender === g.key }"
                     @mouseenter="activeGender = g.key"
+                    @click="activeGender = g.key"
                   >
                     <span>{{ g.label }}</span>
                     <span class="cat-gender-arrow">▸</span>
@@ -85,7 +86,7 @@
 
           <!-- 찜 목록 -->
           <div class="nav-wish" @mouseenter="wishOpen = true" @mouseleave="wishOpen = false">
-            <button class="nav-wish-btn">
+            <button class="nav-wish-btn" @click="wishOpen = !wishOpen">
               <v-badge :content="wishlistStore.count" :model-value="wishlistStore.count > 0" color="black">
                 <v-icon size="20" color="#111">mdi-star-outline</v-icon>
               </v-badge>
@@ -393,6 +394,7 @@ function logout() {
   justify-content: center;
   position: relative;
   padding: 0 40px;
+  padding-right: 160px; /* 언어·찜·카트 아이콘그룹 폭만큼 확보 */
 }
 .nav-link {
   display: inline-block;
