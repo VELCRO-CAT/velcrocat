@@ -27,7 +27,7 @@
       </div>
 
       <div v-else class="order-list">
-        <div v-for="order in pagedOrders" :key="order.id" class="order-card">
+        <div v-for="order in pagedOrders" :key="order.id" class="order-card" :class="{ 'order-card-pending': order.status === 'pending' }">
           <div class="order-top">
             <div>
               <span class="order-no">{{ order.order_no }}</span>
@@ -294,6 +294,49 @@ function formatDate(dt) {
   border-radius: 8px;
   overflow: hidden;
 }
+
+/* 입금대기 주문 카드 — 전체를 네이비로 채워서 한눈에 구분되게 */
+.order-card-pending {
+  background: #16233f;
+  border-color: #16233f;
+}
+.order-card-pending .order-top,
+.order-card-pending .order-bottom {
+  background: #1c2d4f;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.order-card-pending .order-no,
+.order-card-pending .order-value,
+.order-card-pending .order-price,
+.order-card-pending .order-item-name,
+.order-card-pending .order-item-price,
+.order-card-pending .order-cancelled-note {
+  color: #fff;
+}
+.order-card-pending .order-date,
+.order-card-pending .order-label,
+.order-card-pending .order-item-opts,
+.order-card-pending .order-shipping-detail,
+.order-card-pending .order-section-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+.order-card-pending .order-detail-toggle { color: rgba(255, 255, 255, 0.75); }
+.order-card-pending .order-detail-toggle:hover { color: #fff; }
+.order-card-pending .order-detail,
+.order-card-pending .order-shipping-detail {
+  border-top-color: rgba(255, 255, 255, 0.15);
+}
+.order-card-pending .order-item-thumb { border-color: rgba(255, 255, 255, 0.2); }
+.order-card-pending .status-badge.status-pending { background: #fff; color: #16233f; }
+.order-card-pending .deposit-confirm-btn { border-color: #fff; color: #fff; }
+.order-card-pending .deposit-confirm-btn:hover { background: #fff; color: #16233f; }
+.order-card-pending .edit-toggle-btn,
+.order-card-pending .delete-btn {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.75);
+}
+.order-card-pending .edit-toggle-btn:hover { border-color: #fff; color: #fff; }
+.order-card-pending .delete-btn:hover { border-color: #ff8a8a; color: #ff8a8a; }
 .order-top {
   display: flex;
   justify-content: space-between;
