@@ -234,7 +234,7 @@
           <div class="footer-col">
             <h4>{{ t('footer.menuTitle') }}</h4>
             <router-link to="/" class="footer-menu-link">{{ t('footer.menuHome') }}</router-link>
-            <router-link to="/brand" class="footer-menu-link">{{ t('footer.menuBrand') }}</router-link>
+            <router-link to="/" class="footer-menu-link">{{ t('footer.menuBrand') }}</router-link>
             <router-link to="/story" class="footer-menu-link">{{ t('footer.menuStory') }}</router-link>
             <router-link to="/products" class="footer-menu-link">{{ t('footer.menuProducts') }}</router-link>
             <router-link to="/contact" class="footer-menu-link">{{ t('footer.menuContact') }}</router-link>
@@ -289,7 +289,7 @@ import { useLocalized } from './composables/useLocalized';
 const { t } = useI18n();
 const { lf } = useLocalized();
 const route = useRoute();
-const isBrandPage = computed(() => route.path === '/brand' || route.path === '/about');
+const isBrandPage = computed(() => route.path === '/' || route.path === '/brand' || route.path === '/about');
 const isAdminPage = computed(() => route.path.startsWith('/admin'));
 
 const cartStore = useCartStore();

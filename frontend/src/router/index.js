@@ -31,9 +31,9 @@ import AdminBankSettings from '../views/admin/BankSettings.vue';
 const DEFAULT_DESC = '벨크로캣(VELCROCAT, VCAT) - 일본식 의류의 트렌드와 스타일링. 가디건, 니트, 풀오버 등 프리미엄 울 100% 의류';
 
 const routes = [
-  { path: '/', redirect: '/brand' },
+  { path: '/', component: About, meta: { title: '벨크로캣(VELCROCAT) | 브랜드 소개', description: DEFAULT_DESC } },
   { path: '/home', redirect: '/products' },
-  { path: '/brand', component: About, meta: { title: '벨크로캣(VELCROCAT) | 브랜드 소개', description: DEFAULT_DESC } },
+  { path: '/brand', redirect: '/' },
   { path: '/story', component: Story, meta: { title: '브랜드 스토리 | 벨크로캣(VELCROCAT)', description: DEFAULT_DESC } },
   { path: '/products', component: Products, meta: { title: '전체 상품 | 벨크로캣(VELCROCAT)', description: '벨크로캣(VELCROCAT) 전체 상품 - 가디건, 니트, 풀오버 등 프리미엄 울 100% 의류를 만나보세요.' } },
   { path: '/products/:id', component: ProductDetail },
@@ -47,7 +47,7 @@ const routes = [
   { path: '/order-complete', component: OrderComplete, meta: { title: '주문완료 | 벨크로캣(VELCROCAT)' } },
   { path: '/order-lookup', component: GuestOrderLookup, meta: { title: '비회원 주문조회 | 벨크로캣(VELCROCAT)' } },
   { path: '/contact', component: Contact, meta: { title: '문의하기 | 벨크로캣(VELCROCAT)', description: '벨크로캣(VELCROCAT)에 궁금한 점을 문의해보세요.' } },
-  { path: '/about', redirect: '/brand' },
+  { path: '/about', redirect: '/' },
   { path: '/privacy', component: Privacy, meta: { title: '개인정보처리방침 | 벨크로캣(VELCROCAT)' } },
   { path: '/terms', component: Terms, meta: { title: '이용약관 | 벨크로캣(VELCROCAT)' } },
   { path: '/refund', component: Refund, meta: { title: '환불정책 | 벨크로캣(VELCROCAT)' } },

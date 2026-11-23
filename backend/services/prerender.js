@@ -52,7 +52,7 @@ const DEFAULT_DESC = '벨크로캣(VELCROCAT, VCAT) - 일본식 의류의 트렌
 
 // 정적 페이지 메타 — frontend/src/router/index.js의 route meta.title/description과 맞춰둠
 const STATIC_PAGE_META = {
-  '/brand': { title: '벨크로캣(VELCROCAT) | 브랜드 소개', description: DEFAULT_DESC },
+  '/': { title: '벨크로캣(VELCROCAT) | 브랜드 소개', description: DEFAULT_DESC },
   '/products': { title: '전체 상품 | 벨크로캣(VELCROCAT)', description: '벨크로캣(VELCROCAT) 전체 상품 - 가디건, 니트, 풀오버 등 프리미엄 울 100% 의류를 만나보세요.' },
   '/story': { title: '브랜드 스토리 | 벨크로캣(VELCROCAT)', description: DEFAULT_DESC },
   '/contact': { title: '문의하기 | 벨크로캣(VELCROCAT)', description: '벨크로캣(VELCROCAT)에 궁금한 점을 문의해보세요.' },
