@@ -454,7 +454,7 @@ function formatDate(dt) {
   letter-spacing: 0.02em;
 }
 .status-badge.status-paid { background: #111; color: #fff; }
-.status-badge.status-pending { background: #fff; color: #b88a00; border: 1px solid #e8b94a; }
+.status-badge.status-pending { background: #16233f; color: #fff; }
 .status-badge.status-cancelled { background: #fce4ec; color: #c62828; }
 
 /* 배송 상태 3단 버튼 */
