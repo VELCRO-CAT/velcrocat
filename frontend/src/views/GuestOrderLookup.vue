@@ -32,7 +32,7 @@
           <span class="order-no">{{ order.order_no }}</span>
           <span class="order-date">{{ formatDate(order.created_at) }}</span>
         </div>
-        <span class="order-status-chip">{{ statusLabel(order.status) }}</span>
+        <span class="order-status-chip">{{ displayStatusLabel(order) }}</span>
       </div>
 
       <p class="order-section-label">{{ t('mypage.sectionItems') }}</p>
@@ -131,13 +131,18 @@ function statusLabel(s) {
   const map = {
     pending: t('mypage.statusPending'),
     paid: t('mypage.statusPaid'),
-    confirmed: t('mypage.statusConfirmed'),
-    processing: t('mypage.statusProcessing'),
-    shipped: t('mypage.statusShipped'),
+    preparing: t('mypage.statusPreparing'),
+    shipping: t('mypage.statusShipped'),
     delivered: t('mypage.statusDelivered'),
     cancelled: t('mypage.statusCancelled')
   };
   return map[s] || s;
+}
+
+// 결제완료 주문은 배송 진행 상태(shipping_status)가 실제 표시 상태 — status는 이제 결제 상태만 의미한다.
+function displayStatusLabel(order) {
+  if (order.status === 'paid') return statusLabel(order.shipping_status || 'preparing');
+  return statusLabel(order.status);
 }
 </script>
 

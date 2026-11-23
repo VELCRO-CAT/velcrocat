@@ -5,7 +5,7 @@
     <v-container class="admin-container" style="max-width:1000px">
       <h1 class="page-title">주문 관리</h1>
       <p class="page-sub mb-5">
-        총 {{ orders.length }}건의 주문<span v-if="searchQuery"> · 검색결과 {{ filteredOrders.length }}건</span><span v-if="totalPages > 1"> · {{ currentPage }}/{{ totalPages }}페이지</span>
+        총 {{ orders.length }}건의 주문 · 결제완료 {{ orderCounts.paid }}건 · 입금대기 {{ orderCounts.pending }}건<span v-if="searchQuery"> · 검색결과 {{ filteredOrders.length }}건</span><span v-if="totalPages > 1"> · {{ currentPage }}/{{ totalPages }}페이지</span>
       </p>
 
       <v-text-field
@@ -27,15 +27,13 @@
       </div>
 
       <div v-else class="order-list">
-        <div v-for="order in pagedOrders" :key="order.id" class="order-card" :class="{ 'order-card-bank-transfer': order.payment_method === 'bank_transfer' }">
+        <div v-for="order in pagedOrders" :key="order.id" class="order-card">
           <div class="order-top">
             <div>
               <span class="order-no">{{ order.order_no }}</span>
               <span class="order-date">{{ formatDate(order.created_at) }}</span>
             </div>
-            <v-chip :color="statusColor(order.status)" size="x-small" variant="tonal">
-              {{ statusLabel(order.status) }}
-            </v-chip>
+            <span class="status-badge" :class="`status-${order.status}`">{{ statusLabel(order.status) }}</span>
           </div>
           <div class="order-body">
             <div class="order-info-row">
@@ -99,14 +97,37 @@
           </div>
           <div class="order-bottom">
             <div class="order-bottom-left">
-              <span class="order-label">상태 변경</span>
-              <select class="order-status-select" :value="order.status" @change="updateStatus(order, $event.target.value)">
-                <option v-for="s in statusItems" :key="s.value" :value="s.value">{{ s.title }}</option>
-              </select>
+              <span class="order-label">배송 상태</span>
+
+              <button
+                v-if="order.status === 'pending'"
+                class="deposit-confirm-btn"
+                @click="confirmDeposit(order)"
+              >입금확인</button>
+
+              <div v-else-if="order.status === 'paid'" class="shipping-status-group">
+                <button
+                  v-for="s in SHIPPING_STEPS"
+                  :key="s.value"
+                  class="shipping-status-btn"
+                  :class="{ active: order.shipping_status === s.value }"
+                  @click="updateShippingStatus(order, s.value)"
+                >{{ s.title }}</button>
+              </div>
+
+              <span v-else class="order-cancelled-note">취소된 주문입니다</span>
             </div>
-            <button class="delete-btn" @click="deleteOrder(order)">
-              <v-icon size="16">mdi-delete-outline</v-icon>
-            </button>
+
+            <div class="order-bottom-right">
+              <template v-if="isEditing(order.id)">
+                <button v-if="order.status !== 'cancelled'" class="cancel-order-btn" @click="cancelOrder(order)">주문 취소</button>
+                <button class="edit-toggle-btn" @click="toggleEdit(order.id)">닫기</button>
+              </template>
+              <button v-else class="edit-toggle-btn" @click="toggleEdit(order.id)">수정</button>
+              <button class="delete-btn" @click="deleteOrder(order)">
+                <v-icon size="16">mdi-delete-outline</v-icon>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -187,15 +208,28 @@ function toggleExpand(id) {
 function isExpanded(id) {
   return expandedIds.value.has(id);
 }
-const statusItems = [
-  { title: '대기중', value: 'pending' },
-  { title: '결제완료', value: 'paid' },
-  { title: '확인됨', value: 'confirmed' },
-  { title: '처리중', value: 'processing' },
-  { title: '발송완료', value: 'shipped' },
-  { title: '배달완료', value: 'delivered' },
-  { title: '취소됨', value: 'cancelled' }
+
+const SHIPPING_STEPS = [
+  { title: '배송준비중', value: 'preparing' },
+  { title: '배송중', value: 'shipping' },
+  { title: '배송완료', value: 'delivered' }
 ];
+
+const editingIds = ref(new Set());
+function toggleEdit(id) {
+  const next = new Set(editingIds.value);
+  if (next.has(id)) next.delete(id);
+  else next.add(id);
+  editingIds.value = next;
+}
+function isEditing(id) {
+  return editingIds.value.has(id);
+}
+
+const orderCounts = computed(() => ({
+  paid: orders.value.filter(o => o.status === 'paid').length,
+  pending: orders.value.filter(o => o.status === 'pending').length
+}));
 
 onMounted(async () => {
   const res = await axios.get('/api/admin/orders');
@@ -211,9 +245,23 @@ onMounted(async () => {
   loading.value = false;
 });
 
-async function updateStatus(order, status) {
-  await axios.patch(`/api/admin/orders/${order.id}/status`, { status });
-  order.status = status;
+async function confirmDeposit(order) {
+  if (!confirm(`주문 ${order.order_no}의 입금을 확인하셨나요? 결제완료로 전환되며 재고가 차감됩니다.`)) return;
+  const { data } = await axios.patch(`/api/admin/orders/${order.id}/status`, { status: 'paid' });
+  order.status = data.status;
+  order.shipping_status = data.shipping_status;
+}
+
+async function cancelOrder(order) {
+  if (!confirm(`주문 ${order.order_no}을(를) 취소하시겠습니까?`)) return;
+  const { data } = await axios.patch(`/api/admin/orders/${order.id}/status`, { status: 'cancelled' });
+  order.status = data.status;
+  toggleEdit(order.id);
+}
+
+async function updateShippingStatus(order, shipping_status) {
+  await axios.patch(`/api/admin/orders/${order.id}/shipping-status`, { shipping_status });
+  order.shipping_status = shipping_status;
 }
 
 async function deleteOrder(order) {
@@ -223,10 +271,7 @@ async function deleteOrder(order) {
 }
 
 function statusLabel(s) {
-  return { pending:'대기중', paid:'결제완료', confirmed:'확인됨', processing:'처리중', shipped:'발송완료', delivered:'배달완료', cancelled:'취소됨' }[s] || s;
-}
-function statusColor(s) {
-  return { pending:'grey', paid:'blue', confirmed:'blue', processing:'orange', shipped:'green', delivered:'grey-darken-1', cancelled:'red' }[s] || 'grey';
+  return { pending:'입금대기', paid:'결제완료', cancelled:'취소됨' }[s] || s;
 }
 function methodLabel(m) {
   return { card:'카드결제', kakaopay:'카카오페이', naverpay:'네이버페이', tosspay:'토스페이', mpc:'카드결제', bank_transfer:'무통장입금' }[m] || m || '-';
@@ -248,15 +293,6 @@ function formatDate(dt) {
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   overflow: hidden;
-}
-.order-card-bank-transfer {
-  background: #fffaf0;
-  border-color: #f0dca0;
-}
-.order-card-bank-transfer .order-top,
-.order-card-bank-transfer .order-bottom {
-  background: #fff3d6;
-  border-color: #f0dca0;
 }
 .order-top {
   display: flex;
@@ -390,6 +426,11 @@ function formatDate(dt) {
   align-items: center;
   gap: 10px;
 }
+.order-bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .delete-btn {
   background: none;
   border: 1px solid #ddd;
@@ -403,17 +444,67 @@ function formatDate(dt) {
   color: #e53e3e;
   border-color: #e53e3e;
 }
-.order-status-select {
-  border: 1px solid #ddd;
-  padding: 6px 10px;
-  font-size: 12px;
-  border-radius: 4px;
-  background: #fff;
-  color: #333;
-  cursor: pointer;
-  outline: none;
+
+/* 상태 배지 */
+.status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 2px;
+  letter-spacing: 0.02em;
 }
-.order-status-select:focus { border-color: #111; }
+.status-badge.status-paid { background: #111; color: #fff; }
+.status-badge.status-pending { background: #fff; color: #b88a00; border: 1px solid #e8b94a; }
+.status-badge.status-cancelled { background: #fce4ec; color: #c62828; }
+
+/* 배송 상태 3단 버튼 */
+.shipping-status-group { display: flex; gap: 6px; }
+.shipping-status-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #777;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.shipping-status-btn:hover { border-color: #111; color: #111; }
+.shipping-status-btn.active { background: #111; border-color: #111; color: #fff; }
+
+/* 입금확인 버튼 */
+.deposit-confirm-btn {
+  border: 1px solid #111;
+  background: #fff;
+  color: #111;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.deposit-confirm-btn:hover { background: #111; color: #fff; }
+
+.order-cancelled-note { font-size: 12.5px; color: #c62828; font-weight: 600; }
+
+/* 수정/취소 버튼 */
+.edit-toggle-btn,
+.cancel-order-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #666;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.edit-toggle-btn:hover { border-color: #111; color: #111; }
+.cancel-order-btn { border-color: #f0b4b4; color: #c62828; }
+.cancel-order-btn:hover { background: #c62828; border-color: #c62828; color: #fff; }
 
 .pagination {
   display: flex;

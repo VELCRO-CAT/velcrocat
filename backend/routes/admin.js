@@ -84,7 +84,11 @@ router.get('/orders', adminMiddleware, async (req, res) => {
   })));
 });
 
+// 결제 상태(pending/paid/cancelled) 변경 — 배송 진행 상태는 /orders/:id/shipping-status에서 별도 관리.
 router.patch('/orders/:id/status', adminMiddleware, async (req, res) => {
+  if (!['pending', 'paid', 'cancelled'].includes(req.body.status)) {
+    return res.status(400).json({ error: '잘못된 상태 값입니다' });
+  }
   const before = await db('orders').where('id', req.params.id).first();
   await db('orders').where('id', req.params.id).update({ status: req.body.status });
 
@@ -105,6 +109,17 @@ router.patch('/orders/:id/status', adminMiddleware, async (req, res) => {
     }
   }
 
+  const order = await db('orders').where('id', req.params.id).first();
+  res.json(order);
+});
+
+// 배송 진행 상태 — 결제완료(paid) 주문에서만 의미가 있지만 값 자체는 항상 바꿀 수 있게 둔다
+// (관리자가 실수로 되돌리고 싶을 수도 있으니 굳이 status로 막지 않는다).
+router.patch('/orders/:id/shipping-status', adminMiddleware, async (req, res) => {
+  if (!['preparing', 'shipping', 'delivered'].includes(req.body.shipping_status)) {
+    return res.status(400).json({ error: '잘못된 배송 상태 값입니다' });
+  }
+  await db('orders').where('id', req.params.id).update({ shipping_status: req.body.shipping_status });
   const order = await db('orders').where('id', req.params.id).first();
   res.json(order);
 });

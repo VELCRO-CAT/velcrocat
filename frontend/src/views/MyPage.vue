@@ -100,12 +100,12 @@
                 <div v-else-if="order.status !== 'cancelled'" class="order-stepper">
                   <div class="order-stepper-track">
                     <template v-for="(s, idx) in STEP_ORDER" :key="s">
-                      <span class="order-stepper-node" :class="{ done: idx <= stepIndex(order.status) }"></span>
-                      <span v-if="idx < STEP_ORDER.length - 1" class="order-stepper-bar" :class="{ done: idx < stepIndex(order.status) }"></span>
+                      <span class="order-stepper-node" :class="{ done: idx <= stepIndex(order) }"></span>
+                      <span v-if="idx < STEP_ORDER.length - 1" class="order-stepper-bar" :class="{ done: idx < stepIndex(order) }"></span>
                     </template>
                   </div>
                   <div class="order-stepper-labels">
-                    <span v-for="s in STEP_ORDER" :key="s" :class="{ on: s === order.status }">{{ statusLabel(s) }}</span>
+                    <span v-for="(s, idx) in STEP_ORDER" :key="s" :class="{ on: idx === stepIndex(order) }">{{ statusLabel(s) }}</span>
                   </div>
                 </div>
 
@@ -387,10 +387,13 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const LOCALE_TAGS = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' };
-const STEP_ORDER = ['paid', 'confirmed', 'processing', 'shipped', 'delivered'];
-function stepIndex(status) {
-  const i = STEP_ORDER.indexOf(status);
-  return i === -1 ? 0 : i;
+// 결제(status)와 배송 진행(shipping_status)이 분리된 뒤의 통합 스텝 — 결제완료는 항상 이 분기에
+// 들어온 시점에 이미 끝난 상태이고, 그 다음은 shipping_status(준비중/배송중/배송완료)로 진행된다.
+const STEP_ORDER = ['paid', 'preparing', 'shipping', 'delivered'];
+function stepIndex(order) {
+  if (order.shipping_status === 'delivered') return 3;
+  if (order.shipping_status === 'shipping') return 2;
+  return 1; // shipping_status 없음(과거 데이터) 또는 'preparing'
 }
 
 // u-ur의 My Account 좌측 사이드바를 참고한 섹션 전환 — 페이지 이동 없이
@@ -492,25 +495,24 @@ function goToOrdersPage(p) {
   ordersPage.value = p;
 }
 
-const IN_PROGRESS_STATUSES = ['paid', 'confirmed', 'processing', 'shipped'];
 const orderStats = computed(() => {
   const list = orders.value;
   return {
     total: list.length,
-    inProgress: list.filter(o => IN_PROGRESS_STATUSES.includes(o.status)).length,
+    inProgress: list.filter(o => o.status === 'paid' && o.shipping_status !== 'delivered').length,
     spent: list.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + Number(o.total || 0), 0)
   };
 });
 
-// u-ur의 "나의 주문처리 현황" 단계별 건수 집계를 참고 — 우리 주문 상태에 맞춰 4단계로 재구성
+// 결제(status)와 배송 진행(shipping_status)이 분리된 뒤의 3단계 집계 — 배송준비중/배송중/배송완료.
+// 결제완료(paid)된 주문만 대상 — pending(입금대기)/cancelled는 배송 진행 자체가 의미 없다.
 const orderFunnel = computed(() => {
-  const list = orders.value.filter(o => o.status !== 'cancelled');
+  const list = orders.value.filter(o => o.status === 'paid');
   const count = pred => list.filter(pred).length;
   return [
-    { key: 'paid', label: t('mypage.statusPaid'), count: count(o => o.status === 'paid') },
-    { key: 'preparing', label: t('mypage.statusProcessing'), count: count(o => o.status === 'confirmed' || o.status === 'processing') },
-    { key: 'shipped', label: t('mypage.statusShipped'), count: count(o => o.status === 'shipped') },
-    { key: 'delivered', label: t('mypage.statusDelivered'), count: count(o => o.status === 'delivered') }
+    { key: 'preparing', label: t('mypage.statusPreparing'), count: count(o => !o.shipping_status || o.shipping_status === 'preparing') },
+    { key: 'shipping', label: t('mypage.statusShipped'), count: count(o => o.shipping_status === 'shipping') },
+    { key: 'delivered', label: t('mypage.statusDelivered'), count: count(o => o.shipping_status === 'delivered') }
   ];
 });
 
@@ -747,6 +749,7 @@ function statusLabel(s) {
     confirmed: t('mypage.statusConfirmed'),
     processing: t('mypage.statusProcessing'),
     preparing: t('mypage.statusPreparing'),
+    shipping: t('mypage.statusShipped'),
     shipped: t('mypage.statusShipped'),
     delivered: t('mypage.statusDelivered'),
     cancelled: t('mypage.statusCancelled')
