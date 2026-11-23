@@ -328,10 +328,11 @@ function formatDate(dt) {
 }
 .order-card-pending .order-item-thumb { border-color: rgba(255, 255, 255, 0.2); }
 .order-card-pending .status-badge.status-pending { background: #fff; color: #16233f; }
-.order-card-pending .deposit-confirm-btn { border-color: #fff; color: #fff; }
+.order-card-pending .deposit-confirm-btn { background: transparent; border-color: #fff; color: #fff; }
 .order-card-pending .deposit-confirm-btn:hover { background: #fff; color: #16233f; }
 .order-card-pending .edit-toggle-btn,
 .order-card-pending .delete-btn {
+  background: transparent;
   border-color: rgba(255, 255, 255, 0.3);
   color: rgba(255, 255, 255, 0.75);
 }
