@@ -90,7 +90,7 @@ function dismiss(n) {
 function handleClick(n) {
   dismiss(n);
   if (n.type === 'order') {
-    router.push('/admin/orders');
+    router.push({ path: '/admin/orders', query: { orderNo: n.reference_id } });
   } else if (n.type === 'user') {
     router.push('/admin/users');
   } else {

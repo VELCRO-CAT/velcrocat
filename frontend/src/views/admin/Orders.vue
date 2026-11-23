@@ -5,8 +5,19 @@
     <v-container class="admin-container" style="max-width:1000px">
       <h1 class="page-title">주문 관리</h1>
       <p class="page-sub mb-5">
-        총 {{ orders.length }}건의 주문<span v-if="totalPages > 1"> · {{ currentPage }}/{{ totalPages }}페이지</span>
+        총 {{ orders.length }}건의 주문<span v-if="searchQuery"> · 검색결과 {{ filteredOrders.length }}건</span><span v-if="totalPages > 1"> · {{ currentPage }}/{{ totalPages }}페이지</span>
       </p>
+
+      <v-text-field
+        v-model="searchQuery"
+        placeholder="주문번호 또는 고객명으로 검색"
+        variant="outlined"
+        density="compact"
+        clearable
+        hide-details
+        prepend-inner-icon="mdi-magnify"
+        class="mb-4"
+      />
 
       <v-progress-circular v-if="loading" indeterminate color="grey-darken-3" class="d-block mx-auto my-12" />
 
@@ -16,7 +27,7 @@
       </div>
 
       <div v-else class="order-list">
-        <div v-for="order in pagedOrders" :key="order.id" class="order-card">
+        <div v-for="order in pagedOrders" :key="order.id" class="order-card" :class="{ 'order-card-bank-transfer': order.payment_method === 'bank_transfer' }">
           <div class="order-top">
             <div>
               <span class="order-no">{{ order.order_no }}</span>
@@ -118,20 +129,32 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import axios from 'axios';
 import AdminSidebar from '../../components/AdminSidebar.vue';
 
+const route = useRoute();
 const orders = ref([]);
 const loading = ref(true);
 const expandedIds = ref(new Set());
+const searchQuery = ref('');
+
+const filteredOrders = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase();
+  if (!q) return orders.value;
+  return orders.value.filter(o =>
+    o.order_no?.toLowerCase().includes(q) || o.user_name?.toLowerCase().includes(q)
+  );
+});
 
 const PAGE_SIZE = 10;
 const currentPage = ref(1);
-const totalPages = computed(() => Math.max(1, Math.ceil(orders.value.length / PAGE_SIZE)));
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredOrders.value.length / PAGE_SIZE)));
 const pagedOrders = computed(() => {
   const start = (currentPage.value - 1) * PAGE_SIZE;
-  return orders.value.slice(start, start + PAGE_SIZE);
+  return filteredOrders.value.slice(start, start + PAGE_SIZE);
 });
+watch(searchQuery, () => { currentPage.value = 1; });
 const pageNumbers = computed(() => {
   const total = totalPages.value;
   const cur = currentPage.value;
@@ -177,6 +200,14 @@ const statusItems = [
 onMounted(async () => {
   const res = await axios.get('/api/admin/orders');
   orders.value = res.data;
+
+  // 알림 토스트에서 특정 주문번호를 들고 들어온 경우 — 검색창에 채워 바로 찾아 펼쳐 보여준다.
+  const targetOrderNo = route.query.orderNo;
+  if (targetOrderNo) {
+    searchQuery.value = String(targetOrderNo);
+    const match = orders.value.find(o => o.order_no === targetOrderNo);
+    if (match) expandedIds.value = new Set([match.id]);
+  }
   loading.value = false;
 });
 
@@ -217,6 +248,15 @@ function formatDate(dt) {
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   overflow: hidden;
+}
+.order-card-bank-transfer {
+  background: #fffaf0;
+  border-color: #f0dca0;
+}
+.order-card-bank-transfer .order-top,
+.order-card-bank-transfer .order-bottom {
+  background: #fff3d6;
+  border-color: #f0dca0;
 }
 .order-top {
   display: flex;
