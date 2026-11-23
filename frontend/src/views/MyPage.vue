@@ -93,7 +93,11 @@
                   <span v-if="order.status === 'cancelled'" class="order-cancel-flag">{{ statusLabel('cancelled') }}</span>
                 </div>
 
-                <div v-if="order.status !== 'cancelled'" class="order-stepper">
+                <div v-if="order.status === 'pending'" class="order-pending-deposit">
+                  <v-icon size="16" color="#b88a00" class="mr-1">mdi-clock-outline</v-icon>
+                  {{ t('mypage.statusPendingDeposit') }}
+                </div>
+                <div v-else-if="order.status !== 'cancelled'" class="order-stepper">
                   <div class="order-stepper-track">
                     <template v-for="(s, idx) in STEP_ORDER" :key="s">
                       <span class="order-stepper-node" :class="{ done: idx <= stepIndex(order.status) }"></span>
@@ -152,6 +156,11 @@
 
                 <div class="order-footer">
                   <div class="order-actions">
+                    <router-link
+                      v-if="order.status === 'pending' && order.payment_method === 'bank_transfer'"
+                      :to="`/order-complete?orderNo=${order.order_no}`"
+                      class="order-action-btn order-action-btn-primary"
+                    >{{ t('mypage.viewBankInfoBtn') }}</router-link>
                     <router-link
                       v-if="order.status === 'delivered' && order.items.length === 1"
                       :to="`/products/${order.items[0].id}`"
@@ -748,6 +757,8 @@ function statusLabel(s) {
 function paymentMethodLabel(m) {
   const map = {
     card: t('checkout.paymentCard'),
+    mpc: t('checkout.paymentCard'),
+    bank_transfer: t('checkout.paymentBankTransfer'),
     kakaopay: 'Kakao Pay',
     naverpay: 'Naver Pay',
     tosspay: 'Toss Pay'
@@ -928,6 +939,18 @@ function itemsSubtotal(order) {
 .order-stepper-labels span { font-size: 10px; color: #bbb; }
 .order-stepper-labels span.on { color: #111; font-weight: 700; }
 
+.order-pending-deposit {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  background: #fff8e1;
+  border: 1px solid #ffe4a3;
+  color: #8a6400;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
 /* 주문 상세를 주문상품/결제정보/배송지정보 소단락으로 구분 */
 .order-section-label {
   font-size: 11px;
@@ -976,6 +999,8 @@ function itemsSubtotal(order) {
   white-space: nowrap;
 }
 .order-action-btn:hover { background: #111; color: #fff; }
+.order-action-btn-primary { background: #111; color: #fff; }
+.order-action-btn-primary:hover { background: #333; }
 
 .pagination {
   display: flex;

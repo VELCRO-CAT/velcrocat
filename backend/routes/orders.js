@@ -64,12 +64,14 @@ router.post('/cancel', authMiddleware, async (req, res) => {
 
 router.get('/my', authMiddleware, async (req, res) => {
   try {
-    // 결제가 확정되지 않은(pending) 주문은 노출하지 않는다.
-    // 결제 시도 중이거나 중간에 이탈한 주문은 /api/payment/mainpay/abandon 등에서 정리되며,
-    // 혹시 정리되지 않고 남아있더라도 사용자에게는 "결제 안 한 주문"으로 보이지 않아야 한다.
+    // 결제가 확정되지 않은(pending) 주문은 노출하지 않는다 — 단, 무통장입금은 예외.
+    // 무통장입금은 PG 결제 시도 없이 바로 주문이 "접수"된 상태라 pending이어도 실제 주문이고,
+    // 고객이 계좌 안내를 다시 확인할 수 있어야 한다. 중단된 카드결제 pending만 계속 숨긴다.
     const orders = await db('orders')
       .where('user_id', req.user.id)
-      .whereNot('status', 'pending')
+      .where(function () {
+        this.whereNot('status', 'pending').orWhere('payment_method', 'bank_transfer');
+      })
       .orderBy('created_at', 'desc');
     res.json(orders.map(o => ({
       ...o,
@@ -92,7 +94,9 @@ router.post('/guest-lookup', async (req, res) => {
     const order = await db('orders')
       .where('order_no', orderNo)
       .whereNull('user_id')
-      .whereNot('status', 'pending')
+      .where(function () {
+        this.whereNot('status', 'pending').orWhere('payment_method', 'bank_transfer');
+      })
       .first();
     if (!order || !order.guest_password) {
       return res.status(404).json({ error: '주문 정보를 찾을 수 없습니다' });

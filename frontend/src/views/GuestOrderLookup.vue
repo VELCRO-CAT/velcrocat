@@ -71,6 +71,11 @@
       </template>
 
       <div class="order-footer">
+        <router-link
+          v-if="order.status === 'pending' && order.payment_method === 'bank_transfer'"
+          :to="`/order-complete?orderNo=${order.order_no}`"
+          class="order-action-btn order-action-btn-primary"
+        >{{ t('mypage.viewBankInfoBtn') }}</router-link>
         <router-link to="/contact" class="order-action-btn">{{ t('mypage.contactBtn') }}</router-link>
       </div>
     </div>
@@ -124,6 +129,7 @@ function formatDate(d) {
 
 function statusLabel(s) {
   const map = {
+    pending: t('mypage.statusPending'),
     paid: t('mypage.statusPaid'),
     confirmed: t('mypage.statusConfirmed'),
     processing: t('mypage.statusProcessing'),
@@ -214,7 +220,7 @@ function statusLabel(s) {
 .order-shipping { display: flex; align-items: flex-start; gap: 4px; }
 .order-shipping-text { font-size: 12px; color: #888; line-height: 1.5; }
 
-.order-footer { display: flex; justify-content: flex-end; margin-top: 20px; padding-top: 14px; border-top: 1px solid #eee; }
+.order-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 14px; border-top: 1px solid #eee; }
 .order-action-btn {
   font-size: 11px;
   font-weight: 700;
@@ -225,4 +231,6 @@ function statusLabel(s) {
   text-decoration: none;
 }
 .order-action-btn:hover { background: #111; color: #fff; }
+.order-action-btn-primary { background: #111; color: #fff; }
+.order-action-btn-primary:hover { background: #333; }
 </style>
