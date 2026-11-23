@@ -4,85 +4,31 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { optionalAuthMiddleware } = require('../middleware/auth');
 const { validateCoupon } = require('../services/coupons');
+const { applyOrderPaid } = require('../services/orderFulfillment');
 
-// 네이버 SMTP (users.js/newsletter.js와 동일 설정 — MAIL_USER/MAIL_PASS .env)
-const transporter = nodemailer.createTransport({
-  host: 'smtp.naver.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS
-  },
-  tls: { rejectUnauthorized: false }
-});
+// 무통장입금 계좌 기본값 — 관리자가 /admin/bank-settings에서 settings 테이블 값을 바꾸지 않았을 때 사용
+const DEFAULT_BANK_TRANSFER_INFO = {
+  bankName: '카카오뱅크',
+  accountNumber: '3333102045899',
+  accountHolder: '김충성'
+};
 
-function escapeHtml(str) {
-  return String(str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-// 주문 확인 메일 본문 (상품 이미지/이름/사이즈/색상/수량/배송지)
-function buildOrderEmailHtml(order, items, shippingAddress) {
-  const rows = items.map(item => {
-    const opts = [item.color, item.size].filter(Boolean).join(' · ');
-    const rawImg = item.image || '';
-    const imgSrc = rawImg ? (rawImg.startsWith('http') ? rawImg : `${SITE_URL}${rawImg}`) : '';
-    const thumb = imgSrc
-      ? `<img src="${imgSrc}" width="56" height="56" alt="" style="width:56px;height:56px;object-fit:cover;border:1px solid #eee;border-radius:4px;display:block" />`
-      : `<div style="width:56px;height:56px;background:#f5f5f5;border:1px solid #eee;border-radius:4px"></div>`;
-    return `
-      <tr>
-        <td style="padding:12px 8px 12px 0;border-bottom:1px solid #eee;width:56px">${thumb}</td>
-        <td style="padding:12px 0;border-bottom:1px solid #eee;font-size:13px;color:#111">
-          ${escapeHtml(item.name)}
-          <div style="font-size:12px;color:#999;margin-top:3px">${opts ? escapeHtml(opts) + ' · ' : ''}수량 ${item.quantity || 1}개</div>
-        </td>
-        <td style="padding:12px 0;border-bottom:1px solid #eee;font-size:13px;color:#111;text-align:right;white-space:nowrap">
-          ₩${Number(item.price || 0).toLocaleString()}
-        </td>
-      </tr>`;
-  }).join('');
-
-  const addressBlock = shippingAddress?.address ? `
-    <p style="margin:24px 0 0;font-size:12px;color:#888;line-height:1.7">
-      <strong style="color:#333">배송지</strong><br>
-      ${shippingAddress.name || ''}${shippingAddress.phone ? ` · ${shippingAddress.phone}` : ''}<br>
-      (${shippingAddress.zip || ''}) ${shippingAddress.address || ''} ${shippingAddress.addressDetail || ''}
-      ${shippingAddress.memo ? `<br>배송 메모: ${shippingAddress.memo}` : ''}
-    </p>` : '';
-
-  return `
-  <div style="max-width:480px;margin:0 auto;font-family:'Apple SD Gothic Neo',sans-serif;padding:40px 20px">
-    <img src="${SITE_URL}/uploads/email-logo.png" alt="VELCROCAT" width="64" height="48" style="display:block;width:64px;height:48px;margin:26px auto 2px" />
-    <h2 style="text-align:center;letter-spacing:2px;margin:0 0 2px;font-size:22px;line-height:1.2">VELCROCAT</h2>
-    <p style="text-align:center;font-size:11px;letter-spacing:4px;color:#999;margin:0 0 28px;line-height:1.2">SEOUL</p>
-    <p style="color:#333;font-size:14px">${order.user_name}님, 주문이 정상적으로 완료되었습니다.</p>
-    <p style="color:#999;font-size:12px;margin:4px 0 24px">주문번호 ${order.order_no}</p>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-      ${rows}
-    </table>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px">
-      <tr>
-        <td style="padding-top:14px;font-size:14px;font-weight:700;color:#111">합계</td>
-        <td style="padding-top:14px;font-size:16px;font-weight:800;color:#111;text-align:right">₩${Number(order.total).toLocaleString()}</td>
-      </tr>
-    </table>
-    ${addressBlock}
-    <div style="text-align:center;margin-top:28px">
-      <a href="${SITE_URL}/mypage" style="display:inline-block;background:#111;color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:0.3px;padding:12px 28px;border-radius:4px">주문 내역 보기</a>
-    </div>
-    <p style="margin-top:20px;font-size:12px;color:#999;line-height:1.6;text-align:center">
-      문의사항은 고객센터로 연락해주세요.
-    </p>
-  </div>`;
+async function getBankTransferInfo() {
+  const rows = await db('settings').whereIn('key', [
+    'bank_transfer_bank_name',
+    'bank_transfer_account_number',
+    'bank_transfer_account_holder'
+  ]);
+  const byKey = Object.fromEntries(rows.map(r => [r.key, r.value]));
+  return {
+    bankName: byKey.bank_transfer_bank_name || DEFAULT_BANK_TRANSFER_INFO.bankName,
+    accountNumber: byKey.bank_transfer_account_number || DEFAULT_BANK_TRANSFER_INFO.accountNumber,
+    accountHolder: byKey.bank_transfer_account_holder || DEFAULT_BANK_TRANSFER_INFO.accountHolder
+  };
 }
 
 const MPC_HOST          = process.env.MPC_HOST          || 'https://mpc.icu';
@@ -159,7 +105,7 @@ function closeAndRedirectHtml(redirectUrl, message = '결제 처리 중...') {
 // 1. 결제 준비 (READY)
 router.post('/ready', optionalAuthMiddleware, async (req, res) => {
   try {
-    const { items, shippingAddress, paymethod = 'CARD', guestInfo, couponCode } = req.body;
+    const { items, shippingAddress, paymethod = 'CARD', guestInfo, couponCode, depositorName } = req.body;
 
     if (!items?.length) {
       return res.status(400).json({ error: '주문 정보가 부족합니다' });
@@ -199,6 +145,47 @@ router.post('/ready', optionalAuthMiddleware, async (req, res) => {
     }
 
     const orderNo = generateOrderNo();
+
+    // 무통장입금은 PG(MPC) 연동 없이 바로 주문을 접수하고 고정 계좌를 안내한다.
+    // 재고 차감/쿠폰 소진은 결제 확정 시점(관리자 수동 확인)에만 일어난다 — applyOrderPaid 참고.
+    if (paymethod === 'BANK_TRANSFER') {
+      if (!depositorName?.trim()) {
+        return res.status(400).json({ error: '입금자명을 입력해주세요' });
+      }
+
+      await db('orders').insert({
+        order_no: orderNo,
+        user_id: req.user ? req.user.id : null,
+        user_name: buyerName,
+        user_email: buyerEmail,
+        guest_password: guestPasswordHash,
+        items_json: JSON.stringify(items),
+        total: amount,
+        discount_amount: discountAmount,
+        coupon_code: couponCode ? String(couponCode).trim().toUpperCase() : null,
+        payment_method: 'bank_transfer',
+        depositor_name: depositorName.trim(),
+        shipping_address_json: JSON.stringify(shippingAddress || {}),
+        status: 'pending'
+      });
+
+      await db('notifications').insert({
+        type: 'order',
+        title: '무통장입금 주문이 접수되었습니다',
+        message: `${buyerName}님이 ₩${amount.toLocaleString()} 주문 (입금 대기)`,
+        reference_id: orderNo,
+        is_read: false
+      });
+
+      return res.json({
+        success: true,
+        orderNo,
+        bankTransfer: true,
+        bankInfo: await getBankTransferInfo(),
+        amount
+      });
+    }
+
     const timestamp = getTimestamp();
     const goodsName = (items.length === 1
       ? items[0].name
@@ -296,11 +283,51 @@ router.get('/status/:orderNo', optionalAuthMiddleware, async (req, res) => {
       orderNo: order.order_no,
       status: order.status,
       total: order.total,
-      isGuest: !order.user_id
+      isGuest: !order.user_id,
+      paymentMethod: order.payment_method,
+      depositNotified: !!order.deposit_notified_at,
+      ...(order.payment_method === 'bank_transfer'
+        ? { bankInfo: await getBankTransferInfo(), depositorName: order.depositor_name }
+        : {})
     });
   } catch (e) {
     console.error('[MPC status 오류]', e);
     res.status(500).json({ error: '주문 상태 확인 중 오류가 발생했습니다' });
+  }
+});
+
+// 1-1-1. 무통장입금 고객이 "입금완료" 버튼을 눌렀을 때 — 관리자에게 알리기만 하고,
+// 실제 결제 확정(paid 전환)은 관리자가 입금을 직접 확인한 뒤 수동으로 한다.
+router.post('/notify-deposit', optionalAuthMiddleware, async (req, res) => {
+  try {
+    const { orderNo } = req.body;
+    if (!orderNo) return res.status(400).json({ error: '주문번호가 없습니다' });
+
+    const query = db('orders').where('order_no', orderNo);
+    if (req.user) query.where('user_id', req.user.id);
+    else query.whereNull('user_id');
+    const order = await query.first();
+
+    if (!order || order.status !== 'pending' || order.payment_method !== 'bank_transfer') {
+      return res.status(400).json({ error: '입금대기 중인 무통장입금 주문만 알릴 수 있습니다' });
+    }
+
+    // 이미 알린 적 있으면(deposit_notified_at) 중복 발송 없이 조용히 넘어간다 — 버튼을 여러 번 눌러도 무방.
+    if (!order.deposit_notified_at) {
+      await db('orders').where('order_no', orderNo).update({ deposit_notified_at: db.fn.now() });
+      await db('notifications').insert({
+        type: 'order',
+        title: '고객이 입금완료를 알렸습니다',
+        message: `${order.user_name}님 · 주문번호 ${orderNo} · ₩${Number(order.total).toLocaleString()}`,
+        reference_id: orderNo,
+        is_read: false
+      });
+    }
+
+    res.json({ success: true });
+  } catch (e) {
+    console.error('[MPC notify-deposit 오류]', e);
+    res.status(500).json({ error: '처리 중 오류가 발생했습니다' });
   }
 });
 
@@ -460,57 +487,8 @@ router.post('/notify', async (req, res) => {
       pay_tran_date: p.tranDate || null
     });
 
-    let items = [];
-    try { items = JSON.parse(order.items_json || '[]'); } catch {}
-    let shippingAddress = null;
-    try { shippingAddress = order.shipping_address_json ? JSON.parse(order.shipping_address_json) : null; } catch {}
-
-    // 재고 차감 (결제 확정 시점에만 — 위 idempotent 체크 덕분에 같은 주문은 한 번만 차감됨)
-    try {
-      for (const item of items) {
-        const qty = Number(item.quantity) || 0;
-        if (!item.id || qty <= 0) continue;
-        await db('products')
-          .where('id', item.id)
-          .update({ stock: db.raw('GREATEST(stock - ?, 0)', [qty]) });
-      }
-    } catch (stockErr) {
-      console.error('[MPC notify] 재고 차감 실패', orderNo, stockErr.message);
-    }
-
-    // 쿠폰 소진 (재고 차감과 같은 타이밍 — 주문 생성 시점엔 검증만 했고 올리지 않았다).
-    // WHERE 조건에 한도 체크를 같이 걸어서, 마지막 1장을 두고 여러 주문이 동시에 경쟁해도
-    // DB 레벨에서 오버유즈를 막는다. 영향받은 row가 0이면 레이스로 못 올린 것인데,
-    // 이미 결제된 돈을 무르지 않고 로그만 남긴다.
-    if (order.coupon_code) {
-      try {
-        const affected = await db('coupons')
-          .where('code', order.coupon_code)
-          .where(function () {
-            this.whereNull('usage_limit').orWhereRaw('used_count < usage_limit');
-          })
-          .update({ used_count: db.raw('used_count + 1') });
-        if (!affected) {
-          console.error(`[ALERT][coupon-overuse] order=${orderNo} code=${order.coupon_code}`);
-        }
-      } catch (couponErr) {
-        console.error('[MPC notify] 쿠폰 소진 처리 실패', orderNo, couponErr.message);
-      }
-    }
-
-    // 주문 확인 메일 (상품/사이즈/색상/배송지 안내)
-    if (order.user_email && process.env.MAIL_USER && process.env.MAIL_PASS) {
-      try {
-        await transporter.sendMail({
-          from: `"VELCROCAT" <${process.env.MAIL_USER}>`,
-          to: order.user_email,
-          subject: `[VELCROCAT] 주문이 완료되었습니다 (${orderNo})`,
-          html: buildOrderEmailHtml(order, items, shippingAddress)
-        });
-      } catch (mailErr) {
-        console.error('[MPC notify] 주문 확인 메일 발송 실패', orderNo, mailErr.message);
-      }
-    }
+    // 재고 차감/쿠폰 소진/확인 메일 — 관리자의 무통장입금 수동 확인과 공통 로직(services/orderFulfillment)
+    await applyOrderPaid(order);
 
     await db('notifications').insert({
       type: 'order',

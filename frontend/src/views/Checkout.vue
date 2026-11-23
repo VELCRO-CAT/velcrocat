@@ -230,6 +230,17 @@
               </button>
             </div>
 
+            <div v-if="selectedMethod === 'bank_transfer'" class="mt-4">
+              <label class="field-label">{{ t('checkout.depositorNameLabel') }} <span class="required">*</span></label>
+              <v-text-field
+                v-model="depositorName"
+                variant="outlined"
+                density="comfortable"
+                hide-details
+                :placeholder="t('checkout.depositorNamePlaceholder')"
+              />
+            </div>
+
             <div class="pay-info">
               <v-icon size="16" color="#888" class="mr-1">mdi-shield-check-outline</v-icon>
               {{ payDesc }}
@@ -388,6 +399,7 @@ const form = ref({
 });
 const showPostcode = ref(false);
 const selectedMethod = ref('card');
+const depositorName = ref('');
 const couponInput = ref('');
 const appliedCoupon = ref(null);
 const couponError = ref('');
@@ -470,7 +482,8 @@ function onPhoneInput() {
 
 // 결제 수단 목록
 const payMethods = computed(() => [
-  { key: 'card', label: t('checkout.paymentCard'), mdi: 'mdi-credit-card-outline' }
+  { key: 'card', label: t('checkout.paymentCard'), mdi: 'mdi-credit-card-outline' },
+  { key: 'bank_transfer', label: t('checkout.paymentBankTransfer'), mdi: 'mdi-bank-outline' }
 ]);
 
 // 배송 메모 옵션 (value는 관리자 화면 호환을 위해 항상 한국어로 전송)
@@ -482,7 +495,7 @@ const memoOptions = computed(() => [
   { title: t('checkout.memo5'), value: '부재시 문 앞에 놓아주세요' }
 ]);
 
-const payDesc = computed(() => t('checkout.paymentDesc'));
+const payDesc = computed(() => selectedMethod.value === 'bank_transfer' ? t('checkout.paymentBankTransferDesc') : t('checkout.paymentDesc'));
 
 // 주소 검색
 function searchAddress() {
@@ -512,6 +525,10 @@ async function processPayment() {
   if (checkoutMode.value === 'guest') {
     if (!guestPassword.value || guestPassword.value.length < 4) { error.value = t('checkout.errorGuestPassword'); return; }
     if (guestPassword.value !== guestPasswordConfirm.value) { error.value = t('checkout.errorGuestPasswordMismatch'); return; }
+  }
+  if (selectedMethod.value === 'bank_transfer' && !depositorName.value.trim()) {
+    error.value = t('checkout.errorDepositorName');
+    return;
   }
 
   // 새 배송지를 직접 입력했고 저장하기로 체크했다면, 결제 진행과 별개로 기본 배송지로 저장 (회원만)
@@ -547,11 +564,19 @@ async function processPayment() {
       amount: finalTotal.value,
       couponCode: appliedCoupon.value?.code,
       shippingAddress: form.value,
-      paymethod: 'CARD',
+      paymethod: selectedMethod.value === 'bank_transfer' ? 'BANK_TRANSFER' : 'CARD',
+      depositorName: selectedMethod.value === 'bank_transfer' ? depositorName.value.trim() : undefined,
       guestInfo: checkoutMode.value === 'guest'
         ? { name: form.value.name, email: form.value.email, password: guestPassword.value }
         : undefined
     });
+
+    if (data?.bankTransfer) {
+      // 무통장입금은 PG 결제창 없이 바로 주문이 접수된다 — 계좌 안내는 order-complete 화면에서 보여준다.
+      cartStore.clearCart();
+      router.push(`/order-complete?orderNo=${encodeURIComponent(data.orderNo)}`);
+      return;
+    }
 
     if (!data?.nextPcUrl) {
       error.value = t('checkout.errorNoPayUrl');

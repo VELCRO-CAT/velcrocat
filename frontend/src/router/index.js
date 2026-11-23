@@ -26,6 +26,7 @@ import AdminCoupons from '../views/admin/Coupons.vue';
 import AdminInquiries from '../views/admin/Inquiries.vue';
 import AdminNaver from '../views/admin/Naver.vue';
 import AdminUsers from '../views/admin/Users.vue';
+import AdminBankSettings from '../views/admin/BankSettings.vue';
 
 const DEFAULT_DESC = '벨크로캣(VELCROCAT, VCAT) - 일본식 의류의 트렌드와 스타일링. 가디건, 니트, 풀오버 등 프리미엄 울 100% 의류';
 
@@ -59,6 +60,7 @@ const routes = [
   { path: '/admin/inquiries', component: AdminInquiries, meta: { requiresAdmin: true } },
   { path: '/admin/users', component: AdminUsers, meta: { requiresAdmin: true } },
   { path: '/admin/naver', component: AdminNaver, meta: { requiresAdmin: true } },
+  { path: '/admin/bank-settings', component: AdminBankSettings, meta: { requiresAdmin: true } },
   { path: '/:pathMatch(.*)*', component: NotFound, meta: { title: '페이지를 찾을 수 없습니다 | 벨크로캣(VELCROCAT)' } }
 ];
 

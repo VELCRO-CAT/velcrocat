@@ -22,7 +22,10 @@ const PUBLIC_KEYS = [
   'mosaic_men_image',
   'mosaic_women_image',
   'mosaic_unisex_image',
-  'collection_label'
+  'collection_label',
+  'bank_transfer_bank_name',
+  'bank_transfer_account_number',
+  'bank_transfer_account_holder'
 ];
 
 function rowsToObject(rows) {

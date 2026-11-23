@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { adminMiddleware, superAdminMiddleware, SUPER_ADMIN_EMAIL } = require('../middleware/auth');
 const { toExpiryDate } = require('../services/coupons');
+const { applyOrderPaid } = require('../services/orderFulfillment');
 
 // 최고 관리자 전용 로그인 (아이디/비밀번호 방식) — 이 계정(SUPER_ADMIN_EMAIL) 하나에 로그인
 // 수단이 2개 있는 것. 이 계정만 다른 회원에게 관리자 권한을 주고 뺏을 수 있음
@@ -86,6 +87,13 @@ router.get('/orders', adminMiddleware, async (req, res) => {
 router.patch('/orders/:id/status', adminMiddleware, async (req, res) => {
   const before = await db('orders').where('id', req.params.id).first();
   await db('orders').where('id', req.params.id).update({ status: req.body.status });
+
+  // pending → paid 전환은 (보통 무통장입금을 관리자가 눈으로 확인하고 수동으로 올리는 경우) PG
+  // notify가 자동으로 하는 재고 차감/쿠폰 소진/확인 메일을 여기서도 똑같이 해줘야 한다 —
+  // 안 그러면 "결제완료"로 바꿔도 재고가 그대로 남고 쿠폰도 안 닳는다.
+  if (before && before.status === 'pending' && req.body.status === 'paid') {
+    await applyOrderPaid(before);
+  }
 
   // 결제 완료된 주문을 취소로 바꾸면 쿠폰도 재고와 대칭으로 복구한다.
   // paid였던 주문만 복구 대상 — pending/다른 상태에선 애초에 소진(used_count 증가)된 적이 없다.

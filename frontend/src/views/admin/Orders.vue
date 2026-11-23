@@ -43,6 +43,13 @@
               <span class="order-label">적용 쿠폰</span>
               <span class="order-value">{{ order.coupon_code }} (-₩{{ Number(order.discount_amount || 0).toLocaleString() }})</span>
             </div>
+            <div v-if="order.payment_method === 'bank_transfer'" class="order-info-row">
+              <span class="order-label">입금자명</span>
+              <span class="order-value">
+                {{ order.depositor_name || '-' }}
+                <v-chip v-if="order.deposit_notified_at" color="blue" size="x-small" variant="tonal" class="ml-2">고객 입금완료 알림</v-chip>
+              </span>
+            </div>
 
             <button class="order-detail-toggle" @click="toggleExpand(order.id)">
               <span>주문 상품 {{ order.items?.length || 0 }}건 {{ isExpanded(order.id) ? '접기' : '상세보기' }}</span>
@@ -191,7 +198,7 @@ function statusColor(s) {
   return { pending:'grey', paid:'blue', confirmed:'blue', processing:'orange', shipped:'green', delivered:'grey-darken-1', cancelled:'red' }[s] || 'grey';
 }
 function methodLabel(m) {
-  return { card:'카드결제', kakaopay:'카카오페이', naverpay:'네이버페이', tosspay:'토스페이' }[m] || m || '-';
+  return { card:'카드결제', kakaopay:'카카오페이', naverpay:'네이버페이', tosspay:'토스페이', mpc:'카드결제', bank_transfer:'무통장입금' }[m] || m || '-';
 }
 function formatDate(dt) {
   if (!dt) return '-';
