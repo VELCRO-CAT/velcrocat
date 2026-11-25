@@ -8,7 +8,9 @@ const STATIC_PAGES = [
   { loc: '/', priority: '1.0' },
   { loc: '/products', priority: '0.9' },
   { loc: '/story', priority: '0.8' },
-  { loc: '/contact', priority: '0.7' }
+  { loc: '/contact', priority: '0.7' },
+  { loc: '/terms', priority: '0.3' },
+  { loc: '/privacy', priority: '0.3' }
 ];
 
 router.get('/sitemap.xml', async (req, res) => {
