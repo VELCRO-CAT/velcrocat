@@ -18,9 +18,11 @@
 <script setup>
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import axios from 'axios';
 
 const { t } = useI18n();
+const route = useRoute();
 const loading = ref(false);
 
 async function onClick() {
@@ -28,6 +30,7 @@ async function onClick() {
   try {
     const res = await axios.get('/api/auth/naver');
     sessionStorage.setItem('vcat_social_pending', '1');
+    if (route.query.redirect) sessionStorage.setItem('vcat_social_redirect', route.query.redirect);
     window.location.href = res.data.url;
   } catch {
     loading.value = false;

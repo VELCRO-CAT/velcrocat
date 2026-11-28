@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('user', JSON.stringify(this.user));
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
       useWishlistStore().load();
-      useCartStore().load();
+      useCartStore().mergeGuestIntoUser();
     },
     async register(name, email, password) {
       const res = await axios.post('/api/users/register', { name, email, password });
@@ -31,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('user', JSON.stringify(this.user));
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
       useWishlistStore().load();
-      useCartStore().load();
+      useCartStore().mergeGuestIntoUser();
     },
     logout() {
       this.token = null;

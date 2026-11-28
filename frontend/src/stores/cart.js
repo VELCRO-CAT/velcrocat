@@ -5,15 +5,18 @@ function variantKey(item) {
   return `${item.id}__${item.color || ''}__${item.size || ''}`;
 }
 
-// 로그인한 회원만 장바구니를 기기에 저장해 새로고침/재방문에도 유지한다 (비회원은 유지 안 함)
+const GUEST_CART_KEY = 'osaka_cart_guest';
+
+// 비회원 장바구니도 기기에 저장해, 로그인(특히 소셜 로그인의 전체 페이지 리다이렉트)으로
+// 페이지가 새로고침돼도 담아둔 상품이 사라지지 않게 한다. 로그인 시 mergeGuestIntoUser()가
+// 이 비회원 장바구니를 회원 장바구니로 옮겨준다.
 function getCartKey() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
-  return user ? `osaka_cart_${user.id}` : null;
+  return user ? `osaka_cart_${user.id}` : GUEST_CART_KEY;
 }
 
 function loadFromStorage() {
-  const key = getCartKey();
-  return key ? JSON.parse(localStorage.getItem(key) || '[]') : [];
+  return JSON.parse(localStorage.getItem(getCartKey()) || '[]');
 }
 
 export const useCartStore = defineStore('cart', {
@@ -26,11 +29,23 @@ export const useCartStore = defineStore('cart', {
   },
   actions: {
     save() {
-      const key = getCartKey();
-      if (key) localStorage.setItem(key, JSON.stringify(this.items));
+      localStorage.setItem(getCartKey(), JSON.stringify(this.items));
     },
     load() {
       this.items = loadFromStorage();
+    },
+    // 로그인 직후 호출: 로그인 전 비회원 상태로 담아둔 상품을 회원 장바구니에 합친다.
+    mergeGuestIntoUser() {
+      const guestItems = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || '[]');
+      this.load();
+      for (const gi of guestItems) {
+        const key = variantKey(gi);
+        const existing = this.items.find(i => variantKey(i) === key);
+        if (existing) existing.qty += gi.qty;
+        else this.items.push(gi);
+      }
+      this.save();
+      localStorage.removeItem(GUEST_CART_KEY);
     },
     addItem(product, options = {}) {
       const newItem = {

@@ -38,8 +38,10 @@ onMounted(async () => {
     localStorage.setItem('user', JSON.stringify(res.data.user));
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
     useWishlistStore().load();
-    useCartStore().load();
-    router.push('/products');
+    useCartStore().mergeGuestIntoUser();
+    const dest = sessionStorage.getItem('vcat_social_redirect') || '/products';
+    sessionStorage.removeItem('vcat_social_redirect');
+    router.push(dest);
   } catch (e) {
     router.replace({ path: '/login', query: { socialError: '1' } });
   }
