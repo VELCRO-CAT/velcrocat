@@ -3,7 +3,9 @@
     <div class="detail-wrap">
       <v-btn variant="text" to="/products" prepend-icon="mdi-arrow-left" class="mb-6" style="color:#555">{{ t('detail.backToList') }}</v-btn>
 
-      <v-progress-circular v-if="loading" indeterminate color="#111" class="d-block mx-auto my-12" />
+      <ProductDetailSkeleton v-if="loading && showSkeleton" />
+
+      <div v-else-if="loading"></div>
 
       <div v-else-if="product" class="product-main">
         <!-- 이미지 캐러셀 -->
@@ -340,6 +342,8 @@ import axios from 'axios';
 import { useCartStore } from '../stores/cart';
 import { useWishlistStore } from '../stores/wishlist';
 import { useLocalized } from '../composables/useLocalized';
+import { useDelayedLoading } from '../composables/useDelayedLoading';
+import ProductDetailSkeleton from '../components/ProductDetailSkeleton.vue';
 
 const { t } = useI18n();
 const { lf, colorName } = useLocalized();
@@ -349,6 +353,7 @@ const cartStore = useCartStore();
 const wishlistStore = useWishlistStore();
 const product = ref(null);
 const loading = ref(true);
+const { showSkeleton } = useDelayedLoading(loading);
 const qty = ref(1);
 const snackbar = ref(false);
 const snackMsg = ref('');

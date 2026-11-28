@@ -70,8 +70,10 @@
           </div>
 
           <h2 class="mypage-section-title">{{ t('mypage.tabOrders') }}</h2>
-          <div v-if="ordersLoading" class="text-center py-8">
-            <v-progress-circular indeterminate color="#111" />
+          <div v-if="ordersLoading">
+            <template v-if="ordersShowSkeleton">
+              <OrderCardSkeleton v-for="n in 3" :key="n" />
+            </template>
           </div>
           <div v-else-if="orders.length === 0" class="text-center py-8 text-grey">
             {{ t('mypage.noOrders') }}
@@ -381,6 +383,8 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
+import { useDelayedLoading } from '../composables/useDelayedLoading';
+import OrderCardSkeleton from '../components/OrderCardSkeleton.vue';
 
 const { t, locale } = useI18n();
 const authStore = useAuthStore();
@@ -466,6 +470,7 @@ const showPw = ref(false);
 // 주문
 const orders = ref([]);
 const ordersLoading = ref(false);
+const { showSkeleton: ordersShowSkeleton } = useDelayedLoading(ordersLoading);
 
 // 주문내역 페이지네이션 (10건씩)
 const ORDERS_PAGE_SIZE = 10;

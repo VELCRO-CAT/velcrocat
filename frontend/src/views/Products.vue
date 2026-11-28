@@ -42,9 +42,13 @@
       <p class="result-count">{{ t('products.resultCount', { count: total }) }}</p>
     </div>
 
-    <!-- 로딩 -->
-    <div v-if="loading" class="loading-wrap">
-      <v-progress-circular indeterminate color="#111" size="36" />
+    <!-- 로딩 (300ms 이상 걸릴 때만 스켈레톤 표시) -->
+    <div v-if="loading">
+      <div v-if="showSkeleton" class="product-grid-wrap">
+        <div class="product-grid">
+          <ProductCardSkeleton v-for="n in 6" :key="n" />
+        </div>
+      </div>
     </div>
 
     <!-- 상품 그리드 -->
@@ -114,6 +118,8 @@ import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import { useWishlistStore } from '../stores/wishlist';
 import { useLocalized } from '../composables/useLocalized';
+import { useDelayedLoading } from '../composables/useDelayedLoading';
+import ProductCardSkeleton from '../components/ProductCardSkeleton.vue';
 
 const { t } = useI18n();
 const { lf, colorName } = useLocalized();
@@ -122,6 +128,7 @@ const wishlistStore = useWishlistStore();
 const products = ref([]);
 const total = ref(0);
 const loading = ref(true);
+const { showSkeleton } = useDelayedLoading(loading);
 const snackbar = ref(false);
 const snackMsg = ref('');
 
@@ -338,8 +345,8 @@ function toggleWish(product) {
   letter-spacing: 0.5px;
 }
 
-/* 로딩 / 빈 상태 */
-.loading-wrap, .empty-wrap {
+/* 빈 상태 */
+.empty-wrap {
   text-align: center;
   padding: 80px 24px;
   color: #767676;
