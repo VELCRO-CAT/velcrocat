@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('token', this.token);
       localStorage.setItem('user', JSON.stringify(this.user));
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
-      useWishlistStore().load();
+      useWishlistStore().mergeGuestIntoUser();
       useCartStore().mergeGuestIntoUser();
     },
     async register(name, email, password) {
@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('token', this.token);
       localStorage.setItem('user', JSON.stringify(this.user));
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
-      useWishlistStore().load();
+      useWishlistStore().mergeGuestIntoUser();
       useCartStore().mergeGuestIntoUser();
     },
     logout() {

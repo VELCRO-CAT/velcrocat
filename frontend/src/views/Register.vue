@@ -132,6 +132,8 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
+import { useCartStore } from '../stores/cart';
+import { useWishlistStore } from '../stores/wishlist';
 import axios from 'axios';
 import NaverLoginButton from '../components/NaverLoginButton.vue';
 import KakaoLoginButton from '../components/KakaoLoginButton.vue';
@@ -255,6 +257,8 @@ async function handleSubmit() {
     localStorage.setItem('token', res.data.token);
     localStorage.setItem('user', JSON.stringify(res.data.user));
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+    useWishlistStore().mergeGuestIntoUser();
+    useCartStore().mergeGuestIntoUser();
     router.push('/products');
   } catch (e) {
     error.value = e.response?.data?.error || t('auth.registerFailed');

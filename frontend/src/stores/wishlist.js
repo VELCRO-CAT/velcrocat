@@ -19,6 +19,17 @@ export const useWishlistStore = defineStore('wishlist', () => {
     localStorage.setItem(getKey(), JSON.stringify(items.value));
   }
 
+  // 로그인 직후 호출: 로그인 전 비회원 상태로 찜해둔 상품을 회원 찜 목록에 합친다.
+  function mergeGuestIntoUser() {
+    const guestItems = JSON.parse(localStorage.getItem('osaka_wishlist_guest') || '[]');
+    load();
+    for (const gi of guestItems) {
+      if (!items.value.some(i => i.id === gi.id)) items.value.push(gi);
+    }
+    save();
+    localStorage.removeItem('osaka_wishlist_guest');
+  }
+
   function isWished(productId) {
     return items.value.some(item => item.id === productId);
   }
@@ -46,5 +57,5 @@ export const useWishlistStore = defineStore('wishlist', () => {
   // 초기 로드
   load();
 
-  return { items, count, isWished, toggle, remove, load };
+  return { items, count, isWished, toggle, remove, load, mergeGuestIntoUser };
 });

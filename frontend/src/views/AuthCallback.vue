@@ -37,7 +37,7 @@ onMounted(async () => {
     localStorage.setItem('token', res.data.token);
     localStorage.setItem('user', JSON.stringify(res.data.user));
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-    useWishlistStore().load();
+    useWishlistStore().mergeGuestIntoUser();
     useCartStore().mergeGuestIntoUser();
     const dest = sessionStorage.getItem('vcat_social_redirect') || '/products';
     sessionStorage.removeItem('vcat_social_redirect');
